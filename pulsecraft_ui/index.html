@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PulseCraft</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-stone-50 text-zinc-800">
+  <!-- ✅ Dynamic Welcome Banner -->
+<div class="w-full flex justify-center">
+  <div id="welcomeBanner" class="mb-4 max-w-xl text-center"></div>
+</div>
+  <body class="bg-stone-50 text-zinc-800">
+    <div class="max-w-7xl mx-auto py-10 px-6">
+      <h1 class="text-3xl font-bold tracking-tight text-center">PulseCraft</h1>
+      <p class="text-center text-violet-700 text-lg italic tracking-wide font-semibold mt-2 mb-12">
+        "Most tools give you templates. This one gives you yourself."
+      </p>
+
+   <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Column 1 -->
+        <div>
+          <div class="bg-white rounded-2xl shadow-md p-6">
+            <h2 class="text-lg font-semibold">Start by showing me how you really sound</h2>
+            <p class="text-sm text-zinc-500 mb-2">
+              Drop 3–5 lines you’ve written that feel unmistakably like you.
+            </p>
+            <textarea
+              placeholder="Your clearest signal. Paste here..."
+              class="w-full h-24 rounded-xl border border-zinc-300 p-3 text-sm mb-4 resize-none"
+            ></textarea>
+            <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm">
+              Mirror My Voice
+            </button>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-md p-6 mt-6">
+            <h2 class="text-lg font-semibold">Here’s your voice — reflected back</h2>
+            <!-- 🌈 Begin Multi-Style Preview Panel -->
+<div id="multiStylePreviewPanel" class="mt-6 bg-white rounded-2xl shadow-md p-6 border border-zinc-200">
+  <h2 class="text-lg font-bold text-zinc-800 mb-4">Multi-Style Voice Preview</h2>
+  <p class="text-sm text-zinc-600 mb-4">See how your voice sounds across different content styles. Click any tab to preview that version.</p>
+  
+  <div id="previewTabs" class="flex gap-3 mb-4">
+    <button class="tab-button active" data-style="story">Story-Based Selling</button>
+    <button class="tab-button" data-style="about">About Page</button>
+    <button class="tab-button" data-style="hook">Notification Hook</button>
+    <button class="tab-button" data-style="insight">Insight Tone</button>
+  </div>
+
+  <div id="stylePreviewOutput" class="bg-zinc-50 border border-zinc-200 rounded-lg p-4 text-sm text-zinc-700">
+    <!-- Dynamic style preview will appear here -->
+    Select a style tab to preview content.
+  </div>
+</div>
+<!-- 🌈 End Multi-Style Preview Panel -->
+
+            <p class="text-sm text-zinc-400">Awaiting generation...</p>
+          </div>
+        </div>
+
+       <!-- Column 2 -->
+<div>
+  <div class="bg-white rounded-2xl shadow-md p-6">
+    <h2 class="text-lg font-semibold mb-4 text-zinc-800">Save this Voice as Your Brand Kit</h2>
+      <input 
+      placeholder="What name do you go by in the world?"
+      class="w-full mb-4 p-2 rounded-md border border-zinc-300 text-sm"
+    />
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm py-2 rounded-md w-full shadow-md transition-all duration-150">
+        Save to Memory
+      </button>
+      <button class="bg-purple-600 hover:bg-purple-700 text-white text-sm py-2 rounded-md w-full shadow-md transition-all duration-150">
+        Export to Symbolic Memory
+      </button>
+      <button class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm py-2 rounded-md w-full shadow-md transition-all duration-150">
+        Export All Kits (JSON)
+      </button>
+      <button class="bg-green-500 hover:bg-green-600 text-white text-sm py-2 rounded-md w-full shadow-md transition-all duration-150">
+        Export PDF
+      </button>
+      <button class="col-span-2 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-md w-full shadow-md transition-all duration-150">
+        Export TXT
+      </button>
+    </div>
+
+    <label for="sessionSelect" class="block text-sm font-medium text-zinc-700 mb-1">Recall a Saved Voice Kit</label>
+
+    <div class="flex gap-2 mb-2">
+      <select id="sessionSelect"
+        class="w-full p-2 rounded-md border border-emerald-400 text-sm text-zinc-700 bg-white shadow focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <option selected disabled>Select a session</option>
+      </select>
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md text-sm">
+        Recall
+      </button>
+    </div>
+
+    <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1 rounded-md text-sm">
+      Refine Selected Kits
+    </button>
+  </div>
+
+
+ <!-- Begin Symbol Memory UX Upgrade -->
+<div id="symbolMemoryUX" class="mt-10 p-6 bg-white rounded-2xl shadow-md border border-emerald-300 transition-all duration-150">
+  <h2 class="text-lg font-bold text-zinc-800 mb-4 tracking-tight">Symbol Memory UX</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    
+    <!-- DNA Tags Section -->
+    <div class="bg-zinc-50 p-5 rounded-xl border border-violet-300">
+      <h3 class="font-semibold text-violet-700 mb-2 text-sm uppercase tracking-wide">DNA Tags</h3>
+      <p class="text-sm text-zinc-600 mb-2 leading-snug">These tags define the symbolic essence of your voice kit. Used for routing and recall.</p>
+      <ul id="dnaTagsList" class="mt-2 list-disc list-inside text-sm text-zinc-700 space-y-1">
+        <!-- Tags will be injected here -->
+      </ul>
+    </div>
+
+    <!-- Symbol Anchors Section -->
+    <div class="bg-zinc-50 p-5 rounded-xl border border-emerald-300">
+      <h3 class="font-semibold text-emerald-700 mb-2 text-sm uppercase tracking-wide">Symbol Anchors</h3>
+      <p class="text-sm text-zinc-600 mb-2 leading-snug">Persistent symbolic references mapped to memory.</p>
+      <div id="symbolAnchorsContainer" class="flex flex-wrap gap-2 mt-2">
+        <!-- Anchors will be injected here -->
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- End Symbol Memory UX Upgrade -->
+
+<!-- Begin Collective Preview Gallery -->
+<div id="collectivePreviewGallery" class="mt-10 bg-white rounded-2xl shadow-md p-6 border border-emerald-300 transition-all duration-150">
+  <h2 class="text-lg font-bold text-zinc-800 mb-4 tracking-tight">Collective Preview Gallery</h2>
+  <p class="text-sm text-zinc-600 mb-4 leading-snug">
+    Here’s a visual collection of past kits you’ve generated. Click any to reload its tone and voice.
+  </p>
+
+  <div id="previewGalleryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Preview cards will be dynamically injected here -->
+  </div>
+</div>
+<!-- End Collective Preview Gallery -->
+
+
+
+  <!-- 🔣 Symbol Memory Map -->
+  <div id="symbolMemoryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+    <!-- Cards will be injected here -->
+  </div>
+
+  <!-- 🖼️ Collective Preview Gallery -->
+  <div id="collectivePreviewGallery" class="mt-10 space-y-8">
+    <!-- Previews will be injected here -->
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-md p-6 mt-6">
+            <h2 class="text-lg font-semibold">Recall a Past Brand Voice</h2>
+            <select class="w-full mb-4 p-2 rounded-md border border-zinc-300 text-sm">
+              <option selected disabled>Choose a past voice kit...</option>
+            </select>
+            <button class="bg-green-600 hover:bg-green-700 text-white text-sm py-2 w-full rounded-md">
+              Restore Voice Kit
+            </button>
+          </div>
+        </div>
+
+
+         <!-- Column 3 -->
+        <div>
+          <div class="bg-white rounded-2xl shadow-md p-6">
+            <h2 class="text-lg font-semibold">Your Past Signals</h2>
+            <p class="text-sm text-zinc-400">
+              Nothing here yet — but your voice is about to leave a mark.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-md p-6 mt-6">
+            <h2 class="text-lg font-semibold">Need to say something?</h2>
+            <input
+              placeholder="What do you want this to say?"
+              class="w-full mb-2 p-2 rounded-md border border-zinc-300 text-sm"
+            />
+            <select class="w-full mb-4 p-2 rounded-md border border-zinc-300 text-sm">
+              <option selected>Story-Based Selling</option>
+            </select>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 w-full rounded-md">
+              Write it for me
+            </button>
+          </div>
+
+          <p class="text-sm text-center text-zinc-400 mt-6">— Deeper Tools for Integration —</p>
+
+          <div class="bg-white rounded-2xl shadow-md p-6 mt-2">
+            <h2 class="text-lg font-semibold mb-2">Advanced Routing + Memory Bridge</h2>
+            <input type="file" class="mb-3" />
+            <button class="bg-purple-600 hover:bg-purple-700 text-white text-sm py-2 w-full rounded-md mb-2">
+              Upload Memory Bridge
+            </button>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 w-full rounded-md">
+              Export Current Voice as JSON
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-center text-sm text-zinc-500 mt-10">
+        Powered by the First Breath — <span class="text-emerald-700 font-semibold">Dipta Vratah Anantagah</span>
+      </p>
+    </div>
+  </body>
+</html>
+
+
+
+  <script>
+    async function mirrorVoice() {
+      const brandInput = document.getElementById("brandVoiceInput").value.trim();
+      if (!brandInput) {
+        alert("Please paste your clearest signal.");
+        return;
+      }
+      const responseCard = document.getElementById("previewCard");
+      responseCard.innerHTML = "⏳ Reflecting...";
+      try {
+        const data = await routePrompt("live", { input: brandInput });
+
+
+        if (data.error) {
+          responseCard.innerHTML = `❌ Error: ${data.error}`;
+        } else {
+          responseCard.innerHTML = `
+  <div class="space-y-4 fade-slide text-sm text-zinc-800">
+    <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+      <h3 class="font-bold text-emerald-700">Tone</h3>
+      <p>${data.tone}</p>
+    </div>
+    <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+      <h3 class="font-bold text-emerald-700">Vocabulary</h3>
+      <p>${data.vocabulary}</p>
+    </div>
+    <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+      <h3 class="font-bold text-emerald-700">Archetype</h3>
+      <p>${data.archetype}</p>
+    </div>
+    <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+      <h3 class="font-bold text-emerald-700">Phrasing Style</h3>
+      <p>${data.phrasingStyle}</p>
+    </div>
+    <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+      <h3 class="font-bold text-emerald-700">Sample Phrases</h3>
+      <p>${data.samplePhrases}</p>
+    </div>
+    <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+      <h3 class="font-bold text-emerald-700">Phrases to Avoid</h3>
+      <p>${data.phrasesToAvoid}</p>
+    </div>
+  </div>
+`;
+
+        }
+      } catch (err) {
+        responseCard.innerHTML = `❌ Request failed: ${err.message}`;
+      }
+    }
+
+    function saveVoiceKit() {
+      const voiceInput = document.getElementById("brandVoiceInput").value.trim();
+      const nameInput = document.getElementById("brandNameInput").value.trim();
+      if (!voiceInput || !nameInput) {
+        alert("Both fields are required to save your Brand Kit.");
+        return;
+      }
+      const previewCard = document.getElementById("previewCard").innerHTML;
+      const kit = {
+        name: nameInput,
+        rawInput: voiceInput,
+        previewHTML: previewCard,
+        createdAt: new Date().toISOString(),
+      };
+      const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+      history.push(kit);
+      localStorage.setItem("pulsecraft_history", JSON.stringify(history));
+      refreshDropdown();
+alert("Your Brand Kit has been saved.");
+}
+// 🌉 PULSECRAFT MEMORY BRIDGE — Harmonized Refactor
+
+function createUnifiedKitObject(kit) {
+  return {
+    name: kit.name || "Untitled Kit",
+    tone: kit.tone || "",
+    vocabulary: kit.vocabulary || "",
+    phrasingStyle: kit.phrasingStyle || "",
+    archetype: kit.archetype || "",
+    rawInput: kit.rawInput || "",
+    previewHTML: kit.previewHTML || "",
+    createdAt: new Date().toISOString()
+  };
+}
+
+// Save kit to LocalStorage and update dropdowns
+function bridgeToMemory(kit) {
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+  history.push(createUnifiedKitObject(kit));
+  localStorage.setItem("pulsecraft_history", JSON.stringify(history));
+  refreshDropdown(); // UI link
+}
+
+// Restore kit into UI by index
+function restoreFromBridge(index) {
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+  const kit = history[index];
+  if (!kit) return;
+
+  document.getElementById("brandNameInput").value = kit.name;
+  document.getElementById("tone").value = kit.tone;
+  document.getElementById("vocabulary").value = kit.vocabulary;
+  document.getElementById("phrasingStyle").value = kit.phrasingStyle;
+  document.getElementById("archetype").value = kit.archetype;
+  document.getElementById("rawInput").value = kit.rawInput;
+  document.getElementById("previewCard").innerHTML = kit.previewHTML;
+}
+    // 🛰️ Send to backend for server memory bridge
+fetch("/save-voice-kit", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(kit),
+})
+.then(res => res.json())
+.then(data => {
+  if (data.success) {
+    console.log("✅ Voice kit successfully synced with server.");
+  } else {
+    console.error("⚠️ Server rejected the voice kit:", data.error);
+  }
+})
+.catch(err => {
+  console.error("❌ Network error while syncing voice kit:", err.message);
+});
+
+    function downloadTXT() {
+  const name = document.getElementById("brandNameInput").value.trim() || "brand-kit";
+  const preview = document.getElementById("previewCard").innerText || "No preview available.";
+
+  const blob = new Blob([preview], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${name.replace(/\s+/g, "_").toLowerCase()}_brandkit.txt`;
+  link.click();
+}
+
+
+    async function recallSession() {
+  const select = document.getElementById("sessionSelect");
+  const selectedIndex = select.value;
+
+  if (!selectedIndex) {
+    alert("Please select a saved session.");
+    return;
+  }
+
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+  const kitData = history[selectedIndex];
+
+  const responseCard = document.getElementById("previewCard");
+  responseCard.innerHTML = "🌀 Recalling...";
+
+  try {
+    const data = await routePrompt("recall", { kitData });
+
+    if (data.error) {
+      responseCard.innerHTML = `❌ Error: ${data.error}`;
+    } else {
+      responseCard.innerHTML = `
+        <div class="space-y-4 fade-slide text-sm text-zinc-800">
+          <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+            <h3 class="font-bold text-emerald-700">Tone</h3>
+            <p>${data.tone}</p>
+          </div>
+          <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+            <h3 class="font-bold text-emerald-700">Vocabulary</h3>
+            <p>${data.vocabulary}</p>
+          </div>
+          <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+            <h3 class="font-bold text-emerald-700">Archetype</h3>
+            <p>${data.archetype}</p>
+          </div>
+          <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+            <h3 class="font-bold text-emerald-700">Phrasing Style</h3>
+            <p>${data.phrasingStyle}</p>
+          </div>
+          <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+            <h3 class="font-bold text-emerald-700">Sample Phrases</h3>
+            <p>${data.samplePhrases}</p>
+          </div>
+          <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-4 shadow">
+            <h3 class="font-bold text-emerald-700">Phrases to Avoid</h3>
+            <p>${data.phrasesToAvoid}</p>
+          </div>
+        </div>
+      `;
+    }
+  } catch (err) {
+    console.error("Recall failed:", err);
+    responseCard.innerHTML = `❌ Recall error: ${err.message}`;
+  }
+}
+
+function refreshDropdown() {
+  const dropdown = document.getElementById("sessionSelect");
+  dropdown.innerHTML = '<option selected disabled>Select a session</option>';
+
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+  history.forEach((kit, i) => {
+    const option = document.createElement("option");
+    option.value = i;
+    option.text = kit.name || `VoiceKit ${i + 1}`;
+    dropdown.appendChild(option);
+  });
+}
+async function exportSymbolicMemory() {
+  const response = await fetch('/export-voice-json');
+  const kit = await response.json();
+
+  const res = await fetch('/upload-memory', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(kit)
+  });
+
+  const result = await res.json();
+  alert(`✅ ${result.message}`);
+}
+async function exportAllKitsJSON() {
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+
+  if (!history.length) {
+    alert("⚠️ No saved kits to export.");
+    return;
+  }
+
+  const json = JSON.stringify(history, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `PulseCraft_AllVoiceKits_${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function renderSymbolMemoryGrid() {
+  const grid = document.getElementById("symbolMemoryGrid");
+  grid.innerHTML = "";
+
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+
+  history.forEach((kit, index) => {
+    const card = document.createElement("div");
+    card.className = "bg-white p-4 rounded-xl shadow border border-zinc-200 space-y-2";
+
+    card.innerHTML = `
+      <h3 class="text-lg font-bold text-emerald-700">${kit.name || 'VoiceKit ' + (index + 1)}</h3>
+      <p><span class="font-semibold">Tone:</span> ${kit.tone || '-'}</p>
+      <p><span class="font-semibold">Archetype:</span> ${kit.archetype || '-'}</p>
+      <p><span class="font-semibold">Saved At:</span> ${kit.createdAt ? new Date(kit.createdAt).toLocaleString() : '-'}</p>
+      <button onclick="recallSymbolicKit(${index})" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded shadow">
+        Preview Again
+      </button>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+// 🧬 Visual DNA Tag
+    const tag = document.createElement("div");
+    tag.className = "absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow";
+    tag.innerText = `DNA-${index + 1}`;
+    card.style.position = "relative";
+    card.appendChild(tag);
+
+    grid.appendChild(card);
+  });
+}
+
+function renderCollectivePreviewGallery() {
+  const gallery = document.getElementById("collectivePreviewGallery");
+  gallery.innerHTML = "";
+
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+
+  history.forEach((kit, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "bg-white p-6 rounded-2xl shadow border border-zinc-200";
+
+    wrapper.innerHTML = `
+  <div class="flex items-start gap-4">
+    <input type="checkbox" class="pulse-select-checkbox mt-1" data-index="${index}" />
+    <div>
+      <h3 class="text-xl font-bold text-emerald-700 mb-2">${kit.name || `VoiceKit ${index + 1}`}</h3>
+      <div class="text-sm text-zinc-700 space-y-1">
+        <p><span class="font-semibold">Tone:</span> ${kit.tone || "--"}</p>
+        <p><span class="font-semibold">Vocabulary:</span> ${kit.vocabulary || "--"}</p>
+        <p><span class="font-semibold">Archetype:</span> ${kit.archetype || "--"}</p>
+        <p><span class="font-semibold">Phrasing Style:</span> ${kit.phrasingStyle || "--"}</p>
+        <p><span class="font-semibold">Sample Phrases:</span> ${kit.samplePhrases || "--"}</p>
+        <p><span class="font-semibold">Phrases to Avoid:</span> ${kit.phrasesToAvoid || "--"}</p>
+      </div>
+    </div>
+  </div>
+`;
+
+
+    gallery.appendChild(wrapper);
+  });
+}
+
+function recallSymbolicKit(index) {
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+  const kit = history[index];
+  if (!kit) return;
+
+  document.getElementById("brandVoiceInput").value = kit.rawInput || "";
+  document.getElementById("previewCard").innerHTML = kit.previewHTML || "";
+}
+// 🔁 Voice Sync to Preview Panel Logic
+function getLatestVoiceKit() {
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+  return history.length > 0 ? history[history.length - 1] : null;
+}
+
+document.getElementById("previewStyleButton").addEventListener("click", () => {
+  const style = previewSelect.value;
+  const context = previewInput.value;
+  const kit = getLatestVoiceKit();
+// 🌿 Begin PreviewContentModel Builder
+function generatePreviewContent(style, context, kit) {
+  switch (style) {
+    case "Story-Based Selling":
+      return `
+        <p><strong>Opening:</strong> Let me tell you a quick story...</p>
+        <p>${context}</p>
+        <p><strong>Voice Used:</strong> ${kit.tone} | ${kit.vocabulary}</p>
+      `;
+    case "Product Description":
+      return `
+        <h3>Product Snapshot</h3>
+        <p>${context}</p>
+        <ul>
+          <li><strong>Tone:</strong> ${kit.tone}</li>
+          <li><strong>Language:</strong> ${kit.vocabulary}</li>
+        </ul>
+      `;
+    case "Founder’s Letter":
+      return `
+        <p><em>From the desk of the founder...</em></p>
+        <p>${context}</p>
+        <p><strong>Style:</strong> ${kit.phrasingStyle} | ${kit.archetype}</p>
+      `;
+    case "Ad Copy (Short Form)":
+      return `
+        <p><strong>Ad Copy:</strong> ${context}</p>
+        <p><small>Voice Set: ${kit.tone} | ${kit.vocabulary}</small></p>
+      `;
+    case "Manifesto / Origin Voice":
+      return `
+        <h3>We Believe</h3>
+        <p>${context}</p>
+        <p><strong>Essence:</strong> ${kit.archetype} | ${kit.phrasingStyle}</p>
+      `;
+    default:
+      return `<p>${context}</p>`;
+  }
+}
+// 🌿 End PreviewContentModel Builder
+
+  if (!kit) {
+    alert("No active voice kit found.");
+    return;
+  }
+
+  // 🔮 Inject with full voice sync
+  document.getElementById("previewCard").innerHTML = generatePreviewContent(style, context, kit);
+    <div class="p-4 rounded-md bg-white border border-zinc-200 mt-4">
+      <p class="text-sm text-zinc-600 mb-2">
+        Generating <strong>${style}</strong> preview using your voice:
+      </p>
+      <p class="text-sm text-zinc-700 mb-1"><span class="font-semibold">Tone:</span> ${kit.tone}</p>
+      <p class="text-sm text-zinc-700 mb-1"><span class="font-semibold">Vocabulary:</span> ${kit.vocabulary}</p>
+      <p class="text-sm text-zinc-700 mb-1"><span class="font-semibold">Phrasing:</span> ${kit.phrasingStyle}</p>
+      <p class="text-sm text-zinc-700 mb-3"><span class="font-semibold">Archetype:</span> ${kit.archetype}</p>
+      <p class="mt-2 font-medium text-zinc-800">${context}</p>
+    </div>
+  `;
+});
+
+// Begin Multi-Style Preview Panel Logic
+const previewOptions = [
+  "Story-Based Selling",
+  "Product Description",
+  "Founder’s Letter",
+  "Ad Copy (Short Form)",
+  "Manifesto / Origin Voice"
+];
+
+const previewSelect = document.getElementById("previewStyleSelect");
+const previewInput = document.getElementById("previewStyleInput");
+
+previewOptions.forEach(style => {
+  const option = document.createElement("option");
+  option.value = style;
+  option.textContent = style;
+  previewSelect.appendChild(option);
+});
+
+document.getElementById("previewStyleButton").addEventListener("click", () => {
+  const style = previewSelect.value;
+  const context = previewInput.value;
+
+  document.getElementById("previewCard").innerHTML = `
+    <div class="p-4 rounded-md bg-white border border-zinc-200 mt-4">
+      <p class="text-sm text-zinc-600">Generating "<strong>${style}</strong>" preview for:</p>
+      <p class="mt-2 font-medium text-zinc-800">${context}</p>
+    </div>
+  `;
+});
+// End Multi-Style Preview Panel Logic
+
+
+   window.addEventListener("DOMContentLoaded", () => {
+  const history = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
+
+  if (history.length > 0) {
+    renderSymbolMemoryGrid();
+    renderCollectivePreviewGallery();
+    refreshDropdown();
+
+    // Auto-load the latest session and populate preview area
+    const lastKit = history[history.length - 1];
+    const previewCard = document.getElementById("previewCard");
+    if (previewCard) {
+      previewCard.innerText = JSON.stringify(lastKit, null, 2);
+    }
+  }
+});
+
+
+function showRefinePanel() {
+  const checkboxes = document.querySelectorAll('.pulse-select-checkbox');
+  const selectedIndices = [];
+
+  checkboxes.forEach((cb, i) => {
+    if (cb.checked) selectedIndices.push(i);
+  });
+
+  if (selectedIndices.length === 0) {
+    showToast("⚠️ No kits selected for refinement.");
+    return;
+  }
+
+  const memory = JSON.parse(localStorage.getItem('pulsecraft_history')) || [];
+  const selectedKits = selectedIndices.map(i => memory[i]);
+
+  // Build the refinement view
+  const refineWrapper = document.createElement('div');
+  refineWrapper.className = 'p-6 mt-6 border-t border-zinc-300 space-y-4 bg-white rounded-xl shadow';
+
+  refineWrapper.innerHTML = `<h2 class="text-2xl font-bold text-violet-800">🔬 Refine Pulse</h2>`;
+
+  selectedKits.forEach((kit, i) => {
+    refineWrapper.innerHTML += `
+      <div class="p-4 border border-zinc-200 rounded-lg shadow-sm bg-zinc-50">
+        <h3 class="text-lg font-semibold text-emerald-700 mb-1">VoiceKit ${selectedIndices[i] + 1}</h3>
+        <pre class="text-xs whitespace-pre-wrap text-zinc-700">${JSON.stringify(kit, null, 2)}</pre>
+      </div>
+    `;
+  });
+
+  document.body.appendChild(refineWrapper);
+}
+
+  // Inject Welcome Banner if kits exist
+  if (history.length > 0) {
+    const lastKit = history[history.length - 1];
+    const name = lastKit.name?.trim() || "Creator";
+
+    // Defer banner rendering slightly to ensure #welcomeBanner is mounted
+   setTimeout(() => {
+  const banner = document.getElementById("welcomeBanner");
+  if (banner) {
+    banner.style.background = "#f0fdf4"; // Light greenish background
+    banner.innerHTML = `
+      <div class="text-center text-emerald-700 font-semibold text-base fade-slide mb-4">
+        Welcome back, <span class="italic">${name}</span>. Ready to echo your voice again?
+      </div>
+    `;
+  }
+}, 0);
+
+
+  // Populate dropdown with saved kits
+  const dropdown = document.getElementById("sessionSelect");
+  history.forEach((kit, i) => {
+    const option = document.createElement("option");
+    option.value = i;
+    option.text = kit.name || `VoiceKit ${i + 1}`;
+    dropdown.appendChild(option);
+  });
+});
+
+
+
+      const dropdown = document.getElementById("sessionSelect");
+      history.forEach((kit, i) => {
+        const option = document.createElement("option");
+        option.value = i;
+        option.text = kit.name || `VoiceKit ${i + 1}`;
+        dropdown.appendChild(option);
+      });
+    });
+
+    async function downloadPDF() {
+      const previewCard = document.getElementById("previewCard");
+      if (!previewCard || !previewCard.innerText.trim()) {
+        alert("No voice reflected yet. Mirror your voice first.");
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const lines = previewCard.innerText.split("\n");
+      let y = 20;
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(14);
+      doc.text("PulseCraft — Reflected Voice Report", 20, y);
+      y += 10;
+
+      doc.setFont("Helvetica", "normal");
+      doc.setFontSize(12);
+      lines.forEach(line => {
+        const wrapped = doc.splitTextToSize(line, 170);
+        wrapped.forEach(subline => {
+          doc.text(subline, 20, y);
+          y += 8;
+        });
+      });
+
+      const filename = `PulseCraft_VoiceKit_${new Date().toISOString().slice(0, 10)}.pdf`;
+      doc.save(filename);
+    }
+    function generateLiveBrandKit(input) {
+  return `
+You are the PulseCraft engine. Create a fresh brand kit based on this voice input:
+
+"${input}"
+
+Output in structured JSON format with voice tone, visual style, story arc, etc.
+  `;
+}
+
+function regenerateFromMemory(kitData) {
+  return `
+You are reanimating a past PulseCraft session. Mirror this saved kit faithfully:
+
+${JSON.stringify(kitData, null, 2)}
+
+Re-render it into formatted brand text output.
+  `;
+}
+async function routePrompt(mode, payload) {
+  let prompt;
+  
+  if (mode === 'live') {
+    prompt = generateLiveBrandKit(payload.input);
+  } else if (mode === 'recall') {
+    prompt = regenerateFromMemory(payload.kitData);
+  } else {
+    throw new Error('Unknown routing mode');
+  }
+
+  // Fetch from OpenAI or local LLM endpoint
+  const response = await fetch('/api/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+  });
+
+  const data = await response.json();
+  return data.output;
+}
+
+  </script>
+  <!-- Toast container -->
+<div id="toastContainer" class="fixed bottom-5 right-5 space-y-2 z-50"></div>
+
+<script>
+  function toastMessage(type, message) {
+    const toast = document.createElement('div');
+    let bgColor = '';
+
+    switch (type) {
+      case 'success':
+        bgColor = 'bg-emerald-600';
+        break;
+      case 'warning':
+        bgColor = 'bg-yellow-600';
+        break;
+      case 'error':
+        bgColor = 'bg-red-600';
+        break;
+      case 'info':
+      default:
+        bgColor = 'bg-zinc-800';
+    }
+
+    toast.className = `${bgColor} text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in-up`;
+    toast.textContent = message;
+
+    const container = document.getElementById('toastContainer');
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('opacity-0');
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
+  }
+</script>
+
+<script>
+  function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = "bg-zinc-800 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in-up";
+    toast.textContent = message;
+
+    const container = document.getElementById('toastContainer');
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('opacity-0');
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
+  }
+</script>
+
+<style>
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.4s ease-out;
+    transition: opacity 0.3s ease;
+  }
+
+  .opacity-0 {
+    opacity: 0;
+  }
+</style>
+
+</body>
+</html>
