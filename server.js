@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
 const fs = require('fs');
 const { handleGPTRequest } = require('./gpt_router');
 
@@ -22,7 +23,7 @@ let currentVoiceKit = null;
 // 🟢 API: Reflect Brand Voice
 app.post('/api/brand-voice', async (req, res) => {
   const { brandInput, kit } = req.body;
-  console.log("🟢 brandInput received:", brandInput);
+  console.log('🔵 Received brandInput:', brandInput);
 
   if (!brandInput) return res.status(400).json({ error: 'Missing prompt' });
 
@@ -48,8 +49,8 @@ app.post('/api/brand-voice', async (req, res) => {
   }
 
   try {
-    const { outputSections } = await handleGPTRequest("voice", prompt);
-    console.log("🟣 Sending back to frontend:", outputSections);
+    const { outputSections } = await handleGPTRequest('voice', prompt);
+    console.log('🟣 Sending back to frontend:', outputSections);
 
     // ✨ Format output cleanly
     const response = {
@@ -121,6 +122,26 @@ app.get('/export-voice-json', (req, res) => {
     return res.status(404).json({ error: "No voice kit available to export." });
   }
   res.json(currentVoiceKit);
+});
+// 🔊 NEW: Reflect My Voice — this will feed the Mirror My Voice feature directly
+app.post('/api/reflect-voice', async (req, res) => {
+  try {
+    const { brandInput } = req.body;
+    if (!brandInput) return res.status(400).json({ error: 'Missing brandInput' });
+
+    const { outputSections } = await handleGPTRequest('voice', brandInput);
+    res.json({
+      tone: outputSections['Tone'],
+      vocabulary: outputSections['Vocabulary'],
+      archetype: outputSections['Archetype'],
+      phrasingStyle: outputSections['Phrasing Style'],
+      samplePhrases: outputSections['Sample Phrases'],
+      phrasesToAvoid: outputSections['Phrases to Avoid']
+    });
+  } catch (err) {
+    console.error('❌ Reflect My Voice error:', err);
+    res.status(500).json({ error: 'Failed to process voice reflection.' });
+  }
 });
 
 // 🔸 Memory Sync Placeholder (future multi-kit logic here)

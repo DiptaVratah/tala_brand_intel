@@ -40,9 +40,17 @@ Format strictly as:
     });
 
     const content = completion.choices[0].message.content.trim();
-
+console.log('📜 Raw completion content:', content);
+let sections = {};
+try {
+  sections = JSON.parse(content); 
+  console.log('✅ Parsed sections:', sections); 
+} catch (parseError) {
+  console.error('❌ JSON parse failed:', parseError.message); 
+  sections = { rawOutput: content };
+}
     // Parse the numbered sections
-    const sections = {};
+    
     const sectionTitles = [
   "Tone",
   "Vocabulary",
