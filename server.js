@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -9,112 +10,107 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// 🔷 Serve frontend from public folder
+// 🔷 Serve frontend from public folder (assuming 'pulsecraft_ui' is where your index.html and script.js reside)
 app.use(express.static(path.join(__dirname, 'pulsecraft_ui')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'pulsecraft_ui', 'index.html'));
 });
 
-
-
-// 🧠 Temporary in-memory store
+// 🧠 Global in-memory store for the *currently active* voice kit on the server side (for single-user context)
 let currentVoiceKit = null;
 
-// 🟢 API: Reflect Brand Voice
-app.post('/api/brand-voice', async (req, res) => {
-  const { brandInput, kit } = req.body;
-  console.log('🔵 Received brandInput:', brandInput);
+// 🟢 API: Mirror Brand Voice (Unified endpoint for voice analysis)
+app.post('/api/mirror-voice', async (req, res) => {
+  const { brandInput } = req.body;
+  console.log('🔵 Received /api/mirror-voice request with input:', brandInput);
 
-  if (!brandInput) return res.status(400).json({ error: 'Missing prompt' });
-
-  // 🪶 Prompt base
-  let prompt = `Analyze the following voice and extract its brand tone, archetype, and phrasing:\n\n${brandInput}`;
-
-  // 🎯 Add tone shaping if kit is recalled
-  if (kit && kit.tone) {
-    switch (kit.tone) {
-      case "Bold, Inspirational, Nonconformist":
-        prompt += `\n\nUse a rebellious, inspiring voice. Challenge the status quo.`;
-        break;
-      case "Warm, Supportive, Empathetic":
-        prompt += `\n\nUse a kind, warm tone that makes the reader feel safe and understood.`;
-        break;
-      case "Witty, Clever, High-Attention":
-        prompt += `\n\nWrite with sharp wit and clever phrasing. Keep it engaging and unexpected.`;
-        break;
-      case "Elegant, Refined, Understated":
-        prompt += `\n\nMaintain a calm, elegant tone with rich vocabulary and minimal clutter.`;
-        break;
-    }
+  if (!brandInput) {
+    return res.status(400).json({ error: 'Missing brandInput for voice mirroring.' });
   }
 
   try {
-    const { outputSections } = await handleGPTRequest('voice', prompt);
-    console.log('🟣 Sending back to frontend:', outputSections);
+    const outputSections = await handleGPTRequest('voice', brandInput); // Pass raw input to gpt_router
+    console.log('🟣 GPT Router response for mirroring:', outputSections);
 
-    // ✨ Format output cleanly
-    const response = {
-      tone: outputSections["Tone"],
-      vocabulary: outputSections["Vocabulary"],
-      archetype: outputSections["Archetype"],
-      phrasingStyle: outputSections["Phrasing Style"],
-      samplePhrases: outputSections["Sample Phrases"],
-      phrasesToAvoid: outputSections["Phrases to Avoid"]
+    // --- FIX START ---
+    // Change expected keys to lowercase to match the actual JSON output from gpt_router.js
+    const requiredFields = ["tone", "vocabulary", "archetype", "phrasingStyle", "samplePhrases", "phrasesToAvoid"];
+    const missingFields = requiredFields.filter(field => !outputSections[field]);
+
+    if (missingFields.length > 0) {
+        console.warn(`GPT response missing expected fields: ${missingFields.join(', ')}`);
+        // If parsing error happened in gpt_router and it returned N/A fields
+        if (outputSections.error) {
+            return res.status(500).json({ error: outputSections.error, details: outputSections });
+        }
+        // Otherwise, still return what we have, but log a warning
+    }
+
+    const responseKit = {
+      tone: outputSections["tone"] || "N/A", // Changed from "Tone" to "tone"
+      vocabulary: outputSections["vocabulary"] || "N/A", // Changed from "Vocabulary" to "vocabulary"
+      archetype: outputSections["archetype"] || "N/A", // Changed from "Archetype" to "archetype"
+      phrasingStyle: outputSections["phrasingStyle"] || "N/A", // Changed from "Phrasing Style" to "phrasingStyle"
+      samplePhrases: outputSections["samplePhrases"] || "N/A", // Changed from "Sample Phrases" to "samplePhrases"
+      phrasesToAvoid: outputSections["phrasesToAvoid"] || "N/A" // Changed from "Phrases to Avoid" to "phrasesToAvoid"
     };
+    // --- FIX END ---
 
-    currentVoiceKit = response; // 🔐 Store for export
-    res.json(response);
+    currentVoiceKit = responseKit; // 🔐 Store on server for export/content generation
+    res.json(responseKit);
+
   } catch (err) {
-    res.status(500).json({ error: 'OpenAI error: ' + err.message });
+    console.error('❌ Mirror Voice API error:', err);
+    res.status(500).json({ error: 'Failed to mirror voice: ' + err.message });
   }
 });
 
-// 🔹 Upload Route Stub (Memory Bridge)
+// 🌐 API: Generate Content based on Voice Kit
+app.post('/api/generate-content', async (req, res) => {
+  const { kit, style, context } = req.body;
+  console.log(`🔵 Received /api/generate-content request for style: ${style}, context: ${context}`);
+
+  if (!kit || !style || !context) {
+    return res.status(400).json({ error: 'Missing kit, style, or context for content generation.' });
+  }
+
+  // Ensure kit values are accessed with lowercase keys here as well
+  let generationPrompt = `
+Generate content in the style of a "${style}" piece, using the following voice characteristics:
+
+Tone: ${kit.tone}
+Vocabulary: ${kit.vocabulary}
+Archetype: ${kit.archetype}
+Phrasing Style: ${kit.phrasingStyle}
+Sample Phrases: ${Array.isArray(kit.samplePhrases) ? kit.samplePhrases.join(', ') : kit.samplePhrases}
+Phrases to Avoid: ${Array.isArray(kit.phrasesToAvoid) ? kit.phrasesToAvoid.join(', ') : kit.phrasesToAvoid}
+
+Here is the core idea or context for the content:
+"${context}"
+
+Ensure the output is a coherent, well-written piece of content, reflecting ONLY these characteristics. Do NOT add any preamble or postamble.
+`.trim();
+
+  try {
+    const { output, error } = await handleGPTRequest('content', generationPrompt); // Capture error from gpt_router
+    if (error) {
+        return res.status(500).json({ error: 'GPT content generation error: ' + error });
+    }
+    res.json({ output });
+  } catch (err) {
+    console.error('❌ Generate Content API error:', err);
+    res.status(500).json({ error: 'Failed to generate content: ' + err.message });
+  }
+});
+
+
+// 🔹 Upload Route Stub (Memory Bridge) - This seems related to external memory upload
 app.post('/upload-memory', (req, res) => {
   const kit = req.body;
-  syncMemoryBridge(kit);  // 🧠 Call symbolic memory sync
+  syncMemoryBridge(kit); // 🧠 Call symbolic memory sync
   res.status(200).json({ message: "✅ Symbolic kit memory received and processed." });
 });
 
-
-// 🌐 API: Dual-Channel GPT Router (Live + Recall)
-app.post('/api/generate', async (req, res) => {
-  try {
-    const { prompt } = req.body;
-    if (!prompt) return res.status(400).json({ error: 'Missing prompt in request.' });
-
-    const { output } = await handleGPTRequest("preview_card", prompt);
-    res.json({ output });
-  } catch (err) {
-    console.error("❌ GPT generate error:", err);
-    res.status(500).json({ error: 'Failed to process generate request.' });
-  }
-});
-
-
-app.post('/save-voice-kit', (req, res) => {
-  try {
-    const { name, rawInput, previewHTML } = req.body;
-
-    if (!name || !rawInput || !previewHTML) {
-      return res.status(400).json({ error: "Missing fields in voice kit" });
-    }
-
-    currentVoiceKit = {
-      name,
-      rawInput,
-      previewHTML,
-      createdAt: new Date().toISOString()
-    };
-
-    console.log("✅ Voice kit saved:", currentVoiceKit.name);
-    res.json({ success: true, message: "Voice kit saved successfully." });
-
-  } catch (err) {
-    console.error("❌ Failed to save voice kit:", err);
-    res.status(500).json({ error: "Internal error while saving voice kit." });
-  }
-});
 
 // 🔹 Export Route – Return currentVoiceKit as JSON
 app.get('/export-voice-json', (req, res) => {
@@ -123,26 +119,7 @@ app.get('/export-voice-json', (req, res) => {
   }
   res.json(currentVoiceKit);
 });
-// 🔊 NEW: Reflect My Voice — this will feed the Mirror My Voice feature directly
-app.post('/api/reflect-voice', async (req, res) => {
-  try {
-    const { brandInput } = req.body;
-    if (!brandInput) return res.status(400).json({ error: 'Missing brandInput' });
 
-    const { outputSections } = await handleGPTRequest('voice', brandInput);
-    res.json({
-      tone: outputSections['Tone'],
-      vocabulary: outputSections['Vocabulary'],
-      archetype: outputSections['Archetype'],
-      phrasingStyle: outputSections['Phrasing Style'],
-      samplePhrases: outputSections['Sample Phrases'],
-      phrasesToAvoid: outputSections['Phrases to Avoid']
-    });
-  } catch (err) {
-    console.error('❌ Reflect My Voice error:', err);
-    res.status(500).json({ error: 'Failed to process voice reflection.' });
-  }
-});
 
 // 🔸 Memory Sync Placeholder (future multi-kit logic here)
 function syncMemoryBridge(kitObject) {
@@ -151,21 +128,19 @@ function syncMemoryBridge(kitObject) {
     return;
   }
 
-  // Attach symbolic metadata
+  // Attach symbolic metadata - this is currently just logging, not persistent storage
   const enrichedKit = {
     ...kitObject,
     symbolicMeta: {
-      frequency: "alpha-prime",  // Placeholder – will route via tone/archetype later
+      frequency: "alpha-prime",
       mirroredBy: "Dipta Vratah Anantagah",
       timestamp: new Date().toISOString(),
       kitHash: `KIT_${Date.now().toString(36)}`,
     }
   };
 
-  // Save it to a symbolic folder (or log for now)
   console.log("🔗 Symbolic Memory Sync:", JSON.stringify(enrichedKit, null, 2));
-  
-  // (Optional) store to file or DB later
+  // Future: Here you would integrate with a persistent storage solution (e.g., database, file system)
 }
 
 
