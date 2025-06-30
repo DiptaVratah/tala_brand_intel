@@ -377,7 +377,7 @@ button:active {
     margin-bottom: 0.9rem;
 }
 /* Styling for dynamically inserted DNA Tag buttons */
-button.dna-tag-button {
+.dna-tag-button {
     background-color: #0A3D62 !important; /* **CRITICAL: VERY DARK BLUE for undeniable visibility, with !important** */
     color: #FFFFFF !important; /* **CRITICAL: White text, with !important** */
     border: 1px solid #072C49 !important; /* **CRITICAL: Even darker border, with !important** */
@@ -388,13 +388,13 @@ button.dna-tag-button {
     min-width: unset;
     flex-grow: 0;
     flex-shrink: 0;
-    transition: var(--transition-base);
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out; /* Add box-shadow to transition */
     font-size: 0.85rem;
     line-height: 1.1;
     margin-right: 0; /* Override default button margin to use gap */
     margin-bottom: 0; /* Override default button margin to use gap */
 }
-button.dna-tag-button:hover {
+.dna-tag-button:hover {
     background-color: #072C49 !important; /* Darker shade on hover */
     color: #FFFFFF !important;
     border-color: #051F33 !important; /* Even darker border on hover */
@@ -403,7 +403,7 @@ button.dna-tag-button:hover {
 }
 
 /* Styling for dynamically inserted Symbol Anchor buttons (can be same or different) */
-button.symbol-anchor-button {
+.symbol-anchor-button {
     background-color: #5B2C6F !important; /* **CRITICAL: Dark purple for contrast, with !important** */
     color: #FFFFFF !important; /* **CRITICAL: White text, with !important** */
     border: 1px solid #4A205A !important; /* **CRITICAL: Darker border, with !important** */
@@ -414,18 +414,40 @@ button.symbol-anchor-button {
     min-width: unset;
     flex-grow: 0;
     flex-shrink: 0;
-    transition: var(--transition-base);
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out; /* Add box-shadow to transition */
     font-size: 0.85rem;
     line-height: 1.1;
     margin-right: 0; /* Override default button margin to use gap */
     margin-bottom: 0; /* Override default button margin to use gap */
 }
-button.symbol-anchor-button:hover {
+.symbol-anchor-button:hover {
     background-color: #4A205A !important; /* Darker shade on hover */
     color: #FFFFFF !important;
     border-color: #3B1B47 !important; /* Even darker border on hover */
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Ensure the containers themselves are visible if content is minimal */
+#dnaTagsContainer,
+#symbolAnchorsContainer {
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap to next line */
+    gap: 0.5rem; /* Gap between buttons in flex container */
+    margin-top: 1rem;
+    min-height: 50px; /* Give them some minimum height even if empty */
+    padding: 0.5rem;
+    border: 1px dashed #d4d4d8; /* Light dashed border to show the container */
+    border-radius: 0.5rem;
+    background-color: #fafafa;
+}
+
+#dnaTagsContainer p,
+#symbolAnchorsContainer p {
+    color: #a1a1aa; /* Gray text for placeholders */
+    font-style: italic;
+    font-size: 0.8rem;
+    padding: 0.5rem; /* Padding for placeholder text */
 }
 
 .symbol-memory-ux h4 {
@@ -579,6 +601,16 @@ footer {
     h1 { font-size: 2.0rem; }
     .tagline { font-size: 0.95rem; margin-bottom: 1.8rem; max-width: 500px; }
     .section { padding: 0.9rem; }
+    .section:nth-child(3) {
+        min-height: 100px;
+        flex-direction: row;
+    }
+    .section:nth-child(3) p {
+        flex-grow: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
     h2 { font-size: 1.3rem; }
     h3 { font-size: 1.05rem; }
     h4 { font-size: 0.9rem; }
@@ -599,7 +631,7 @@ footer {
     .advanced-routing-section { margin-top: 1.2rem; padding: 1.1rem; }
     footer { margin-top: 1.8rem; font-size: 0.78rem; }
     #welcomeBanner {
-        max-width: 300px;
+        max-width: 350px;
         font-size: 0.8rem;
         padding: 0.6rem 0.9rem;
     }

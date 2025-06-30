@@ -1,6 +1,6 @@
 // script.js - Updated for Welcome Banner logic and Dynamic DNA Tag/Symbol Anchor insertion
 
-// 🜂 Release Signal v2 — Mirror Widening: Dipta Vratah Anantagah
+// Release Signal v2 -- Mirror Widening: Dipta Vratah Anantagah
 
 // Global state for the currently mirrored voice kit
 let currentVoiceKit = null;
@@ -32,6 +32,20 @@ function showToast(message, type = 'info') {
     }
 }
 
+// Helper to safely parse JSON strings that should be arrays
+const parseSafeArray = (value) => {
+    if (typeof value === 'string') {
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            console.warn("Error parsing nested JSON array:", value, e);
+            return [];
+        }
+    }
+    return Array.isArray(value) ? value : [];
+};
+
+
 // Helper to create a unified kit object for saving
 function createUnifiedKitObject(kitData) {
     return {
@@ -40,30 +54,51 @@ function createUnifiedKitObject(kitData) {
         vocabulary: kitData.vocabulary || "",
         phrasingStyle: kitData.phrasingStyle || "",
         archetype: kitData.archetype || "",
-        samplePhrases: Array.isArray(kitData.samplePhrases) ? JSON.stringify(kitData.samplePhrases) : kitData.samplePhrases || "",
-        phrasesToAvoid: Array.isArray(kitData.phrasesToAvoid) ? JSON.stringify(kitData.phrasesToAvoid) : kitData.phrasesToAvoid || "",
-        dnaTags: Array.isArray(kitData.dnaTags) ? JSON.stringify(kitData.dnaTags) : kitData.dnaTags || "",
-        symbolAnchors: Array.isArray(kitData.symbolAnchors) ? JSON.stringify(kitData.symbolAnchors) : kitData.symbolAnchors || "",
+        // Ensure values are strings for localStorage, JSON.stringify empty array if null/undefined
+        samplePhrases: JSON.stringify(parseSafeArray(kitData.samplePhrases)),
+        phrasesToAvoid: JSON.stringify(parseSafeArray(kitData.phrasesToAvoid)),
+        dnaTags: JSON.stringify(parseSafeArray(kitData.dnaTags)),
+        symbolAnchors: JSON.stringify(parseSafeArray(kitData.symbolAnchors)),
         rawInput: kitData.rawInput || "", // Store the original input
         createdAt: new Date().toISOString()
     };
 }
 
-// Gets all saved kits from LocalStorage
+// Gets all saved kits from LocalStorage with robust parsing
 function getSavedKits() {
-    const kits = JSON.parse(localStorage.getItem("pulsecraft_history")) || [];
-    return kits.map(kit => ({
-        ...kit,
-        samplePhrases: typeof kit.samplePhrases === 'string' ? JSON.parse(kit.samplePhrases) : kit.samplePhrases,
-        phrasesToAvoid: typeof kit.phrasesToAvoid === 'string' ? JSON.parse(kit.phrasesToAvoid) : kit.phrasesToAvoid,
-        dnaTags: typeof kit.dnaTags === 'string' ? JSON.parse(kit.dnaTags) : kit.dnaTags,
-        symbolAnchors: typeof kit.symbolAnchors === 'string' ? JSON.parse(kit.symbolAnchors) : kit.symbolAnchors
-    }));
+    const rawKits = localStorage.getItem("pulsecraft_history");
+    let kits = [];
+    if (rawKits) {
+        try {
+            kits = JSON.parse(rawKits);
+        } catch (e) {
+            console.error("Error parsing pulsecraft_history from localStorage:", e);
+            showToast("Error loading saved kits. Local storage may be corrupted.", 'error');
+            localStorage.removeItem("pulsecraft_history"); // Clear corrupted data to prevent future errors
+            kits = [];
+        }
+    }
+
+    return kits.map(kit => {
+        // Ensure all array-like properties are actually arrays after retrieval
+        return {
+            ...kit,
+            samplePhrases: parseSafeArray(kit.samplePhrases),
+            phrasesToAvoid: parseSafeArray(kit.phrasesToAvoid),
+            dnaTags: parseSafeArray(kit.dnaTags),
+            symbolAnchors: parseSafeArray(kit.symbolAnchors)
+        };
+    });
 }
 
 // Saves kits to LocalStorage
 function saveKits(kits) {
-    localStorage.setItem("pulsecraft_history", JSON.stringify(kits));
+    try {
+        localStorage.setItem("pulsecraft_history", JSON.stringify(kits));
+    } catch (e) {
+        console.error("Error saving kits to localStorage:", e);
+        showToast("Error saving kits. Local storage limit reached or inaccessible.", 'error');
+    }
 }
 
 // --- UI Refresh Functions ---
@@ -81,8 +116,17 @@ function refreshDropdown() {
 }
 
 function renderMirroredVoiceOutput(data) {
-    const samplePhrases = Array.isArray(data.samplePhrases) ? data.samplePhrases.join(', ') : data.samplePhrases || '';
-    const phrasesToAvoid = Array.isArray(data.phrasesToAvoid) ? data.phrasesToAvoid.join(', ') : data.phrasesToAvoid || '';
+    // Ensure data properties are always arrays before rendering
+    const voiceData = {
+        tone: data.tone || 'N/A',
+        vocabulary: data.vocabulary || 'N/A',
+        archetype: data.archetype || 'N/A',
+        phrasingStyle: data.phrasingStyle || 'N/A',
+        samplePhrases: parseSafeArray(data.samplePhrases),
+        phrasesToAvoid: parseSafeArray(data.phrasesToAvoid),
+        dnaTags: parseSafeArray(data.dnaTags),
+        symbolAnchors: parseSafeArray(data.symbolAnchors)
+    };
 
     const outputTone = document.getElementById("outputTone");
     const outputVocabulary = document.getElementById("outputVocabulary");
@@ -91,21 +135,28 @@ function renderMirroredVoiceOutput(data) {
     const outputSamplePhrases = document.getElementById("outputSamplePhrases");
     const outputPhrasesToAvoid = document.getElementById("outputPhrasesToAvoid");
 
-    if (outputTone) outputTone.textContent = data.tone || 'N/A';
-    if (outputVocabulary) outputVocabulary.textContent = data.vocabulary || 'N/A';
-    if (outputArchetype) outputArchetype.textContent = data.archetype || 'N/A';
-    if (outputPhrasingStyle) outputPhrasingStyle.textContent = data.phrasingStyle || 'N/A';
-    if (outputSamplePhrases) outputSamplePhrases.textContent = samplePhrases || 'N/A';
-    if (outputPhrasesToAvoid) outputPhrasesToAvoid.textContent = phrasesToAvoid || 'N/A';
+    if (outputTone) outputTone.textContent = voiceData.tone;
+    if (outputVocabulary) outputVocabulary.textContent = voiceData.vocabulary;
+    if (outputArchetype) outputArchetype.textContent = voiceData.archetype;
+    if (outputPhrasingStyle) outputPhrasingStyle.textContent = voiceData.phrasingStyle;
+    if (outputSamplePhrases) outputSamplePhrases.textContent = voiceData.samplePhrases.join(', ') || 'N/A';
+    if (outputPhrasesToAvoid) outputPhrasesToAvoid.textContent = voiceData.phrasesToAvoid.join(', ') || 'N/A';
 
-    // Render DNA Tags and Symbol Anchors
-    renderDNATags(data.dnaTags);
-    renderSymbolAnchors(data.symbolAnchors);
+    // --- CRITICAL CHANGE START ---
+    // Ensure DNA Tags and Symbol Anchors are rendered LAST to prevent overwrites
+    // and are called directly with the parsed voiceData.
+    renderDNATags(voiceData.dnaTags);
+    renderSymbolAnchors(voiceData.symbolAnchors);
+    // --- CRITICAL CHANGE END ---
 }
+
 
 function renderDNATags(tags) {
     const container = document.getElementById('dnaTagsContainer');
-    if (!container) return;
+    if (!container) {
+        console.error("dnaTagsContainer not found in DOM."); // More specific error
+        return;
+    }
     container.innerHTML = ''; // Clear previous tags
 
     if (Array.isArray(tags) && tags.length > 0) {
@@ -115,14 +166,19 @@ function renderDNATags(tags) {
             button.textContent = tag;
             container.appendChild(button);
         });
+        console.log(`DNA Tags rendered: ${tags.join(', ')}`); // Log what was rendered
     } else {
         container.innerHTML = '<p class="text-xs text-zinc-400">No DNA Tags generated.</p>';
+        console.log("No DNA Tags to render, displaying placeholder.");
     }
 }
 
 function renderSymbolAnchors(anchors) {
     const container = document.getElementById('symbolAnchorsContainer');
-    if (!container) return;
+    if (!container) {
+        console.error("symbolAnchorsContainer not found in DOM."); // More specific error
+        return;
+    }
     container.innerHTML = ''; // Clear previous anchors
 
     if (Array.isArray(anchors) && anchors.length > 0) {
@@ -132,8 +188,10 @@ function renderSymbolAnchors(anchors) {
             button.textContent = anchor;
             container.appendChild(button);
         });
+        console.log(`Symbol Anchors rendered: ${anchors.join(', ')}`); // Log what was rendered
     } else {
         container.innerHTML = '<p class="text-xs text-zinc-400">No Symbol Anchors generated.</p>';
+        console.log("No Symbol Anchors to render, displaying placeholder.");
     }
 }
 
@@ -149,17 +207,22 @@ function renderSymbolMemoryGrid() {
         const card = document.createElement("div");
         card.className = "preview-card"; // Apply the preview-card class for styling
 
+        // Ensure dnaTags and symbolAnchors are arrays for display here as well
+        const kitDnaTags = parseSafeArray(kit.dnaTags);
+        const kitSymbolAnchors = parseSafeArray(kit.symbolAnchors);
+
         card.innerHTML = `
+            <input type="checkbox" class="preview-card-checkbox" data-index="${index}">
             <h4>${kit.name || 'VoiceKit ' + (index + 1)}</h4>
             <p><strong>Tone:</strong> ${kit.tone || '-'}</p>
             <p><strong>Archetype:</strong> ${kit.archetype || '-'}</p>
             <p><strong>Saved At:</strong> ${kit.createdAt ? new Date(kit.createdAt).toLocaleString() : '-'}</p>
-            ${Array.isArray(kit.dnaTags) && kit.dnaTags.length > 0 ? `<p class="text-xs text-zinc-600 mt-2">DNA: ${kit.dnaTags.join(', ')}</p>` : ''}
-            ${Array.isArray(kit.symbolAnchors) && kit.symbolAnchors.length > 0 ? `<p class="text-xs text-zinc-600">Anchors: ${kit.symbolAnchors.join(', ')}</p>` : ''}
+            ${kitDnaTags.length > 0 ? `<p class="text-xs text-zinc-600 mt-2">DNA: ${kitDnaTags.join(', ')}</p>` : ''}
+            ${kitSymbolAnchors.length > 0 ? `<p class="text-xs text-zinc-600">Anchors: ${kitSymbolAnchors.join(', ')}</p>` : ''}
             <button data-index="${index}" class="recall-symbolic-kit-button">
                 Preview Again
             </button>
-            <div class="dna-tag-overlay"> <!-- Styling for this class will be in style.css -->
+            <div class="dna-tag-overlay"> <!-- This overlay remains a visual placeholder, not for dynamic tags -->
                 DNA-${index + 1}
             </div>
         `;
@@ -180,6 +243,7 @@ function refreshUIElements() {
     refreshDropdown();
     renderSymbolMemoryGrid();
     // Also clear DNA tags and Symbol anchors on initial load or refresh if no kit is active
+    // This is important to ensure a clean state before new data is rendered.
     renderDNATags([]);
     renderSymbolAnchors([]);
     // Update Your Past Signals section based on saved kits
@@ -230,6 +294,7 @@ async function mirrorVoice() {
     if (outputPhrasesToAvoid) outputPhrasesToAvoid.textContent = "";
     
     // Clear dynamic tags/anchors before new generation
+    // This is crucial to clear old data before new data arrives
     renderDNATags([]);
     renderSymbolAnchors([]);
 
@@ -245,23 +310,36 @@ async function mirrorVoice() {
         console.log("Raw Response Status:", response.status);
         console.log("Raw Response OK:", response.ok);
 
+        if (!response.ok) {
+            let errorText = `HTTP Error: ${response.status} ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                errorText += ` - ${errorData.error || JSON.stringify(errorData)}`;
+            } catch (e) {
+                errorText += ` - ${await response.text()}`;
+            }
+            throw new Error(errorText);
+        }
+
         const data = await response.json(); 
         console.log("Received data from backend for /api/mirror-voice:", data);
 
-        if (data.error || !response.ok) { 
-            const errorMessage = data.error || `HTTP Error: ${response.status} ${response.statusText}`;
-            if (outputTone) outputTone.textContent = `❌ Error: ${errorMessage}`;
-            if (outputVocabulary) outputVocabulary.textContent = "";
-            if (outputArchetype) outputArchetype.textContent = "";
-            if (outputPhrasingStyle) outputPhrasingStyle.textContent = "";
-            if (outputSamplePhrases) outputSamplePhrases.textContent = "";
-            if (outputPhrasesToAvoid) outputPhrasesToAvoid.textContent = "";
-            showToast(`Error: ${errorMessage}`, 'error');
-        } else {
-            currentVoiceKit = data; 
-            renderMirroredVoiceOutput(data); 
+        // Ensure data has expected properties before rendering
+        if (data && data.tone && data.vocabulary) { 
+            // Crucial: Set currentVoiceKit with properly parsed arrays immediately after AI response
+            currentVoiceKit = {
+                ...data,
+                samplePhrases: parseSafeArray(data.samplePhrases),
+                phrasesToAvoid: parseSafeArray(data.phrasesToAvoid),
+                dnaTags: parseSafeArray(data.dnaTags),
+                symbolAnchors: parseSafeArray(data.symbolAnchors)
+            };
+            console.log("currentVoiceKit after parsing in mirrorVoice:", currentVoiceKit); // Log final currentVoiceKit
+            renderMirroredVoiceOutput(currentVoiceKit); // Pass the fully prepared object
             showToast("Voice mirrored successfully!", 'success');
-            updatePastSignalsSection(); // Update after a new voice is mirrored
+            updatePastSignalsSection(); 
+        } else {
+            throw new Error("AI response was incomplete or malformed.");
         }
     } catch (err) {
         console.error("Mirror voice failed (Network or Uncaught):", err);
@@ -306,7 +384,12 @@ async function saveVoiceKit() {
     }
 
     saveKits(history);
-    refreshUIElements();
+    refreshUIElements(); // This will re-render the gallery and dropdown
+    // Explicitly re-render current DNA/Symbol tags if they were just saved
+    if (currentVoiceKit) {
+        renderDNATags(currentVoiceKit.dnaTags);
+        renderSymbolAnchors(currentVoiceKit.symbolAnchors);
+    }
 }
 
 async function recallSession() {
@@ -332,7 +415,7 @@ async function recallSession() {
     const brandNameInputEl = document.getElementById("brandNameInput");
     if (brandNameInputEl) brandNameInputEl.value = kitData.name || "";
     
-    currentVoiceKit = kitData; 
+    currentVoiceKit = kitData; // This kitData is already parsed by getSavedKits
     renderMirroredVoiceOutput(kitData); 
 
     showToast(`Kit "${kitData.name}" recalled successfully!`, 'success');
@@ -352,7 +435,7 @@ function recallSymbolicKit(index) {
     const brandNameInputEl = document.getElementById("brandNameInput");
     if (brandNameInputEl) brandNameInputEl.value = kit.name || "";
 
-    currentVoiceKit = kit;
+    currentVoiceKit = kit; // This kit is already parsed by getSavedKits
     renderMirroredVoiceOutput(kit);
 
     showToast(`Kit "${kit.name}" loaded from gallery!`, 'success');
@@ -371,8 +454,8 @@ async function exportTXT() {
     let textContent = `PulseCraft Voice Kit: ${name}\n\n`;
     textContent += `Tone: ${currentVoiceKit.tone || 'N/A'}\n`;
     textContent += `Vocabulary: ${currentVoiceKit.vocabulary || 'N/A'}\n`;
-    textContent += `Archetype: ${currentVoiceKit.archetype || 'N/A'}\n`;
     textContent += `Phrasing Style: ${currentVoiceKit.phrasingStyle || 'N/A'}\n`;
+    textContent += `Archetype: ${currentVoiceKit.archetype || 'N/A'}\n`;
     textContent += `Sample Phrases: ${Array.isArray(currentVoiceKit.samplePhrases) ? currentVoiceKit.samplePhrases.join(', ') : currentVoiceKit.samplePhrases || 'N/A'}\n`;
     textContent += `Phrases To Avoid: ${Array.isArray(currentVoiceKit.phrasesToAvoid) ? currentVoiceKit.phrasesToAvoid.join(', ') : currentVoiceKit.phrasesToAvoid || 'N/A'}\n`;
     textContent += `DNA Tags: ${Array.isArray(currentVoiceKit.dnaTags) ? currentVoiceKit.dnaTags.join(', ') : currentVoiceKit.dnaTags || 'N/A'}\n`;
@@ -474,7 +557,7 @@ async function exportAllKitsJSON() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     showToast("All kits JSON export started!", 'success');
-}
+    }
 
 async function exportCurrentVoiceJSON() {
     if (!currentVoiceKit) {
@@ -508,6 +591,7 @@ async function generateMultiStylePreview(style) {
     if (stylePreviewOutput) stylePreviewOutput.innerHTML = `⏳ Generating ${style} preview...`;
 
     const brandVoiceInputEl = document.getElementById('brandVoiceInput');
+    // Corrected typo: brandInputEl should be brandVoiceInputEl
     const context = brandVoiceInputEl ? brandVoiceInputEl.value.trim() : '';
 
     try {

@@ -4,7 +4,7 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 const fs = require('fs');
-const { handleGPTRequest } = require('./gpt_router');
+const { handleGPTRequest } = require('./gpt_router'); // Ensure gpt_router.js is in the same directory
 
 const app = express();
 app.use(express.json());
@@ -29,12 +29,16 @@ app.post('/api/mirror-voice', async (req, res) => {
   }
 
   try {
-    const outputSections = await handleGPTRequest('voice', brandInput); // Pass raw input to gpt_router
+    // IMPORTANT: The 'voice' type in handleGPTRequest MUST be configured in gpt_router.js
+    // to prompt the LLM for dnaTags and symbolAnchors and parse them.
+    const outputSections = await handleGPTRequest('voice', brandInput);
     console.log('🟣 GPT Router response for mirroring:', outputSections);
 
-    // --- FIX START ---
-    // Change expected keys to lowercase to match the actual JSON output from gpt_router.js
-    const requiredFields = ["tone", "vocabulary", "archetype", "phrasingStyle", "samplePhrases", "phrasesToAvoid"];
+    // Ensure all expected fields, including new DNA Tags and Symbol Anchors, are present
+    const requiredFields = [
+      "tone", "vocabulary", "archetype", "phrasingStyle",
+      "samplePhrases", "phrasesToAvoid", "dnaTags", "symbolAnchors" // Added new fields
+    ];
     const missingFields = requiredFields.filter(field => !outputSections[field]);
 
     if (missingFields.length > 0) {
@@ -43,18 +47,21 @@ app.post('/api/mirror-voice', async (req, res) => {
         if (outputSections.error) {
             return res.status(500).json({ error: outputSections.error, details: outputSections });
         }
-        // Otherwise, still return what we have, but log a warning
+        // If some fields are missing but no critical error, proceed with available data
     }
 
     const responseKit = {
-      tone: outputSections["tone"] || "N/A", // Changed from "Tone" to "tone"
-      vocabulary: outputSections["vocabulary"] || "N/A", // Changed from "Vocabulary" to "vocabulary"
-      archetype: outputSections["archetype"] || "N/A", // Changed from "Archetype" to "archetype"
-      phrasingStyle: outputSections["phrasingStyle"] || "N/A", // Changed from "Phrasing Style" to "phrasingStyle"
-      samplePhrases: outputSections["samplePhrases"] || "N/A", // Changed from "Sample Phrases" to "samplePhrases"
-      phrasesToAvoid: outputSections["phrasesToAvoid"] || "N/A" // Changed from "Phrases to Avoid" to "phrasesToAvoid"
+      tone: outputSections["tone"] || "N/A",
+      vocabulary: outputSections["vocabulary"] || "N/A",
+      archetype: outputSections["archetype"] || "N/A",
+      phrasingStyle: outputSections["phrasingStyle"] || "N/A",
+      // Ensure these are arrays, even if the LLM returns a string or single item
+      samplePhrases: Array.isArray(outputSections["samplePhrases"]) ? outputSections["samplePhrases"] : (outputSections["samplePhrases"] ? [outputSections["samplePhrases"]] : []),
+      phrasesToAvoid: Array.isArray(outputSections["phrasesToAvoid"]) ? outputSections["phrasesToAvoid"] : (outputSections["phrasesToAvoid"] ? [outputSections["phrasesToAvoid"]] : []),
+      // NEW: Add DNA Tags and Symbol Anchors, ensuring they are arrays
+      dnaTags: Array.isArray(outputSections["dnaTags"]) ? outputSections["dnaTags"] : (outputSections["dnaTags"] ? [outputSections["dnaTags"]] : []),
+      symbolAnchors: Array.isArray(outputSections["symbolAnchors"]) ? outputSections["symbolAnchors"] : (outputSections["symbolAnchors"] ? [outputSections["symbolAnchors"]] : []),
     };
-    // --- FIX END ---
 
     currentVoiceKit = responseKit; // 🔐 Store on server for export/content generation
     res.json(responseKit);
@@ -75,6 +82,7 @@ app.post('/api/generate-content', async (req, res) => {
   }
 
   // Ensure kit values are accessed with lowercase keys here as well
+  // Also pass DNA Tags and Symbol Anchors to the content generation prompt
   let generationPrompt = `
 Generate content in the style of a "${style}" piece, using the following voice characteristics:
 
@@ -84,6 +92,8 @@ Archetype: ${kit.archetype}
 Phrasing Style: ${kit.phrasingStyle}
 Sample Phrases: ${Array.isArray(kit.samplePhrases) ? kit.samplePhrases.join(', ') : kit.samplePhrases}
 Phrases to Avoid: ${Array.isArray(kit.phrasesToAvoid) ? kit.phrasesToAvoid.join(', ') : kit.phrasesToAvoid}
+DNA Tags: ${Array.isArray(kit.dnaTags) ? kit.dnaTags.join(', ') : kit.dnaTags || 'None'}
+Symbol Anchors: ${Array.isArray(kit.symbolAnchors) ? kit.symbolAnchors.join(', ') : kit.symbolAnchors || 'None'}
 
 Here is the core idea or context for the content:
 "${context}"
