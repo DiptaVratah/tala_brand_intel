@@ -1,6 +1,15 @@
-// script.js - Updated for Welcome Banner logic and Dynamic DNA Tag/Symbol Anchor insertion
+// script.js - Updated for Welcome Banner logic, Dynamic DNA Tag/Symbol Anchor insertion,
+// and NEW: Click-to-Generate functionality for DNA Tags and Symbol Anchors,
+// aligned with the new server.js prompt architecture.
+// FIX: Robust rendering of voice kit data from backend (removing redundant parsing in renderMirroredVoiceOutput).
+// FIX: Populate brandVoiceInput with relevant context after Refine Selected Kits.
+// NEW: Automatically save and display refined kits in the Collective Preview Gallery for full functionality.
+// CRITICAL FIX: Remove redundant parseSafeArray calls in refineSelectedKits.
+// NEW FIX: Ensure selected kits for refinement are fully structured before sending to backend.
+// CRITICAL FIX: Stop refreshUIElements from clearing DNA/Symbol tags.
+// NEW FIX: Reset checkboxes after refinement.
 
-// Release Signal v2 -- Mirror Widening: Dipta Vratah Anantagah
+// Release Signal v13 -- Mirror Widening & Active Resonance: Dipta Vratah Anantagah
 
 // Global state for the currently mirrored voice kit
 let currentVoiceKit = null;
@@ -32,13 +41,14 @@ function showToast(message, type = 'info') {
     }
 }
 
-// Helper to safely parse JSON strings that should be arrays
+// Helper to safely parse JSON strings that should be arrays (primarily for localStorage retrieval)
 const parseSafeArray = (value) => {
     if (typeof value === 'string') {
         try {
-            return JSON.parse(value);
+            const parsed = JSON.parse(value);
+            return Array.isArray(parsed) ? parsed : [];
         } catch (e) {
-            console.warn("Error parsing nested JSON array:", value, e);
+            console.warn("Error parsing JSON string to array:", value, e);
             return [];
         }
     }
@@ -81,6 +91,7 @@ function getSavedKits() {
 
     return kits.map(kit => {
         // Ensure all array-like properties are actually arrays after retrieval
+        // This is crucial for consistency when recalling from local storage
         return {
             ...kit,
             samplePhrases: parseSafeArray(kit.samplePhrases),
@@ -116,16 +127,15 @@ function refreshDropdown() {
 }
 
 function renderMirroredVoiceOutput(data) {
-    // Ensure data properties are always arrays before rendering
     const voiceData = {
         tone: data.tone || 'N/A',
         vocabulary: data.vocabulary || 'N/A',
         archetype: data.archetype || 'N/A',
         phrasingStyle: data.phrasingStyle || 'N/A',
-        samplePhrases: parseSafeArray(data.samplePhrases),
-        phrasesToAvoid: parseSafeArray(data.phrasesToAvoid),
-        dnaTags: parseSafeArray(data.dnaTags),
-        symbolAnchors: parseSafeArray(data.symbolAnchors)
+        samplePhrases: data.samplePhrases || [],
+        phrasesToAvoid: data.phrasesToAvoid || [],
+        dnaTags: data.dnaTags || [],
+        symbolAnchors: data.symbolAnchors || []
     };
 
     const outputTone = document.getElementById("outputTone");
@@ -142,19 +152,15 @@ function renderMirroredVoiceOutput(data) {
     if (outputSamplePhrases) outputSamplePhrases.textContent = voiceData.samplePhrases.join(', ') || 'N/A';
     if (outputPhrasesToAvoid) outputPhrasesToAvoid.textContent = voiceData.phrasesToAvoid.join(', ') || 'N/A';
 
-    // --- CRITICAL CHANGE START ---
-    // Ensure DNA Tags and Symbol Anchors are rendered LAST to prevent overwrites
-    // and are called directly with the parsed voiceData.
     renderDNATags(voiceData.dnaTags);
     renderSymbolAnchors(voiceData.symbolAnchors);
-    // --- CRITICAL CHANGE END ---
 }
 
 
 function renderDNATags(tags) {
     const container = document.getElementById('dnaTagsContainer');
     if (!container) {
-        console.error("dnaTagsContainer not found in DOM."); // More specific error
+        console.error("dnaTagsContainer not found in DOM.");
         return;
     }
     container.innerHTML = ''; // Clear previous tags
@@ -162,11 +168,15 @@ function renderDNATags(tags) {
     if (Array.isArray(tags) && tags.length > 0) {
         tags.forEach(tag => {
             const button = document.createElement('button');
-            button.className = 'dna-tag-button'; // Class for specific styling in style.css
+            button.className = 'dna-tag-button';
             button.textContent = tag;
+            button.addEventListener('click', () => {
+                writeItForMe('symbolic_generation', tag);
+                showToast(`Generating content for DNA Tag: "${tag}"`, 'info');
+            });
             container.appendChild(button);
         });
-        console.log(`DNA Tags rendered: ${tags.join(', ')}`); // Log what was rendered
+        console.log(`DNA Tags rendered: ${tags.join(', ')}`);
     } else {
         container.innerHTML = '<p class="text-xs text-zinc-400">No DNA Tags generated.</p>';
         console.log("No DNA Tags to render, displaying placeholder.");
@@ -176,7 +186,7 @@ function renderDNATags(tags) {
 function renderSymbolAnchors(anchors) {
     const container = document.getElementById('symbolAnchorsContainer');
     if (!container) {
-        console.error("symbolAnchorsContainer not found in DOM."); // More specific error
+        console.error("symbolAnchorsContainer not found in DOM.");
         return;
     }
     container.innerHTML = ''; // Clear previous anchors
@@ -184,11 +194,15 @@ function renderSymbolAnchors(anchors) {
     if (Array.isArray(anchors) && anchors.length > 0) {
         anchors.forEach(anchor => {
             const button = document.createElement('button');
-            button.className = 'symbol-anchor-button'; // Class for specific styling in style.css
+            button.className = 'symbol-anchor-button';
             button.textContent = anchor;
+            button.addEventListener('click', () => {
+                writeItForMe('symbolic_generation', anchor);
+                showToast(`Generating content for Symbol Anchor: "${anchor}"`, 'info');
+            });
             container.appendChild(button);
         });
-        console.log(`Symbol Anchors rendered: ${anchors.join(', ')}`); // Log what was rendered
+        console.log(`Symbol Anchors rendered: ${anchors.join(', ')}`);
     } else {
         container.innerHTML = '<p class="text-xs text-zinc-400">No Symbol Anchors generated.</p>';
         console.log("No Symbol Anchors to render, displaying placeholder.");
@@ -242,10 +256,10 @@ function renderSymbolMemoryGrid() {
 function refreshUIElements() {
     refreshDropdown();
     renderSymbolMemoryGrid();
-    // Also clear DNA tags and Symbol anchors on initial load or refresh if no kit is active
-    // This is important to ensure a clean state before new data is rendered.
-    renderDNATags([]);
-    renderSymbolAnchors([]);
+    // CRITICAL FIX: Removed these lines. DNA Tags and Symbol Anchors should be rendered
+    // by renderMirroredVoiceOutput, not cleared on every UI refresh.
+    // renderDNATags([]);
+    // renderSymbolAnchors([]);
     // Update Your Past Signals section based on saved kits
     updatePastSignalsSection();
 }
@@ -286,7 +300,7 @@ async function mirrorVoice() {
     const outputSamplePhrases = document.getElementById("outputSamplePhrases");
     const outputPhrasesToAvoid = document.getElementById("outputPhrasesToAvoid");
 
-    if (outputTone) outputTone.textContent = "⏳ Reflecting...";
+    if (outputTone) outputTone.textContent = " Reflecting...";
     if (outputVocabulary) outputVocabulary.textContent = "";
     if (outputArchetype) outputArchetype.textContent = "";
     if (outputPhrasingStyle) outputPhrasingStyle.textContent = "";
@@ -294,7 +308,6 @@ async function mirrorVoice() {
     if (outputPhrasesToAvoid) outputPhrasesToAvoid.textContent = "";
     
     // Clear dynamic tags/anchors before new generation
-    // This is crucial to clear old data before new data arrives
     renderDNATags([]);
     renderSymbolAnchors([]);
 
@@ -324,26 +337,24 @@ async function mirrorVoice() {
         const data = await response.json(); 
         console.log("Received data from backend for /api/mirror-voice:", data);
 
-        // Ensure data has expected properties before rendering
-        if (data && data.tone && data.vocabulary) { 
-            // Crucial: Set currentVoiceKit with properly parsed arrays immediately after AI response
-            currentVoiceKit = {
-                ...data,
-                samplePhrases: parseSafeArray(data.samplePhrases),
-                phrasesToAvoid: parseSafeArray(data.phrasesToAvoid),
-                dnaTags: parseSafeArray(data.dnaTags),
-                symbolAnchors: parseSafeArray(data.symbolAnchors)
-            };
-            console.log("currentVoiceKit after parsing in mirrorVoice:", currentVoiceKit); // Log final currentVoiceKit
-            renderMirroredVoiceOutput(currentVoiceKit); // Pass the fully prepared object
-            showToast("Voice mirrored successfully!", 'success');
-            updatePastSignalsSection(); 
-        } else {
-            throw new Error("AI response was incomplete or malformed.");
-        }
+        currentVoiceKit = {
+            tone: data.tone,
+            vocabulary: data.vocabulary,
+            archetype: data.archetype,
+            phrasingStyle: data.phrasingStyle,
+            samplePhrases: data.samplePhrases,
+            phrasesToAvoid: data.phrasesToAvoid,
+            dnaTags: data.dnaTags,
+            symbolAnchors: data.symbolAnchors,
+            rawInput: brandInput
+        };
+        console.log("currentVoiceKit after assignment in mirrorVoice:", currentVoiceKit);
+        renderMirroredVoiceOutput(currentVoiceKit);
+        showToast("Voice mirrored successfully!", 'success');
+        updatePastSignalsSection(); 
     } catch (err) {
         console.error("Mirror voice failed (Network or Uncaught):", err);
-        if (outputTone) outputTone.textContent = `❌ Request failed: ${err.message}`;
+        if (outputTone) outputTone.textContent = ` Request failed: ${err.message}`;
         if (outputVocabulary) outputVocabulary.textContent = "";
         if (outputArchetype) outputArchetype.textContent = "";
         if (outputPhrasingStyle) outputPhrasingStyle.textContent = "";
@@ -588,10 +599,9 @@ async function generateMultiStylePreview(style) {
         return;
     }
 
-    if (stylePreviewOutput) stylePreviewOutput.innerHTML = `⏳ Generating ${style} preview...`;
+    if (stylePreviewOutput) stylePreviewOutput.innerHTML = ` Generating ${style} preview...`;
 
     const brandVoiceInputEl = document.getElementById('brandVoiceInput');
-    // Corrected typo: brandInputEl should be brandVoiceInputEl
     const context = brandVoiceInputEl ? brandVoiceInputEl.value.trim() : '';
 
     try {
@@ -600,14 +610,14 @@ async function generateMultiStylePreview(style) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 kit: currentVoiceKit, 
-                style: style,
+                style: style, 
                 context: context 
             })
         });
         const data = await response.json();
 
         if (data.error) {
-            if (stylePreviewOutput) stylePreviewOutput.innerHTML = `❌ Error generating preview: ${data.error}`;
+            if (stylePreviewOutput) stylePreviewOutput.innerHTML = ` Error generating preview: ${data.error}`;
             showToast(`Error generating preview: ${data.error}`, 'error');
         } else {
             if (stylePreviewOutput) stylePreviewOutput.innerHTML = `<p>${data.output}</p>`;
@@ -616,32 +626,32 @@ async function generateMultiStylePreview(style) {
     }
      catch (err) {
         console.error("Multi-style preview generation failed:", err);
-        if (stylePreviewOutput) stylePreviewOutput.innerHTML = `❌ Request failed: ${err.message}`;
+        if (stylePreviewOutput) stylePreviewOutput.innerHTML = ` Request failed: ${err.message}`;
         showToast(`Preview request failed: ${err.message}`, 'error');
     }
 }
 
 
-async function writeItForMe() {
+// --- REFINED writeItForMe Function ---
+async function writeItForMe(overrideStyle = null, overrideContext = null) {
     const contentInputEl = document.getElementById("contentGenerationInput");
-    const contentInput = contentInputEl ? contentInputEl.value.trim() : '';
-    
     const contentGenerationStyleSelect = document.getElementById("contentGenerationStyleSelect");
-    const style = contentGenerationStyleSelect ? contentGenerationStyleSelect.value : 'general'; 
-    
     const generatedContentOutput = document.getElementById("generatedContentOutput");
 
+    let style = overrideStyle || (contentGenerationStyleSelect ? contentGenerationStyleSelect.value : 'general'); 
+    let context = overrideContext || (contentInputEl ? contentInputEl.value.trim() : '');
+    
     if (!currentVoiceKit) {
         if (generatedContentOutput) generatedContentOutput.innerHTML = '<p class="text-red-500">Please mirror your voice first to generate content in your style.</p>';
         showToast("Mirror your voice first.", 'warning');
         return;
     }
-    if (!contentInput) {
-        showToast("Please enter what you want this to say.", 'warning');
+    if (!context) {
+        showToast("Please enter what you want this to say, or click a DNA Tag/Symbol Anchor.", 'warning');
         return;
     }
 
-    if (generatedContentOutput) generatedContentOutput.innerHTML = '⏳ Crafting your content...';
+    if (generatedContentOutput) generatedContentOutput.innerHTML = ' Crafting your content...';
 
     try {
         const response = await fetch('/api/generate-content', { 
@@ -650,13 +660,13 @@ async function writeItForMe() {
             body: JSON.stringify({ 
                 kit: currentVoiceKit, 
                 style: style, 
-                context: contentInput 
+                context: context 
             })
         });
         const data = await response.json();
 
         if (data.error) {
-            if (generatedContentOutput) generatedContentOutput.innerHTML = `❌ Error: ${data.error}`;
+            if (generatedContentOutput) generatedContentOutput.innerHTML = ` Error: ${data.error}`;
             showToast(`Error generating content: ${data.error}`, 'error');
         } else {
             if (generatedContentOutput) generatedContentOutput.innerHTML = `<p>${data.output}</p>`;
@@ -664,7 +674,7 @@ async function writeItForMe() {
         }
     } catch (err) {
         console.error("Write it for me failed:", err);
-        if (generatedContentOutput) generatedContentOutput.innerHTML = `❌ Request failed: ${err.message}`;
+        if (generatedContentOutput) generatedContentOutput.innerHTML = ` Request failed: ${err.message}`;
         showToast(`Content generation failed: ${err.message}`, 'error');
     }
 }
@@ -695,23 +705,27 @@ async function refineSelectedKits() {
 
     showToast(`Refining ${selectedKitData.length} kit(s)...`, 'info');
 
-    // Combine relevant data from selected kits into a single context for the AI
-    let combinedInput = "";
-    selectedKitData.forEach(kit => {
-        combinedInput += `Kit Name: ${kit.name}\n`;
-        combinedInput += `Tone: ${kit.tone}\n`;
-        combinedInput += `Vocabulary: ${kit.vocabulary}\n`;
-        combinedInput += `Phrasing Style: ${kit.phrasingStyle}\n`;
-        combinedInput += `Archetype: ${kit.archetype}\n`;
-        combinedInput += `DNA Tags: ${Array.isArray(kit.dnaTags) ? kit.dnaTags.join(', ') : kit.dnaTags}\n`;
-        combinedInput += `Symbol Anchors: ${Array.isArray(kit.symbolAnchors) ? kit.symbolAnchors.join(', ') : kit.symbolAnchors}\n\n`;
-    });
+    // NEW FIX: Ensure selected kits for refinement are fully structured before sending to backend.
+    // This is crucial to prevent malformed prompts if localStorage data is inconsistent.
+    const structuredSelectedKitData = selectedKitData.map(kit => ({
+        name: kit.name || 'Untitled',
+        tone: kit.tone || '',
+        vocabulary: kit.vocabulary || '',
+        phrasingStyle: kit.phrasingStyle || '',
+        archetype: kit.archetype || '',
+        samplePhrases: Array.isArray(kit.samplePhrases) ? kit.samplePhrases : [],
+        phrasesToAvoid: Array.isArray(kit.phrasesToAvoid) ? kit.phrasesToAvoid : [],
+        dnaTags: Array.isArray(kit.dnaTags) ? kit.dnaTags : [],
+        symbolAnchors: Array.isArray(kit.symbolAnchors) ? kit.symbolAnchors : []
+    }));
+
 
     try {
-        const response = await fetch('/api/refine-kits', { // New API endpoint for refinement
+        const response = await fetch('/api/refine-kits', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ kits: selectedKitData, combinedInput: combinedInput }) // Send both structured data and combined string
+            // Send the newly structured data to the backend
+            body: JSON.stringify({ kits: structuredSelectedKitData })
         });
         const data = await response.json();
 
@@ -720,10 +734,51 @@ async function refineSelectedKits() {
             showToast(`Error refining kits: ${errorMessage}`, 'error');
             console.error("Refine kits failed:", data);
         } else {
-            // Assuming the AI returns a single, refined voice kit
-            currentVoiceKit = data; // Set the refined kit as current
-            renderMirroredVoiceOutput(data); // Display the refined kit
-            showToast("Kits refined successfully! New kit displayed.", 'success');
+            // Ensure the refined kit received from backend is correctly parsed
+            const refinedKit = {
+                tone: data.tone || 'N/A',
+                vocabulary: data.vocabulary || 'N/A',
+                archetype: data.archetype || 'N/A',
+                phrasingStyle: data.phrasingStyle || 'N/A',
+                // CRITICAL FIX: Direct assignment, as backend guarantees arrays
+                samplePhrases: data.samplePhrases,
+                phrasesToAvoid: data.phrasesToAvoid,
+                dnaTags: data.dnaTags,
+                symbolAnchors: data.symbolAnchors,
+                name: data.name || `Refined Kit (${new Date().toLocaleDateString()})`,
+                rawInput: currentVoiceKit ? currentVoiceKit.rawInput : "" // Keep original raw input if available, or empty
+            };
+            
+            // Set the newly refined kit as the current active kit
+            currentVoiceKit = refinedKit;
+
+            // Display the refined kit in the main section
+            renderMirroredVoiceOutput(currentVoiceKit); 
+            
+            // Save the newly refined kit to localStorage
+            const updatedHistory = getSavedKits();
+            updatedHistory.push(createUnifiedKitObject(currentVoiceKit)); // Use createUnifiedKitObject for proper saving
+            saveKits(updatedHistory);
+
+            // Refresh UI to show the new kit in the gallery and dropdown
+            refreshUIElements();
+
+            // NEW FIX: Uncheck all selected checkboxes after successful refinement
+            selectedCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            showToast("Kits refined and saved successfully! New kit displayed.", 'success');
+
+            // Populate brandVoiceInput with a relevant context for multi-style preview
+            const brandVoiceInputEl = document.getElementById("brandVoiceInput");
+            if (brandVoiceInputEl) {
+                if (currentVoiceKit.samplePhrases && currentVoiceKit.samplePhrases.length > 0) {
+                    brandVoiceInputEl.value = currentVoiceKit.samplePhrases[0]; // Use the first sample phrase
+                } else {
+                    brandVoiceInputEl.value = "Describe this refined voice in action."; // Fallback generic prompt
+                }
+            }
         }
     } catch (err) {
         console.error("Refine kits failed (Network or Uncaught):", err);
@@ -756,8 +811,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const exportCurrentVoiceJSONButton = document.getElementById("exportCurrentVoiceJSONButton");
     if (exportCurrentVoiceJSONButton) exportCurrentVoiceJSONButton.addEventListener("click", exportCurrentVoiceJSON);
 
+    // Modified writeItForMe button listener to call without arguments
     const writeItForMeButton = document.getElementById("writeItForMeButton");
-    if (writeItForMeButton) writeItForMeButton.addEventListener("click", writeItForMe);
+    if (writeItForMeButton) writeItForMeButton.addEventListener("click", () => writeItForMe());
 
     // Multi-Style Preview Tabs
     document.querySelectorAll('.tab-button').forEach(button => {
@@ -778,10 +834,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (banner) {
         banner.style.background = "#f0fdf4";
         banner.innerHTML = `
-            <div class="text-center text-emerald-700 font-semibold text-base fade-slide mb-4">
-                Welcome back, Creator. Ready to echo your voice again?
-            </div>
-        `;
+            <div class="text-center text-emerald-700 font-semibold text-base fade-slide mb-4">\n                Welcome back, Creator. Ready to echo your voice again?\\n\n            </div>\n        `;
         setTimeout(() => {
             banner.classList.add('hidden');
         }, 5000);
@@ -809,3 +862,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+// Final casing fix applied.
