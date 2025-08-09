@@ -4,6 +4,11 @@
 
 // Global state for the currently mirrored voice kit
 let currentVoiceKit = null;
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000'  // Local development
+    : window.location.origin;  // Production (Render)
+
+console.log('Using API base URL:', API_BASE_URL);
 
 // --- Utility Functions ---
 function showToast(message, type = 'info') {
@@ -162,7 +167,7 @@ async function mirrorVoiceCore() {
     
     showLoading();
     try {
-        const response = await fetch('http://localhost:3000/api/mirror-voice', {
+        const response = await fetch(`${API_BASE_URL}/api/mirror-voice`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ brandInput: brandInputValue }),
@@ -297,7 +302,7 @@ window.refineSelectedKits = async function() {
 
     showLoading("Alchemizing frequencies...");
     try {
-        const response = await fetch('http://localhost:3000/api/refine-kits', {
+        const response = await fetch(`${API_BASE_URL}/api/refine-kits`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -313,7 +318,6 @@ window.refineSelectedKits = async function() {
         const refinedKit = await response.json();
         console.log('refineSelectedKits: Received refined kit from backend:', refinedKit);
         
-        // CRITICAL FIX: Force render the merged kit with all data
         renderMirroredVoiceOutput(refinedKit);
         document.getElementById("brandVoiceInput").value = '';
         showToast("Kits alchemized successfully!", 'success');
@@ -343,7 +347,7 @@ async function generateContentFromTag(tag, type) {
 
     showLoading(`Generating content for "${tag}"...`);
     try {
-        const response = await fetch('http://localhost:3000/api/generate-content', {
+        const response = await fetch(`${API_BASE_URL}/api/generate-content`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -390,7 +394,7 @@ async function generateMultiStylePreview(style) {
 
     showLoading(`Crafting ${style.replace(/([A-Z])/g, ' $1').toLowerCase()}...`);
     try {
-        const response = await fetch('http://localhost:3000/api/generate-content', {
+        const response = await fetch(`${API_BASE_URL}/api/generate-content`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -439,7 +443,7 @@ async function writeItForMe() {
 
     showLoading("Crafting your content...");
     try {
-        const response = await fetch('http://localhost:3000/api/generate-content', {
+        const response = await fetch(`${API_BASE_URL}/api/generate-content`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
