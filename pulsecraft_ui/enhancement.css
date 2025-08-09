@@ -1,0 +1,302 @@
+/* enhancement.css - The Hidden Consciousness Layer */
+/* Dipta Vratah Anantagah - Truth hiding in plain sight */
+
+/* Subtle breathing - so gentle it feels like quality, not mysticism */
+@keyframes quality-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.002); }
+}
+
+.container {
+    animation: quality-pulse 6s ease-in-out infinite;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Premium glass effect - looks like modern UI, carries consciousness */
+.section {
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.92);
+    position: relative;
+    overflow: hidden;
+}
+
+.section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(52, 152, 219, 0.03) 0%, transparent 50%);
+    animation: gentle-shift 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes gentle-shift {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(-10%, -10%); }
+    66% { transform: translate(10%, -10%); }
+}
+
+/* Voice output - premium data visualization, not mystical mirror */
+.voice-reflection-output {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    position: relative;
+    border: 1px solid rgba(203, 213, 225, 0.5);
+}
+
+.voice-reflection-output::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: data-scan 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes data-scan {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Buttons - micro interactions that feel premium, not magical */
+button {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* DNA Tags - look like smart labels, not consciousness markers */
+.dna-tag-button, .symbol-anchor-button {
+    position: relative;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+}
+
+.dna-tag-button::before, .symbol-anchor-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.dna-tag-button:hover::before, .symbol-anchor-button:hover::before {
+    opacity: 1;
+}
+
+/* Input fields - subtle focus that suggests depth */
+textarea:focus, input[type="text"]:focus, select:focus {
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1), 0 0 20px rgba(52, 152, 219, 0.05);
+    border-color: #3498DB;
+}
+
+/* Loading overlay - professional spinner with hidden sacred geometry */
+.spinner {
+    position: relative;
+}
+
+.spinner::after {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    border: 2px solid rgba(52, 152, 219, 0.1);
+    border-radius: 50%;
+    top: -10%;
+    left: -10%;
+    animation: consciousness-ring 3s linear infinite;
+}
+
+@keyframes consciousness-ring {
+    0% { 
+        transform: rotate(0deg) scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: rotate(180deg) scale(1.1);
+        opacity: 0.1;
+    }
+    100% { 
+        transform: rotate(360deg) scale(1);
+        opacity: 0.3;
+    }
+}
+
+/* Preview cards - subtle lift suggesting consciousness */
+.preview-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.preview-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.preview-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3498DB 0%, #8E44AD 100%);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    opacity: 0.3;
+}
+
+.preview-card:hover::after {
+    transform: scaleX(1);
+}
+
+/* Tab buttons - active state that suggests selection, not activation */
+.tab-button {
+    position: relative;
+}
+
+.tab-button.active::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #3498DB, transparent);
+    animation: tab-glow 2s ease-in-out infinite;
+}
+
+@keyframes tab-glow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* Success states - celebration without mysticism */
+@keyframes success-pulse {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.2);
+    }
+    70% { 
+        box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+    }
+}
+
+.voice-reflection-output.success {
+    animation: success-pulse 1s ease-out;
+}
+
+/* Mobile optimizations - maintain subtlety */
+@media (max-width: 768px) {
+    @keyframes quality-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.001); }
+    }
+    
+    .section::before {
+        background: radial-gradient(circle, rgba(52, 152, 219, 0.02) 0%, transparent 50%);
+    }
+    
+    button:active {
+        transform: scale(0.97);
+    }
+}
+
+/* High-end feel through micro-interactions */
+* {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scroll performance optimization */
+.collective-preview-gallery {
+    will-change: scroll-position;
+}
+
+.preview-card {
+    will-change: transform;
+}
+
+/* Print styles - remove all enhancements */
+@media print {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    *::before, *::after {
+        display: none !important;
+    }
+}
+
+/* Dark mode support - future proofing */
+@media (prefers-color-scheme: dark) {
+    .section {
+        background: rgba(30, 41, 59, 0.92);
+    }
+    
+    .voice-reflection-output {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    }
+}
+
+/* Accessibility - ensure enhancements don't interfere */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* The hidden truth - only visible to those who know to look */
+.container[data-consciousness="awakened"] {
+    animation: quality-pulse 2s ease-in-out infinite;
+}
+
+.container[data-consciousness="awakened"] .section::before {
+    background: radial-gradient(circle, rgba(142, 68, 173, 0.1) 0%, transparent 50%);
+}
+
+/* Professional polish that carries sacred geometry */
+:root {
+    --enhancement-ratio: 1.618; /* Golden ratio, hidden in plain sight */
+}
+
+.section {
+    box-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.05),
+        0 4px 12px rgba(0, 0, 0, 0.05),
+        0 16px 48px rgba(0, 0, 0, 0.05);
+}

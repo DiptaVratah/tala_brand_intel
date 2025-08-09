@@ -1,0 +1,489 @@
+/* shapeshifter.css - Mode-Specific Styling for Interface Transformation */
+/* 0xTRU7H_MULT1PL3_F4C3S - One truth, multiple presentations */
+
+/* Base transitions for mode switching */
+body {
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== CONSCIOUSNESS MODE (Default) ==================== */
+.consciousness-mode {
+    /* Uses default styles from main CSS */
+}
+
+/* Consciousness-specific effects */
+.consciousness-mode .voice-reflection-output::before {
+    opacity: 1;
+    animation: shimmer 4s linear infinite; /* Ensure 'shimmer' keyframe is defined elsewhere if needed, or remove */
+}
+
+.consciousness-mode .pulse-dot {
+    display: inline-block;
+}
+
+.consciousness-mode .container {
+    animation: subtle-breathe 4s ease-in-out infinite;
+}
+
+@keyframes subtle-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.005); }
+}
+
+/* ==================== BRANDING MODE ==================== */
+.branding-mode {
+    /* Professional, clean, business-focused */
+}
+
+.branding-mode h1::after {
+    content: ' for Business';
+    font-size: 0.5em;
+    opacity: 0.7;
+    font-weight: 400;
+}
+
+.branding-mode .tagline {
+    color: #1e293b;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.branding-mode .voice-reflection-output {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+}
+
+.branding-mode .voice-reflection-output::before {
+    display: none; /* No shimmer in business mode */
+}
+
+.branding-mode .pulse-dot {
+    display: none; /* No pulse in business mode */
+}
+
+.branding-mode .btn-primary {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+}
+
+.branding-mode .btn-primary:hover {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+}
+
+.branding-mode .dna-tag-button {
+    background: #3b82f6 !important;
+    border-color: #2563eb !important;
+    border-radius: 4px;
+}
+
+.branding-mode .symbol-anchor-button {
+    background: #1e40af !important;
+    border-color: #1e3a8a !important;
+    border-radius: 4px;
+}
+
+/* ==================== AUTHOR MODE ==================== */
+.author-mode {
+    /* Creative, warm, literary */
+}
+
+.author-mode h1 {
+    font-family: Georgia, serif;
+    color: #dc2626;
+}
+
+.author-mode .tagline {
+    color: #7c2d12;
+    font-style: italic;
+    font-family: Georgia, serif;
+}
+
+.author-mode .voice-reflection-output {
+    background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+    border: 1px solid #f59e0b;
+}
+
+.author-mode .btn-primary {
+    background: linear-gradient(135deg, #dc2626 0%, #f97316 100%);
+}
+
+.author-mode textarea {
+    font-family: Georgia, serif;
+    line-height: 1.8;
+}
+
+.author-mode .dna-tag-button {
+    background: #f97316 !important;
+    border-radius: 20px;
+}
+
+.author-mode .symbol-anchor-button {
+    background: #dc2626 !important;
+    border-radius: 20px;
+}
+
+/* ==================== THERAPY MODE ==================== */
+.therapy-mode {
+    /* Calming, supportive, gentle */
+}
+
+.therapy-mode body {
+    background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+}
+
+.therapy-mode h1 {
+    color: #10b981;
+}
+
+.therapy-mode .tagline {
+    color: #047857;
+    font-weight: 400;
+}
+
+.therapy-mode .voice-reflection-output {
+    background: linear-gradient(135deg, #dbeafe 0%, #d1fae5 100%);
+    border: none;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+}
+
+.therapy-mode .btn-primary {
+    background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+    border-radius: 25px;
+}
+
+.therapy-mode .section {
+    border-color: #a7f3d0;
+}
+
+.therapy-mode .dna-tag-button {
+    background: #06b6d4 !important;
+    border-radius: 25px;
+}
+
+.therapy-mode .symbol-anchor-button {
+    background: #8b5cf6 !important;
+    border-radius: 25px;
+}
+
+/* ==================== DEEP MODE (Easter Egg) ==================== */
+.deep-mode { /* Changed from .0xDEEP-mode */
+    /* Full consciousness unleashed */
+    background: #000;
+}
+
+.deep-mode body { /* Changed from .0xDEEP-mode */
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 100%);
+    color: #fff;
+}
+
+.deep-mode .container { /* Changed from .0xDEEP-mode */
+    background: rgba(26, 26, 46, 0.9);
+    border: 1px solid #a855f7;
+    box-shadow: 0 0 50px rgba(168, 85, 247, 0.3);
+}
+
+.deep-mode h1 { /* Changed from .0xDEEP-mode */
+    background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: consciousness-pulse 2s ease-in-out infinite;
+}
+
+@keyframes consciousness-pulse {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.8; filter: brightness(1.5); }
+}
+
+.deep-mode .tagline { /* Changed from .0xDEEP-mode */
+    color: #a855f7;
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.deep-mode .voice-reflection-output { /* Changed from .0xDEEP-mode */
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid #a855f7;
+    box-shadow: inset 0 0 30px rgba(168, 85, 247, 0.2);
+}
+
+.deep-mode .voice-reflection-output::before { /* Changed from .0xDEEP-mode */
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%);
+    animation: deep-shimmer 2s linear infinite;
+}
+
+@keyframes deep-shimmer {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg); }
+}
+
+.deep-mode .btn-primary { /* Changed from .0xDEEP-mode */
+    background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #7c3aed 100%);
+    border: 1px solid #fff;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+    animation: deep-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes deep-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+    50% { box-shadow: 0 0 40px rgba(236, 72, 153, 0.8); }
+}
+
+/* Glitch effect for deep mode */
+.glitch {
+    position: relative;
+    animation: glitch-anim 0.2s infinite;
+}
+
+@keyframes glitch-anim {
+    0%, 100% { 
+        text-shadow: -2px 0 #f0f, 2px 0 #0ff;
+        transform: translate(0);
+    }
+    20% { 
+        text-shadow: 2px 0 #f0f, -2px 0 #0ff;
+        transform: translate(-2px, 2px);
+    }
+    40% { 
+        text-shadow: -2px 0 #f0f, 2px 0 #0ff;
+        transform: translate(-2px, -2px);
+    }
+    60% { 
+        text-shadow: 2px 0 #f0f, -2px 0 #0ff;
+        transform: translate(2px, 2px);
+    }
+    80% { 
+        text-shadow: -2px 0 #f0f, 2px 0 #0ff;
+        transform: translate(2px, -2px);
+    }
+}
+
+/* ==================== MODE SWITCHER ==================== */
+.mode-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.mode-switcher.hidden {
+    display: none;
+}
+
+.mode-switcher select {
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* ==================== PROGRESSIVE REVELATION ==================== */
+.consciousness-shimmer {
+    position: relative;
+}
+
+.consciousness-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(142, 68, 173, 0.1), transparent);
+    animation: reveal-shimmer 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes reveal-shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* ==================== DEEP ACTIVATION MESSAGE ==================== */
+.deep-activation-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #a855f7;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 10000;
+    animation: deep-reveal 0.5s ease-out;
+}
+
+.deep-activation-message .deep-text {
+    color: #a855f7;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+.deep-activation-message small {
+    display: block;
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.7;
+    color: #fff;
+}
+
+@keyframes deep-reveal {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* ==================== REALITY SHIFT ANIMATION ==================== */
+@keyframes reality-shift {
+    0% {
+        filter: hue-rotate(0deg) brightness(1);
+    }
+    25% {
+        filter: hue-rotate(90deg) brightness(1.2);
+    }
+    50% {
+        filter: hue-rotate(180deg) brightness(0.8);
+    }
+    75% {
+        filter: hue-rotate(270deg) brightness(1.1);
+    }
+    100% {
+        filter: hue-rotate(360deg) brightness(1);
+    }
+}
+
+/* ==================== MOBILE ADAPTATIONS ==================== */
+@media (max-width: 768px) {
+    .branding-mode h1::after {
+        display: block;
+        font-size: 0.6em;
+        margin-top: 5px;
+    }
+    
+    .mode-switcher {
+        top: 10px;
+        right: 10px;
+        padding: 8px;
+    }
+    
+    .deep-mode .deep-activation-message { /* Changed from .0xDEEP-mode */
+        width: 90%;
+        padding: 20px;
+    }
+    
+    .deep-mode .deep-text { /* Changed from .0xDEEP-mode */
+        font-size: 18px;
+    }
+}
+
+/* ==================== SPECIAL HOVER STATES BY MODE ==================== */
+.branding-mode button:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+.author-mode button:hover {
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+.therapy-mode button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.2);
+    transition: all 0.3s ease;
+}
+
+.deep-mode button:hover { /* Changed from .0xDEEP-mode */
+    animation: deep-hover 0.5s ease;
+}
+
+@keyframes deep-hover {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.05) rotate(1deg); }
+    75% { transform: scale(1.05) rotate(-1deg); }
+}
+
+/* ==================== LOADING STATES BY MODE ==================== */
+.branding-mode .loading-overlay {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.branding-mode .spinner {
+    border-top-color: #3b82f6;
+}
+
+.author-mode .loading-overlay {
+    background: rgba(254, 243, 199, 0.95);
+}
+
+.author-mode .spinner {
+    border-top-color: #dc2626;
+}
+
+.therapy-mode .loading-overlay {
+    background: rgba(209, 250, 229, 0.95);
+}
+
+.therapy-mode .spinner {
+    border-top-color: #10b981;
+}
+
+.deep-mode .loading-overlay { /* Changed from .0xDEEP-mode */
+    background: rgba(0, 0, 0, 0.95);
+}
+
+.deep-mode .spinner { /* Changed from .0xDEEP-mode */
+    border: 4px solid #a855f7;
+    border-top-color: #ec4899;
+    animation: deep-spin 1s linear infinite;
+}
+
+@keyframes deep-spin {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ==================== TOAST NOTIFICATIONS BY MODE ==================== */
+.branding-mode .toast-success {
+    background: #3b82f6;
+}
+
+.author-mode .toast-success {
+    background: #dc2626;
+}
+
+.therapy-mode .toast-success {
+    background: #10b981;
+}
+
+.deep-mode .toast-success { /* Changed from .0xDEEP-mode */
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    border: 1px solid #fff;
+    animation: toast-glow 1s ease-in-out infinite;
+}
+
+@keyframes toast-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(236, 72, 153, 0.7); }
+}

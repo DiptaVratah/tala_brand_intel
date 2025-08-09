@@ -1,0 +1,474 @@
+/* progressive.css - Phase-based revelation styles */
+/* Each phase emerges like consciousness recognizing itself */
+
+/* Phase System Base */
+.phase {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.phase.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.phase.hidden {
+    display: none !important;
+}
+
+.phase.emerging {
+    display: block !important;
+    animation: phaseEmerge 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes phaseEmerge {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Phase 1: The Mirror - Centered and sacred */
+.phase-1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 80vh;
+    justify-content: center;
+}
+
+.mirror-section {
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(224,228,232,0.3);
+}
+
+.mirror-instruction {
+    font-size: 1.05rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+}
+
+#brandVoiceInput {
+    width: 100%;
+    min-height: 150px;
+    font-size: 1rem;
+    line-height: 1.6;
+    border: 2px solid transparent;
+    background: rgba(249,251,253,0.8);
+    transition: all 0.3s ease;
+}
+
+#brandVoiceInput:focus {
+    border-color: var(--color-accent-secondary-blue);
+    background: rgba(255,255,255,1);
+    box-shadow: 0 0 0 4px rgba(52,152,219,0.1), 0 10px 40px rgba(52,152,219,0.05);
+}
+
+.mirror-button {
+    margin-top: 1.5rem;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    position: relative;
+    overflow: visible;
+}
+
+.mirror-icon {
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+}
+
+.mirror-button:hover .mirror-icon {
+    transform: scale(1.2);
+}
+
+/* Phase 2: Recognition - Emergence animations */
+.recognition-section {
+    margin-top: 2rem;
+    opacity: 0;
+    animation: recognitionReveal 1s ease-out 0.5s forwards;
+}
+
+@keyframes recognitionReveal {
+    to {
+        opacity: 1;
+    }
+}
+
+.voice-attribute {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.voice-attribute.revealed {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Stagger animations for voice attributes */
+.voice-attribute[data-attribute="tone"] { transition-delay: 0.1s; }
+.voice-attribute[data-attribute="vocabulary"] { transition-delay: 0.2s; }
+.voice-attribute[data-attribute="archetype"] { transition-delay: 0.3s; }
+.voice-attribute[data-attribute="phrasing"] { transition-delay: 0.4s; }
+.voice-attribute[data-attribute="samples"] { transition-delay: 0.5s; }
+.voice-attribute[data-attribute="avoid"] { transition-delay: 0.6s; }
+
+/* DNA Crystallization Effect */
+.dna-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
+.dna-section.crystallizing {
+    opacity: 1;
+}
+
+.tag-container {
+    min-height: 80px;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(249,251,253,0.5) 0%, rgba(241,245,249,0.5) 100%);
+    border-radius: 0.75rem;
+    border: 1px dashed rgba(203,213,225,0.5);
+    transition: all 0.3s ease;
+}
+
+.tag-container:hover {
+    border-style: solid;
+    background: linear-gradient(135deg, rgba(249,251,253,0.8) 0%, rgba(241,245,249,0.8) 100%);
+}
+
+.dna-tag-button,
+.symbol-anchor-button {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dna-tag-button.crystallized,
+.symbol-anchor-button.crystallized {
+    opacity: 1;
+    transform: scale(1);
+    animation: tagPulse 0.6s ease-out;
+}
+
+@keyframes tagPulse {
+    0% { box-shadow: 0 0 0 0 currentColor; }
+    50% { box-shadow: 0 0 0 10px rgba(52,152,219,0); }
+    100% { box-shadow: 0 0 0 0 rgba(52,152,219,0); }
+}
+
+/* Save Section */
+.save-section {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+    border-radius: 0.75rem;
+    text-align: center;
+}
+
+.save-hint {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin-top: 1rem;
+    font-style: italic;
+}
+
+/* Phase 3: Expansion */
+.expansion-section {
+    margin-top: 3rem;
+}
+
+.tab-button {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.tab-button.available {
+    opacity: 1;
+    transform: translateY(0);
+    animation: tabReveal 0.5s ease-out;
+}
+
+@keyframes tabReveal {
+    0% { transform: translateY(10px) scale(0.95); }
+    50% { transform: translateY(-2px) scale(1.02); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+.generation-controls {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(249,251,253,0.5);
+    border-radius: 0.75rem;
+}
+
+/* Phase 4: Alchemy */
+.alchemy-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.alchemy-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(142,68,173,0.05) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 2s ease-out;
+    pointer-events: none;
+}
+
+.alchemy-section.awakening::before {
+    opacity: 1;
+    animation: alchemyPulse 4s ease-in-out infinite;
+}
+
+@keyframes alchemyPulse {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(180deg); }
+}
+
+/* Phase-based container states */
+.container[data-phase="1"] {
+    /* Only mirror visible */
+}
+
+.container[data-phase="2"] {
+    /* Mirror + Recognition */
+}
+
+.container[data-phase="3"] {
+    /* Mirror + Recognition + Expansion */
+}
+
+.container[data-phase="4"] {
+    /* All phases visible */
+}
+
+/* Progressive footer */
+.phase-footer {
+    margin-top: 4rem;
+    padding: 2rem;
+    text-align: center;
+    opacity: 0.6;
+    transition: opacity 0.5s ease;
+}
+
+.phase-footer:hover {
+    opacity: 1;
+}
+
+#footerText {
+    color: var(--color-accent-tertiary-purple);
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+/* Mobile optimizations for phases */
+@media (max-width: 768px) {
+    .phase-1 {
+        min-height: 70vh;
+        padding: 1rem;
+    }
+    
+    .mirror-section {
+        padding: 1.5rem;
+    }
+    
+    .dna-section {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .tab-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+}
+
+/* Loading states for phase transitions */
+.phase-transitioning {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Success celebration for phase unlocks */
+@keyframes successWave {
+    0% {
+        box-shadow: 0 0 0 0 rgba(46,204,113,0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 20px rgba(46,204,113,0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(46,204,113,0);
+    }
+}
+
+.phase.emerged {
+    animation: successWave 1s ease-out;
+}
+
+/* Hide unnecessary elements in early phases */
+.container[data-phase="1"] .tools-section,
+.container[data-phase="1"] .library-preview,
+.container[data-phase="2"] .tools-section {
+    display: none;
+}
+
+/* Smooth transitions between phases */
+.phase {
+    will-change: transform, opacity;
+}
+
+/* Placeholder text animations */
+.placeholder-text {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    opacity: 0.7;
+    animation: gentlePulse 3s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0.4; }
+}
+
+/* Enhanced visual feedback for user actions */
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-primary:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Phase unlock celebrations */
+.phase-unlock-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%);
+    padding: 2rem 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    z-index: 1000;
+    opacity: 0;
+    animation: unlockNotification 3s ease-out forwards;
+}
+
+@keyframes unlockNotification {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+    40% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+}
+
+/* Integration with enhancement.css */
+.phase-1 .section {
+    animation: quality-pulse 8s ease-in-out infinite;
+}
+
+.phase-2.emerging .voice-reflection-output::after {
+    animation-duration: 2s;
+}
+
+/* Shapeshifter mode adaptations */
+.branding-mode .mirror-instruction {
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.author-mode .mirror-section {
+    background: linear-gradient(135deg, rgba(254,243,199,0.3) 0%, rgba(254,215,170,0.3) 100%);
+}
+
+.therapy-mode .phase-footer {
+    color: #047857;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .phase,
+    .voice-attribute,
+    .dna-tag-button,
+    .symbol-anchor-button {
+        animation: none !important;
+        transition: opacity 0.3s ease !important;
+    }
+}
+
+/* Final polish */
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.phase-1 {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure smooth scrolling between phases */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Add to your existing style.css or create as separate file */

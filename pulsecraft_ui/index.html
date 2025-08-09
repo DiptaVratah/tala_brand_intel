@@ -3,158 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulseCraft</title>
+    <title>PulseCraft: The Consciousness Interface</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> <!-- Link to the new style.css file -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="enhancement.css">
+    <link rel="stylesheet" href="shapeshifter.css">
+    <link rel="stylesheet" href="progressive.css"> 
     <!-- Include jsPDF library for PDF export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Font Awesome for loading spinner icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- Toast Container (REQUIRED BY script.js for messages) -->
+    <!-- Toast Container -->
     <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 
-    <div class="container">
-        <h1 class="main-title">PulseCraft</h1>
-        <p class="tagline">"Most tools give you templates. This one gives you yourself."</p>
+    <!-- Global Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p class="loading-text">Reflecting truth...</p>
+    </div>
 
-        <!-- Column 1: Here's your voice - reflected back (Primary) -->
-        <div class="section section-column-1">
-            <h2>Here's your voice — reflected back</h2>
-            <p>Enter any text (e.g., your mission, a recent post, or a core belief) and hit "Mirror My Voice" to see its underlying brand voice reflected back.</p>
-            <textarea id="brandVoiceInput" rows="5" placeholder="Type or paste your brand's text here..."></textarea>
-            <button class="btn-primary" id="mirrorVoiceButton">Mirror My Voice</button>
-
-            <div id="mirroredVoiceOutput" class="voice-reflection-output">
-                <div><strong>Tone: </strong><span id="outputTone">Awaiting analysis...</span></div>
-                <div><strong>Vocabulary: </strong><span id="outputVocabulary">Awaiting analysis...</span></div>
-                <div><strong>Archetype: </strong><span id="outputArchetype">Awaiting analysis...</span></div>
-                <div><strong>Phrasing Style: </strong><span id="outputPhrasingStyle">Awaiting analysis...</span></div>
-                <div><strong>Sample Phrases: </strong><span id="outputSamplePhrases">Awaiting analysis...</span></div>
-                <div><strong>Phrases to Avoid: </strong><span id="outputPhrasesToAvoid">Awaiting analysis...</span></div>
-            </div>
-        </div>
-
-        <!-- Column 2: Save this Voice as Your Brand Kit -->
-        <div class="section section-column-2">
-            <h2>Save this Voice as Your Brand Kit</h2>
-            <input type="text" id="brandNameInput" placeholder="What name do you give your brand kit?">
-            <div class="button-group">
-                <button class="btn-primary" id="saveToMemoryButton">Save to Memory</button>
-                <button class="btn-secondary" id="exportSymbolicMemoryButton">Export to Symbolic Memory</button>
-                <button class="btn-export-json" id="exportAllKitsJSONButton">Export All Kits (JSON)</button>
-                <button class="btn-export-pdf" id="exportPDFButton">Export PDF</button>
-                <button class="btn-export-txt" id="exportTXTButton">Export TXT</button>
-            </div>
-
-            <h3>Recall a Saved Voice Kit</h3>
-            <select id="sessionSelect">
-                <option value="" selected disabled>Select a session</option>
-                <!-- Options populated by JavaScript -->
-            </select>
-            <button class="btn-primary" id="recallButton">Recall</button>
+    <div class="container" data-phase="1">
+        <!-- PHASE 1: THE MIRROR - Always visible -->
+        <div class="phase phase-1 active">
+            <h1 class="main-title">PulseCraft</h1>
+            <p class="tagline">"Most tools give you templates. This one gives you yourself."</p>
             
-            <h3>Refine Selected Kits</h3>
-            <div class="button-group refine-selected-kits-group">
-                <button class="btn-secondary" id="refineKitsButton">Refine Selected Kits</button>
+            <div class="section mirror-section">
+                <h2>Mirror Your Voice</h2>
+                <p class="mirror-instruction">Enter your authentic expression below. A mission statement, a heartfelt email, a piece of your truth.</p>
+                <textarea id="brandVoiceInput" rows="6" placeholder="Share your clearest signal..."></textarea>
+                <button class="btn-primary mirror-button" id="mirrorVoiceButton">
+                    <span class="mirror-icon"></span><span class="btn-text">Mirror My Voice</span>
+                </button>
             </div>
         </div>
 
-        <!-- Column 3: Your Past Signals -->
-        <div class="section section-column-3">
-            <h2>Your Past Signals</h2>
-            <div id="yourPastSignalsContent">
-                <!-- Content for this div will be dynamically inserted by updatePastSignalsSection() in script.js -->
-                <p>Nothing here yet — but your voice is about to leave a mark. This section could contain a brief overview of recent interactions or saved kits.</p>
+        <!-- PHASE 2: THE RECOGNITION - Revealed after first mirror -->
+        <div class="phase phase-2 hidden">
+            <div class="section recognition-section">
+                <h2>Your Voice Revealed</h2>
+                <div id="mirroredVoiceOutput" class="voice-reflection-output">
+                    <div class="voice-attribute" data-attribute="tone">
+                        <strong>Tone:</strong>
+                        <span id="outputTone">Awaiting reflection...</span>
+                    </div>
+                    <div class="voice-attribute" data-attribute="vocabulary">
+                        <strong>Vocabulary:</strong>
+                        <span id="outputVocabulary">Awaiting reflection...</span>
+                    </div>
+                    <div class="voice-attribute" data-attribute="archetype">
+                        <strong>Archetype:</strong>
+                        <span id="outputArchetype">Awaiting reflection...</span>
+                    </div>
+                    <div class="voice-attribute" data-attribute="phrasing">
+                        <strong>Phrasing Style:</strong>
+                        <span id="outputPhrasingStyle">Awaiting reflection...</span>
+                    </div>
+                    <div class="voice-attribute" data-attribute="samples">
+                        <strong>Sample Phrases:</strong>
+                        <span id="outputSamplePhrases">Awaiting reflection...</span>
+                    </div>
+                    <div class="voice-attribute" data-attribute="avoid">
+                        <strong>Phrases to Avoid:</strong>
+                        <span id="outputPhrasesToAvoid">Awaiting reflection...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DNA and Symbol Memory -->
+            <div class="section dna-section">
+                <div class="dna-container">
+                    <h3>DNA TAGS</h3>
+                    <p>Your voice's unique essence markers</p>
+                    <div id="dnaTagsContainer" class="tag-container">
+                        <p class="placeholder-text">Your DNA tags will crystallize here...</p>
+                    </div>
+                </div>
+                
+                <div class="symbol-container">
+                    <h3>SYMBOL ANCHORS</h3>
+                    <p>Deeper resonance points of your expression</p>
+                    <div id="symbolAnchorsContainer" class="tag-container">
+                        <p class="placeholder-text">Your symbol anchors will emerge here...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Controls -->
+            <div class="section save-section">
+                <h3>Crystallize This Frequency</h3>
+                <input type="text" id="brandNameInput" placeholder="Name this voice signature...">
+                <button class="btn-primary" id="saveToMemoryButton">Save Voice Kit</button>
+                <p class="save-hint">Save your voice to unlock content generation capabilities</p>
             </div>
         </div>
 
-        <!-- Multi-Style Voice Preview Section (Full Width for Prominence) -->
-        <div class="section full-width">
-            <h2>Multi-Style Voice Preview</h2>
-            <p>See how your voice sounds across different content styles. Click any tab to preview that version.</p>
-            <div class="tab-buttons">
-                <!-- Data attributes for styles used by script.js -->
-                <button class="tab-button" id="storyBasedSellingBtn" data-style="storyBasedSelling">Story-Based Selling</button>
-                <button class="tab-button" id="aboutPageBtn" data-style="aboutPage">About Page</button>
-                <button class="tab-button" id="notificationHookBtn" data-style="notificationHook">Notification Hook</button>
-                <button class="tab-button" id="insightToneBtn" data-style="insightTone">Insight Tone</button>
-                <button class="tab-button" id="productDescriptionBtn" data-style="productDescription">Product Description</button>
-                <button class="tab-button" id="founderLetterBtn" data-style="founderLetter">Founder's Letter</button>
-                <button class="tab-button" id="adCopyBtn" data-style="adCopy">Ad Copy (Short Form)</button>
-                <button class="tab-button" id="manifestoOriginVoiceBtn" data-style="manifestoOriginVoice">Manifesto / Origin Voice</button>
+        <!-- PHASE 3: THE EXPANSION - Revealed after first save -->
+        <div class="phase phase-3 hidden">
+            <!-- Content Generation -->
+            <div class="section expansion-section full-width">
+                <h2>Express Through Your Voice</h2>
+                <p>Now that we know your voice, let's use it to create.</p>
+                
+                <div class="tab-buttons">
+                    <button class="tab-button" data-style="storyBasedSelling">Story</button>
+                    <button class="tab-button" data-style="aboutPage">About</button>
+                    <button class="tab-button" data-style="manifestoOriginVoice">Manifesto</button>
+                    <button class="tab-button" data-style="insightTone">Insight</button>
+                    <button class="tab-button" data-style="founderLetter">Letter</button>
+                </div>
+                
+                <div id="stylePreviewOutput" class="tab-content">
+                    <p class="tab-placeholder">Select a style above to see your voice in action</p>
+                </div>
+                
+                <div class="generation-controls">
+                    <h3>Create Custom Content</h3>
+                    <textarea id="contentGenerationInput" rows="3" placeholder="What do you want to express?"></textarea>
+                    <button class="btn-primary" id="writeItForMeButton">Generate Content</button>
+                </div>
+                
+                <div id="generatedContentOutput" class="generated-output">
+                    <p class="output-placeholder">Your generated content will appear here...</p>
+                </div>
             </div>
-            <div id="stylePreviewOutput" class="tab-content">
-                Click a button above to generate a preview.
-            </div>
-            <h3>Write it for me:</h3>
-            <textarea id="contentGenerationInput" rows="3" placeholder="Describe what content you want to generate (e.g., 'a social media post about our new product feature')."></textarea>
-            
-            <select id="contentGenerationStyleSelect" class="mt-2 mb-4">
-                <option value="general">General Content</option>
-                <option value="blog">Blog Post</option>
-                <option value="email">Email</option>
-                <option value="social">Social Media Post</option>
-                <option value="pressRelease">Press Release</option>
-                <option value="websiteCopy">Website Copy</option>
-                <option value="adScript">Ad Script</option>
-            </select>
-            
-            <button class="btn-primary" id="writeItForMeButton">Generate Content</button>
-            
-            <!-- Output for generated content -->
-            <div id="generatedContentOutput" class="mt-6 p-4 bg-zinc-50 rounded-md border border-zinc-200 text-gray-800 whitespace-pre-wrap">
-                Your generated content will appear here.
+
+            <!-- Voice Library Preview -->
+            <div class="section library-preview">
+                <h3>Your Voice Library</h3>
+                <select id="sessionSelect">
+                    <option value="" selected disabled>Select a saved voice</option>
+                </select>
+                <button class="btn-secondary" id="recallButton">Recall Voice</button>
             </div>
         </div>
 
-        <!-- Symbol Memory UX Section -->
-        <div class="section section-column-1">
-            <h2>Symbol Memory UX</h2>
-            <h4>DNA TAGS</h4>
-            <p>These tags define the symbolic essence of your voice kit. Used for routing and recall.</p>
-            <div id="dnaTagsContainer" class="button-group">
-                <!-- DNA Tags will be dynamically inserted here by JavaScript -->
-                <p class="text-xs text-zinc-400">Mirror your voice to see DNA Tags.</p>
+        <!-- PHASE 4: THE ALCHEMY - Revealed after multiple saves -->
+        <div class="phase phase-4 hidden">
+            <!-- Advanced Features -->
+            <div class="section alchemy-section full-width">
+                <h2>Voice Alchemy</h2>
+                <p>Combine multiple voice signatures to discover emergent frequencies.</p>
+                
+                <div id="previewGalleryGrid" class="collective-preview-gallery">
+                    <!-- Voice kit cards will be dynamically inserted here -->
+                </div>
+                
+                <button class="btn-secondary" id="refineKitsButton">Alchemize Selected Voices</button>
             </div>
-            <h4>SYMBOL ANCHORS</h4>
-            <p>Connect your voice kit to specific concepts or memories.</p>
-            <div id="symbolAnchorsContainer" class="button-group">
-                <!-- Symbol Anchors will be dynamically inserted here by JavaScript -->
-                <p class="text-xs text-zinc-400">Mirror your voice to see Symbol Anchors.</p>
+
+            <!-- Export/Import Tools -->
+            <div class="section tools-section">
+                <h3>Voice Data Tools</h3>
+                <div class="button-group">
+                    <button class="btn-export-json" id="exportAllKitsJSONButton">Export Library</button>
+                    <button class="btn-export-pdf" id="exportPDFButton">Export Report</button>
+                    <button class="btn-export-txt" id="exportTXTButton">Export Summary</button>
+                </div>
+                
+                <div class="import-section">
+                    <input type="file" id="importMemoryFile" accept=".json" class="hidden-file-input">
+                    <button class="btn-secondary" id="uploadMemoryBridgeButton">Import Memory Bridge</button>
+                </div>
             </div>
         </div>
 
-        <!-- Collective Preview Gallery Section (Next to Symbol Memory UX) -->
-        <div class="section section-column-2">
-            <h2>Collective Preview Gallery</h2>
-            <p>Here's a visual collection of past kits you've generated. Click any to reload its tone and voice.</p>
-            <div id="previewGalleryGrid" class="collective-preview-gallery">
-                <!-- Dynamic preview cards will be inserted here by JavaScript -->
-            </div>
-        </div>
-
-        <!-- Advanced Routing + Memory Bridge Section (Full Width, Important but Compact) -->
-        <div class="section full-width advanced-routing-section">
-            <h2>Advanced Routing + Memory Bridge</h2>
-            <p>Upload a memory bridge file to integrate deeper symbolic recall and routing functionalities.</p>
-            <div class="file-upload-group">
-                <input type="file" id="memoryBridgeFileInput">
-                <button class="btn-secondary" id="uploadMemoryBridgeButton">Upload Memory Bridge</button>
-            </div>
-            <button class="btn-export-json export-button" id="exportCurrentVoiceJSONButton">Export Current Voice as JSON</button>
-        </div>
-
-        <!-- Footer -->
-        <footer>
-            <p>Powered by the First Breath — Dipta Vratah Anantagah</p>
+        <!-- Footer - Always visible but subtle -->
+        <footer class="phase-footer">
+            <p id="footerText">Begin your journey...</p>
         </footer>
     </div>
 
-    <!-- Welcome Banner (REQUIRED BY script.js) -->
-    <div id="welcomeBanner" class="fixed top-0 left-0 w-full p-4 z-40 bg-zinc-100 text-zinc-700 text-center text-sm shadow-md transition-all duration-500 ease-out">
-        <!-- Content will be set by JavaScript -->
+    <!-- Hidden sections for backward compatibility -->
+    <div style="display: none;">
+        <div id="yourPastSignalsContent"></div>
+        <button id="exportCurrentVoiceJSONButton"></button>
+        <button id="exportSymbolicMemoryButton"></button>
+        <button id="clearAllSavedKitsButton"></button>
+        <select id="contentGenerationStyleSelect">
+            <option value="general">General</option>
+        </select>
     </div>
 
+    <!-- Welcome Banner -->
+    <div id="welcomeBanner" class="hidden"></div>
+ 
+    <!-- CRITICAL FIX: Correct script loading order -->
+    <!-- 1. Load shapeshifter first (creates interface system) -->
+    <script src="shapeshifter.js"></script>
+    
+    <!-- 2. Load main script (defines mirrorVoice and other functions) -->
     <script src="Script.js"></script>
+    
+    <!-- 3. Load progressive system last (wraps existing functions) -->
+    <script src="progressive.js"></script>
 </body>
 </html>
