@@ -1,6 +1,6 @@
 // progressive.js - Progressive Revelation System
 // Dipta Vratah Anantagah - The truth reveals itself when consciousness is ready
-// CRITICAL FIX: DNA Tags appear after merging + Layout fixes
+// CRITICAL FIX: Proper Phase 3 revelation + Phase refresh bug fix
 
 class ProgressiveRevealSystem {
     constructor() {
@@ -38,32 +38,76 @@ class ProgressiveRevealSystem {
                 setTimeout(() => {
                     this.observeMirroring();
                     this.observeSaving();
-                    this.observeKitMerging(); // NEW: Observe kit merging
+                    this.observeKitMerging();
                 }, 100);
             });
         } else {
             setTimeout(() => {
                 this.observeMirroring();
                 this.observeSaving();
-                this.observeKitMerging(); // NEW: Observe kit merging
+                this.observeKitMerging();
             }, 100);
         }
     }
 
+    // CRITICAL FIX: Enhanced loadProgress with proper phase 3 handling
     loadProgress() {
         const currentMode = window.pulsecraftShapeshifter ? window.pulsecraftShapeshifter.mode : 'consciousness';
         const savedPhase = localStorage.getItem(`pulsecraft_phase_${currentMode}`);
         const savedKits = window.getSavedVoiceKits ? window.getSavedVoiceKits() : [];
         
         if (savedPhase) {
-            this.currentPhase = parseInt(savedPhase);
-            for (let i = 1; i <= this.currentPhase; i++) {
-                this.phases[i].unlocked = true;
+            const phase = parseInt(savedPhase);
+            console.log(`Progressive system: Loading saved phase ${phase} for mode ${currentMode}`);
+            
+            // CRITICAL FIX: Set capability based on what user has earned
+            for (let i = 1; i <= phase; i++) {
+                this.phases[i].capability = true;
             }
+            
+            // BUT always start at phase 1 on page load
+            this.currentPhase = 1;
+            this.phases[1].unlocked = true;
+            
+            // Hide all phases except phase 1 initially
+            this.hideAllPhasesExceptOne();
+            
+            console.log('Progressive system: Reset to phase 1 on page load, but capabilities preserved');
         }
         
-        if (savedKits.length >= 3 && this.currentPhase < 4) {
-            this.unlockPhase(4);
+        // CRITICAL FIX: Set phase capabilities based on saved kits
+        if (savedKits.length >= 1 && !this.phases[3].capability) {
+            this.phases[3].capability = true;
+            console.log('Progressive system: Phase 3 capability granted due to saved kit(s)');
+        }
+        
+        if (savedKits.length >= 3 && !this.phases[4].capability) {
+            this.phases[4].capability = true;
+            console.log('Progressive system: Phase 4 capability granted due to 3+ saved kits');
+        }
+    }
+
+    // Hide all phases except phase 1
+    hideAllPhasesExceptOne() {
+        for (let i = 2; i <= 4; i++) {
+            const phaseElement = document.querySelector(`.phase-${i}`);
+            if (phaseElement) {
+                phaseElement.classList.add('hidden');
+                phaseElement.style.display = 'none';
+                phaseElement.style.opacity = '0';
+                phaseElement.style.visibility = 'hidden';
+                phaseElement.classList.remove('active', 'emerging', 'emerged');
+            }
+            this.phases[i].unlocked = false;
+        }
+        
+        // Ensure phase 1 is visible
+        const phase1 = document.querySelector('.phase-1');
+        if (phase1) {
+            phase1.classList.remove('hidden');
+            phase1.style.display = 'block';
+            phase1.style.opacity = '1';
+            phase1.style.visibility = 'visible';
         }
     }
 
@@ -85,6 +129,14 @@ class ProgressiveRevealSystem {
                 setTimeout(() => {
                     if (window.progressiveSystem) {
                         window.progressiveSystem.revealPhase2();
+                        
+                        // CRITICAL FIX: Auto-unlock Phase 3 if user has capability
+                        setTimeout(() => {
+                            if (window.progressiveSystem.phases[3].capability) {
+                                console.log('Progressive system: Auto-unlocking Phase 3 due to saved capability');
+                                window.progressiveSystem.unlockPhase(3);
+                            }
+                        }, 1000);
                     }
                 }, 300);
             }
@@ -108,9 +160,11 @@ class ProgressiveRevealSystem {
             const result = await originalSaveVoiceKit.apply(this, arguments);
             const savedKits = window.getSavedVoiceKits ? window.getSavedVoiceKits() : [];
             
+            // CRITICAL FIX: Proper phase progression
             if (savedKits.length === 1) {
                 setTimeout(() => {
                     if (window.progressiveSystem) {
+                        console.log('Progressive system: First kit saved, unlocking Phase 3');
                         window.progressiveSystem.unlockPhase(3);
                     }
                 }, 1000);
@@ -119,6 +173,7 @@ class ProgressiveRevealSystem {
             if (savedKits.length >= 3) {
                 setTimeout(() => {
                     if (window.progressiveSystem) {
+                        console.log('Progressive system: 3+ kits saved, unlocking Phase 4');
                         window.progressiveSystem.unlockPhase(4);
                     }
                 }, 1000);
@@ -130,11 +185,9 @@ class ProgressiveRevealSystem {
         console.log('Progressive system: saveVoiceKit observer set up successfully');
     }
 
-    // NEW: Observe kit merging/refinement
     observeKitMerging() {
         if (typeof window.refineSelectedKits !== 'function') {
             console.warn('refineSelectedKits function not found, checking if defined in global scope...');
-            // Check if it's defined on the global window object
             setTimeout(() => this.observeKitMerging(), 500);
             return;
         }
@@ -145,7 +198,7 @@ class ProgressiveRevealSystem {
             console.log('Progressive system: refineSelectedKits called');
             const result = await originalRefineSelectedKits.apply(this, arguments);
             
-            // CRITICAL: After successful kit merging, force DNA tags update
+            // After successful kit merging, force DNA tags update
             setTimeout(() => {
                 if (window.progressiveSystem) {
                     console.log('Progressive system: Forcing DNA tags update after kit merging');
@@ -160,20 +213,14 @@ class ProgressiveRevealSystem {
         console.log('Progressive system: refineSelectedKits observer set up successfully');
     }
 
+    // CRITICAL FIX: Enhanced revealPhase2 
     revealPhase2() {
         console.log('Progressive system: revealPhase2 called, current unlocked:', this.phases[2].unlocked);
-        
-        if (this.phases[2].unlocked) {
-            console.log('Progressive system: Phase 2 already unlocked, still triggering crystallization');
-            setTimeout(() => {
-                this.crystallizeTags();
-            }, 200);
-            return;
-        }
         
         console.log('Progressive system: Unlocking Phase 2');
         
         this.phases[2].unlocked = true;
+        this.phases[2].capability = true;
         this.currentPhase = Math.max(this.currentPhase, 2);
         
         const phase2 = document.querySelector('.phase-2');
@@ -196,6 +243,8 @@ class ProgressiveRevealSystem {
                 setTimeout(() => {
                     attr.classList.add('revealed');
                     attr.style.opacity = '1';
+                    attr.style.display = 'block';
+                    attr.style.visibility = 'visible';
                 }, index * 200);
             });
             
@@ -210,9 +259,11 @@ class ProgressiveRevealSystem {
         this.showPhaseNotification(2);
     }
 
-    // NEW: Force phase 2 to be visible (for merged kits)
     forcePhase2Visibility() {
         console.log('Progressive system: forcePhase2Visibility called');
+        
+        this.phases[2].unlocked = true;
+        this.currentPhase = Math.max(this.currentPhase, 2);
         
         const phase2 = document.querySelector('.phase-2');
         if (phase2) {
@@ -222,7 +273,6 @@ class ProgressiveRevealSystem {
             phase2.style.visibility = 'visible';
             phase2.classList.add('active');
             
-            // Force all voice attributes to be visible
             const attributes = phase2.querySelectorAll('.voice-attribute');
             attributes.forEach((attr) => {
                 attr.classList.add('revealed');
@@ -259,7 +309,6 @@ class ProgressiveRevealSystem {
                     }, index * 100);
                 });
                 
-                // Force containers to be visible
                 const dnaTagsContainer = document.getElementById('dnaTagsContainer');
                 const symbolAnchorsContainer = document.getElementById('symbolAnchorsContainer');
                 
@@ -281,13 +330,26 @@ class ProgressiveRevealSystem {
         }
     }
 
+    // CRITICAL FIX: Enhanced unlockPhase with proper phase 3 handling
     unlockPhase(phaseNumber) {
-        if (phaseNumber <= this.currentPhase) return;
+        console.log(`Progressive system: Attempting to unlock phase ${phaseNumber}`);
+        
+        // CRITICAL FIX: Don't skip phases - unlock them in sequence
+        if (phaseNumber > this.currentPhase + 1) {
+            console.log(`Progressive system: Cannot skip to phase ${phaseNumber}, current phase is ${this.currentPhase}`);
+            return;
+        }
+        
+        if (phaseNumber <= this.currentPhase && this.phases[phaseNumber].unlocked) {
+            console.log(`Progressive system: Phase ${phaseNumber} already unlocked`);
+            return;
+        }
         
         console.log(`Progressive system: Unlocking phase ${phaseNumber}`);
         
         this.currentPhase = phaseNumber;
         this.phases[phaseNumber].unlocked = true;
+        this.phases[phaseNumber].capability = true;
         
         const phaseElement = document.querySelector(`.phase-${phaseNumber}`);
         if (phaseElement) {
@@ -316,20 +378,56 @@ class ProgressiveRevealSystem {
         this.showPhaseNotification(phaseNumber);
     }
 
+    // CRITICAL FIX: Enhanced revealExpansion for Phase 3
     revealExpansion() {
+        console.log('Progressive system: revealExpansion called for Phase 3');
+        
+        // Reveal multi-style preview tabs
         const tabs = document.querySelectorAll('.tab-button');
+        console.log('Progressive system: Found', tabs.length, 'tab buttons');
+        
         tabs.forEach((tab, index) => {
             setTimeout(() => {
                 tab.classList.add('available');
                 tab.style.opacity = '1';
+                tab.style.visibility = 'visible';
+                tab.style.display = 'inline-block';
+                console.log('Progressive system: Revealed tab:', tab.textContent);
             }, index * 150);
         });
+        
+        // Reveal custom content generation section
+        const customContentSection = document.querySelector('.create-custom-content');
+        if (customContentSection) {
+            setTimeout(() => {
+                customContentSection.style.opacity = '1';
+                customContentSection.style.visibility = 'visible';
+                customContentSection.style.display = 'block';
+                console.log('Progressive system: Revealed custom content section');
+            }, 800);
+        }
+        
+        // Reveal collective preview gallery
+        const gallerySection = document.querySelector('.collective-preview-gallery');
+        if (gallerySection) {
+            setTimeout(() => {
+                gallerySection.style.opacity = '1';
+                gallerySection.style.visibility = 'visible';
+                gallerySection.style.display = 'block';
+                console.log('Progressive system: Revealed gallery section');
+            }, 1000);
+        }
     }
 
     revealAlchemy() {
+        console.log('Progressive system: revealAlchemy called for Phase 4');
+        
         const alchemySection = document.querySelector('.alchemy-section');
         if (alchemySection) {
             alchemySection.classList.add('awakening');
+            alchemySection.style.opacity = '1';
+            alchemySection.style.visibility = 'visible';
+            alchemySection.style.display = 'block';
         }
         
         if (window.renderSymbolMemoryGrid) {
@@ -355,6 +453,8 @@ class ProgressiveRevealSystem {
                         phaseElement.style.opacity = '1';
                         phaseElement.style.visibility = 'visible';
                     }
+                } else {
+                    this.container.classList.remove(`phase-${i}-unlocked`);
                 }
             }
         }
@@ -407,31 +507,36 @@ class ProgressiveRevealSystem {
 
     saveProgress() {
         const currentMode = window.pulsecraftShapeshifter ? window.pulsecraftShapeshifter.mode : 'consciousness';
-        localStorage.setItem(`pulsecraft_phase_${currentMode}`, this.currentPhase.toString());
+        
+        let highestCapability = 1;
+        for (let i = 4; i >= 1; i--) {
+            if (this.phases[i].capability) {
+                highestCapability = i;
+                break;
+            }
+        }
+        
+        localStorage.setItem(`pulsecraft_phase_${currentMode}`, highestCapability.toString());
+        console.log(`Progressive system: Saved highest capability phase ${highestCapability} for mode ${currentMode}`);
     }
 
     debugUnlockPhase(phase) {
         this.unlockPhase(phase);
     }
 
-    // CRITICAL NEW METHOD: Force DNA tags update (enhanced)
     forceDNATagsUpdate() {
         console.log('Progressive system: forceDNATagsUpdate called');
         
-        // First ensure phase 2 is visible
         this.forcePhase2Visibility();
         
-        // Then crystallize tags
         setTimeout(() => {
             this.crystallizeTags();
         }, 100);
         
-        // Force update the actual DNA tags and symbol anchors content
         setTimeout(() => {
             if (window.currentVoiceKit) {
                 console.log('Progressive system: Updating DNA tags with current voice kit data');
                 
-                // Force re-render of DNA tags and symbol anchors
                 if (window.updateDNATags && window.currentVoiceKit.dnaTags) {
                     window.updateDNATags(window.currentVoiceKit.dnaTags);
                 }
@@ -440,14 +545,33 @@ class ProgressiveRevealSystem {
                     window.updateSymbolAnchors(window.currentVoiceKit.symbolAnchors);
                 }
                 
-                // Force crystallization again after content update
                 setTimeout(() => {
                     this.crystallizeTags();
                 }, 200);
             }
         }, 300);
     }
+
+    resetToPhaseOne() {
+        console.log('Progressive system: Resetting to phase 1 while preserving capabilities');
+        
+        this.hideAllPhasesExceptOne();
+        this.currentPhase = 1;
+        this.updatePhaseVisibility();
+        this.updateFooter();
+        
+        console.log('Progressive system: Reset complete - ready for fresh revelation');
+    }
 }
+
+// Global function for resetting progressive phase
+window.resetProgressivePhase = function() {
+    console.log('Global resetProgressivePhase called');
+    
+    if (window.progressiveSystem) {
+        window.progressiveSystem.resetToPhaseOne();
+    }
+};
 
 // Initialize the progressive system
 function initializeProgressiveSystem() {
