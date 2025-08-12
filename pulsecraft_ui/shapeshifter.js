@@ -559,80 +559,65 @@ translateInterface(lang) {
         }
     }
 
-    setupModeSwitcher() {
-        let switcher = document.getElementById('modeSwitcher');
-        if (!switcher) {
-            switcher = document.createElement('div');
-            switcher.id = 'modeSwitcher';
-            switcher.className = 'mode-switcher hidden';
-            switcher.innerHTML = `
-                <select id="modeSelect">
-                    <option value="consciousness">Consciousness</option>
-                    <option value="branding">Branding</option>
-                    <option value="author">Author</option>
-                    <option value="therapy">Therapy</option>
-                    <option value="deep">0xDEEP</option> 
-                </select>
-            `;
-            document.body.appendChild(switcher);
-        }
+    // 1. REPLACE setupModeSwitcher() function:
+setupModeSwitcher() {
+    let switcher = document.getElementById('modeSwitcher');
+    if (!switcher) {
+        switcher = document.createElement('div');
+        switcher.id = 'modeSwitcher';
+        // CRITICAL FIX: Remove 'hidden' class - make it always visible
+        switcher.className = 'mode-switcher';
+        switcher.innerHTML = `
+            <label for="modeSelect" style="font-size: 12px; color: #666; margin-bottom: 4px; display: block;">Interface Mode:</label>
+            <select id="modeSelect">
+                <option value="consciousness">Consciousness</option>
+                <option value="branding">Branding</option>
+                <option value="author">Author</option>
+                <option value="therapy">Therapy</option>
+                <option value="deep">0xDEEP</option> 
+            </select>
+        `;
+        document.body.appendChild(switcher);
+    }
 
-        // This is the corrected code
-        const modeSelect = document.getElementById('modeSelect');
-        if (modeSelect) {
-            modeSelect.value = this.mode;
-            modeSelect.addEventListener('change', (e) => {
-                this.mode = e.target.value;
+    const modeSelect = document.getElementById('modeSelect');
+    if (modeSelect) {
+        modeSelect.value = this.mode;
+        modeSelect.addEventListener('change', (e) => {
+            this.mode = e.target.value;
 
-                // --- THE FIX ---
-                // Update the URL in the browser's address bar without reloading the page
-                const url = new URL(window.location);
-                url.searchParams.set('mode', this.mode);
-                window.history.pushState({}, '', url);
-                // --- END FIX ---
+            // Update the URL in the browser's address bar without reloading the page
+            const url = new URL(window.location);
+            url.searchParams.set('mode', this.mode);
+            window.history.pushState({}, '', url);
 
-                this.applyMode();
-            });
-        }
-    } // <--- ADD THIS MISSING BRACE
+            this.applyMode();
+        });
+    }
+}
 
     setupEasterEggs() {
-        // Konami code for deep mode
-        let konamiIndex = 0;
-        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-        
-        document.addEventListener('keydown', (e) => {
-            if (e.key === konamiCode[konamiIndex]) {
-                konamiIndex++;
-                if (konamiIndex === konamiCode.length) {
-                    this.activateDeepMode();
-                    konamiIndex = 0;
-                }
-            } else {
+    // Konami code for deep mode
+    let konamiIndex = 0;
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === konamiCode[konamiIndex]) {
+            konamiIndex++;
+            if (konamiIndex === konamiCode.length) {
+                this.activateDeepMode();
                 konamiIndex = 0;
             }
-        });
-
-        // Triple-click logo for mode switcher
-        let clickCount = 0;
-        let clickTimer;
-        const logo = document.querySelector('.main-title'); 
-        if (logo) {
-            logo.addEventListener('click', () => {
-                clickCount++;
-                clearTimeout(clickTimer);
-                clickTimer = setTimeout(() => clickCount = 0, 500);
-                
-                if (clickCount === 3) {
-                    const modeSwitcher = document.getElementById('modeSwitcher');
-                    if (modeSwitcher) {
-                        modeSwitcher.classList.toggle('hidden');
-                    }
-                    clickCount = 0;
-                }
-            });
+        } else {
+            konamiIndex = 0;
         }
-    }
+    });
+
+    // REMOVED: Triple-click logo functionality 
+    // Mode switcher is now always visible, no need for hidden easter egg
+    
+    console.log('shapeshifter.js: Easter eggs initialized (Konami code active)');
+}
 
     activateDeepMode() {
         localStorage.setItem('0xDEEP_ACTIVATED', 'true'); 
