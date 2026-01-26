@@ -17,6 +17,13 @@
     display: none !important;
 }
 
+/* Ensure phases display properly when active */
+.phase.active,
+.phase.emerging,
+.phase:not(.hidden) {
+    display: block !important;
+}
+
 .phase.emerging {
     display: block !important;
     animation: phaseEmerge 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -452,19 +459,12 @@
     }
 }
 
-/* Final polish */
+/* Final polish - Don't override container grid, just set min-height */
 .container {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
-.phase-1 {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+/* Phase 1 centering handled separately */
 
 /* Ensure smooth scrolling between phases */
 html {

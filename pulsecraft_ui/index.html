@@ -9,23 +9,19 @@
     <link rel="stylesheet" href="enhancement.css">
     <link rel="stylesheet" href="shapeshifter.css">
     <link rel="stylesheet" href="progressive.css"> 
-    <!-- Include jsPDF library for PDF export -->
+    <link rel="stylesheet" href="dashboard.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Font Awesome for loading spinner icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <!-- Toast Container -->
     <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 
-    <!-- Global Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay hidden">
         <div class="spinner"></div>
         <p class="loading-text">Reflecting truth...</p>
     </div>
 
     <div class="container" data-phase="1">
-        <!-- PHASE 1: THE MIRROR - Always visible -->
         <div class="phase phase-1 active">
             <h1 class="main-title">PulseCraft</h1>
             <p class="tagline">"Most tools give you templates. This one gives you yourself."</p>
@@ -40,39 +36,31 @@
             </div>
         </div>
 
-        <!-- PHASE 2: THE RECOGNITION - Revealed after first mirror -->
         <div class="phase phase-2 hidden">
             <div class="section recognition-section">
                 <h2>Your Voice Revealed</h2>
                 <div id="mirroredVoiceOutput" class="voice-reflection-output">
                     <div class="voice-attribute" data-attribute="tone">
-                        <strong>Tone:</strong>
-                        <span id="outputTone">Awaiting reflection...</span>
+                        <strong>Tone:</strong><span id="outputTone">Awaiting reflection...</span>
                     </div>
                     <div class="voice-attribute" data-attribute="vocabulary">
-                        <strong>Vocabulary:</strong>
-                        <span id="outputVocabulary">Awaiting reflection...</span>
+                        <strong>Vocabulary:</strong><span id="outputVocabulary">Awaiting reflection...</span>
                     </div>
                     <div class="voice-attribute" data-attribute="archetype">
-                        <strong>Archetype:</strong>
-                        <span id="outputArchetype">Awaiting reflection...</span>
+                        <strong>Archetype:</strong><span id="outputArchetype">Awaiting reflection...</span>
                     </div>
                     <div class="voice-attribute" data-attribute="phrasing">
-                        <strong>Phrasing Style:</strong>
-                        <span id="outputPhrasingStyle">Awaiting reflection...</span>
+                        <strong>Phrasing Style:</strong><span id="outputPhrasingStyle">Awaiting reflection...</span>
                     </div>
                     <div class="voice-attribute" data-attribute="samples">
-                        <strong>Sample Phrases:</strong>
-                        <span id="outputSamplePhrases">Awaiting reflection...</span>
+                        <strong>Sample Phrases:</strong><span id="outputSamplePhrases">Awaiting reflection...</span>
                     </div>
                     <div class="voice-attribute" data-attribute="avoid">
-                        <strong>Phrases to Avoid:</strong>
-                        <span id="outputPhrasesToAvoid">Awaiting reflection...</span>
+                        <strong>Phrases to Avoid:</strong><span id="outputPhrasesToAvoid">Awaiting reflection...</span>
                     </div>
                 </div>
             </div>
 
-            <!-- DNA and Symbol Memory -->
             <div class="section dna-section">
                 <div class="dna-container">
                     <h3>DNA TAGS</h3>
@@ -91,7 +79,6 @@
                 </div>
             </div>
 
-            <!-- Save Controls -->
             <div class="section save-section">
                 <h3>Crystallize This Frequency</h3>
                 <input type="text" id="brandNameInput" placeholder="Name this voice signature...">
@@ -100,37 +87,23 @@
             </div>
         </div>
 
-        <!-- PHASE 3: THE EXPANSION - Revealed after first save -->
         <div class="phase phase-3 hidden">
-            <!-- Content Generation -->
             <div class="section expansion-section full-width">
-                <h2>Express Through Your Voice</h2>
-                <p>Now that we know your voice, let's use it to create.</p>
-                
-                <div class="tab-buttons">
-                    <button class="tab-button" data-style="storyBasedSelling">Story</button>
-                    <button class="tab-button" data-style="aboutPage">About</button>
-                    <button class="tab-button" data-style="manifestoOriginVoice">Manifesto</button>
-                    <button class="tab-button" data-style="insightTone">Insight</button>
-                    <button class="tab-button" data-style="founderLetter">Letter</button>
-                </div>
-                
-                <div id="stylePreviewOutput" class="tab-content">
-                    <p class="tab-placeholder">Select a style above to see your voice in action</p>
-                </div>
+                <h2>Creation Studio</h2>
+                <p>Generate content using your crystallized voice.</p>
                 
                 <div class="generation-controls">
-                    <h3>Create Custom Content</h3>
-                    <textarea id="contentGenerationInput" rows="3" placeholder="What do you want to express?"></textarea>
-                    <button class="btn-primary" id="writeItForMeButton">Generate Content</button>
+                    <textarea id="contentGenerationInput" rows="6" 
+                        placeholder="What do you want to create? (e.g., 'Write a story about...', 'Draft a strategy for...', 'Write a LinkedIn post...')"></textarea>
+                    
+                    <button class="btn-primary" id="writeItForMeButton">
+                        <i class="fas fa-pen-nib"></i> Generate Content
+                    </button>
                 </div>
                 
-                <div id="generatedContentOutput" class="generated-output">
-                    <p class="output-placeholder">Your generated content will appear here...</p>
-                </div>
+                <div id="generatedContentOutput" class="generated-output" style="display:none; margin-top: 1.5rem; padding: 1.5rem; border: 1px solid #e2e8f0; border-radius: 8px; min-height: 100px; background: #fff;"></div>
             </div>
 
-            <!-- Voice Library Preview -->
             <div class="section library-preview">
                 <h3>Your Voice Library</h3>
                 <select id="sessionSelect">
@@ -140,21 +113,14 @@
             </div>
         </div>
 
-        <!-- PHASE 4: THE ALCHEMY - Revealed after multiple saves -->
         <div class="phase phase-4 hidden">
-            <!-- Advanced Features -->
             <div class="section alchemy-section full-width">
                 <h2>Voice Alchemy</h2>
                 <p>Combine multiple voice signatures to discover emergent frequencies.</p>
-                
-                <div id="previewGalleryGrid" class="collective-preview-gallery">
-                    <!-- Voice kit cards will be dynamically inserted here -->
-                </div>
-                
+                <div id="previewGalleryGrid" class="collective-preview-gallery"></div>
                 <button class="btn-secondary" id="refineKitsButton">Alchemize Selected Voices</button>
             </div>
 
-            <!-- Export/Import Tools -->
             <div class="section tools-section">
                 <h3>Voice Data Tools</h3>
                 <div class="button-group">
@@ -162,7 +128,6 @@
                     <button class="btn-export-pdf" id="exportPDFButton">Export Report</button>
                     <button class="btn-export-txt" id="exportTXTButton">Export Summary</button>
                 </div>
-                
                 <div class="import-section">
                     <input type="file" id="importMemoryFile" accept=".json" class="hidden-file-input">
                     <button class="btn-secondary" id="uploadMemoryBridgeButton">Import Memory Bridge</button>
@@ -170,34 +135,142 @@
             </div>
         </div>
 
-        <!-- Footer - Always visible but subtle -->
+        <div class="phase phase-5 hidden">
+            <div class="section observatory-section full-width">
+                <h2 class="observatory-title">The Observatory</h2>
+                <p class="observatory-subtitle">Witness the trajectory of your soul.</p>
+
+                <!-- Row 1: Resonance Gauge (Full Width, Centered) -->
+                <div class="dashboard-card resonance-card">
+                    <div class="resonance-header">
+                        <span class="resonance-label">Voice Resonance</span>
+                        <span class="status-badge" id="driftStatusBadge">Calculating...</span>
+                    </div>
+                    <div class="resonance-body">
+                        <div class="gauge-wrapper">
+                            <svg class="drift-gauge" viewBox="0 0 120 70">
+                                <defs>
+                                    <linearGradient id="gaugeGradientHigh" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#10b981"/>
+                                        <stop offset="100%" style="stop-color:#34d399"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M 15 55 A 45 45 0 0 1 105 55" class="gauge-bg"/>
+                                <path d="M 15 55 A 45 45 0 0 1 105 55" class="gauge-fill" id="driftGaugeFill"/>
+                                <text x="60" y="52" text-anchor="middle" class="drift-score" id="driftScoreDisplay">--%</text>
+                            </svg>
+                        </div>
+                        <p class="drift-insight" id="driftInsightText">Awaiting signal analysis...</p>
+                    </div>
+                </div>
+
+                <!-- Row 2: Four Metric Cards (2x2 Grid) -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon tension-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-header">
+                                <span class="metric-label">Cognitive Tension</span>
+                                <span class="metric-value" id="metaTension">--</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill tension" id="metaTensionBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon cadence-icon">
+                            <i class="fas fa-heart-pulse"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-header">
+                                <span class="metric-label">Emotional Cadence</span>
+                                <span class="metric-value" id="metaCadence">--</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill cadence" id="metaCadenceBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon stability-icon">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-header">
+                                <span class="metric-label">Stability Band</span>
+                                <span class="metric-value" id="metaStability">--</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill stability" id="metaStabilityBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon evolution-icon">
+                            <i class="fas fa-arrows-spin"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-header">
+                                <span class="metric-label">Evolution State</span>
+                                <span class="metric-value" id="metaEvolution">--</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill evolution" id="metaEvolutionBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Timeline & Activity Side by Side -->
+                <div class="dashboard-bottom-grid">
+                    <div class="dashboard-card timeline-card">
+                        <div class="card-title">
+                            <i class="fas fa-route"></i>
+                            <span>Archetypal Trajectory</span>
+                        </div>
+                        <div class="timeline-container" id="evolutionTimeline">
+                            <p class="placeholder-text">Your journey is being mapped...</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card history-card">
+                        <div class="card-title">
+                            <i class="fas fa-clock-rotate-left"></i>
+                            <span>Activity Stream</span>
+                        </div>
+                        <div class="history-feed" id="historyFeedContainer">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="refreshDashboardButton">
+                    <i class="fas fa-sync-alt"></i> Refresh Observatory
+                </button>
+            </div>
+        </div>
+
         <footer class="phase-footer">
             <p id="footerText">Begin your journey...</p>
         </footer>
     </div>
 
-    <!-- Hidden sections for backward compatibility -->
     <div style="display: none;">
         <div id="yourPastSignalsContent"></div>
         <button id="exportCurrentVoiceJSONButton"></button>
         <button id="exportSymbolicMemoryButton"></button>
         <button id="clearAllSavedKitsButton"></button>
-        <select id="contentGenerationStyleSelect">
-            <option value="general">General</option>
-        </select>
     </div>
 
-    <!-- Welcome Banner -->
     <div id="welcomeBanner" class="hidden"></div>
  
-    <!-- CRITICAL FIX: Correct script loading order -->
-    <!-- 1. Load shapeshifter first (creates interface system) -->
     <script src="shapeshifter.js"></script>
-    
-    <!-- 2. Load main script (defines mirrorVoice and other functions) -->
-    <script src="Script.js"></script>
-    
-    <!-- 3. Load progressive system last (wraps existing functions) -->
+    <script src="script.js"></script>
     <script src="progressive.js"></script>
 </body>
 </html>

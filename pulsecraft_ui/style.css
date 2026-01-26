@@ -53,7 +53,7 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
     gap: 0.9rem;
     width: 100%;
-    max-width: 1150px;
+    max-width: 1400px;
     padding: 1.2rem;
     background-color: var(--color-panel-background);
     border-radius: 0.7rem;
@@ -835,7 +835,7 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)) !important;
     gap: 0.9rem !important;
     width: 100% !important;
-    max-width: 1150px !important;
+    max-width: 1400px !important;
     padding: 1.2rem !important;
     background-color: var(--color-panel-background) !important;
     border-radius: 0.7rem !important;
@@ -865,7 +865,8 @@ body {
 
 .phase-2,
 .phase-3,
-.phase-4 {
+.phase-4,
+.phase-5 {
     grid-column: 1 / -1;
     width: 100%;
 }

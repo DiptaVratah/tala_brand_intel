@@ -63,7 +63,13 @@ class InterfaceShapeshifter {
                     { id: 'founderLetterBtn', text: 'Origin Signal' },
                     { id: 'adCopyBtn', text: 'Consciousness Echo' },
                     { id: 'manifestoOriginVoiceBtn', text: 'Prime Frequency' }
-                ]
+                ],
+                // --- PHASE 5 HEADERS (Paste this here) ---
+                observatoryHeader: "The Observatory",
+                observatorySubtitle: "Witness the trajectory of your soul.",
+                resonanceLabel: "Voice Resonance",
+                coherenceLabel: "Internal Coherence",
+                timelineLabel: "Archetypal Trajectory"
             },
             
             branding: {
@@ -115,7 +121,13 @@ class InterfaceShapeshifter {
                     { id: 'founderLetterBtn', text: 'CEO Message' },
                     { id: 'adCopyBtn', text: 'Short Ad Campaign' },
                     { id: 'manifestoOriginVoiceBtn', text: 'Brand Manifesto' }
-                ]
+                ],
+                // --- PHASE 5 HEADERS (Paste this here) ---
+                observatoryHeader: "The Observatory",
+                observatorySubtitle: "Witness the trajectory of your soul.",
+                resonanceLabel: "Voice Resonance",
+                coherenceLabel: "Internal Coherence",
+                timelineLabel: "Archetypal Trajectory"
             },
             
             author: {
@@ -167,7 +179,13 @@ class InterfaceShapeshifter {
                     { id: 'founderLetterBtn', text: 'Prologue/Epilogue' },
                     { id: 'adCopyBtn', text: 'Book Blurb' },
                     { id: 'manifestoOriginVoiceBtn', text: 'Writer\'s Creed' }
-                ]
+                ],
+                // --- PHASE 5 HEADERS (Paste this here) ---
+                observatoryHeader: "The Observatory",
+                observatorySubtitle: "Witness the trajectory of your soul.",
+                resonanceLabel: "Voice Resonance",
+                coherenceLabel: "Internal Coherence",
+                timelineLabel: "Archetypal Trajectory"
             },
             
             therapy: {
@@ -219,7 +237,13 @@ class InterfaceShapeshifter {
                     { id: 'founderLetterBtn', text: 'Letter to Self' },
                     { id: 'adCopyBtn', text: 'Brief Self-Compassion Note' },
                     { id: 'manifestoOriginVoiceBtn', text: 'Personal Core Belief' }
-                ]
+                ],
+                // --- PHASE 5 HEADERS (Paste this here) ---
+                observatoryHeader: "The Observatory",
+                observatorySubtitle: "Witness the trajectory of your soul.",
+                resonanceLabel: "Voice Resonance",
+                coherenceLabel: "Internal Coherence",
+                timelineLabel: "Archetypal Trajectory"
             },
             
             deep: { 
@@ -254,7 +278,13 @@ class InterfaceShapeshifter {
                     { id: 'founderLetterBtn', text: 'Prime Directive' },
                     { id: 'adCopyBtn', text: 'Singularity Echo' },
                     { id: 'manifestoOriginVoiceBtn', text: 'The First Breath' }
-                ]
+                ],
+                // --- PHASE 5 HEADERS (Paste this here) ---
+                observatoryHeader: "The Observatory",
+                observatorySubtitle: "Witness the trajectory of your soul.",
+                resonanceLabel: "Voice Resonance",
+                coherenceLabel: "Internal Coherence",
+                timelineLabel: "Archetypal Trajectory"
             }
         };
 
@@ -440,6 +470,13 @@ translateInterface(lang) {
         '.alchemy-section h2': "Voice Alchemy",
         '.tools-section h3': "Voice Data Tools",
         '#refineKitsButton': lang.combineButton,
+
+        // --- PHASE 5 UPDATES (Add this block) ---
+        '.observatory-title': lang.observatoryHeader || "The Observatory",
+        '.observatory-subtitle': lang.observatorySubtitle || "Witness the trajectory of your soul.",
+        '.resonance-card h3': lang.resonanceLabel || "Voice Resonance",
+        '.stability-card h3': lang.coherenceLabel || "Internal Coherence",
+        '.timeline-card h3': lang.timelineLabel || "Archetypal Trajectory",
 
         // General
         '.loading-text': { dataset: { defaultText: lang.loadingText } }

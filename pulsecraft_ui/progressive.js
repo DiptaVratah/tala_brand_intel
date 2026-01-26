@@ -10,7 +10,8 @@ class ProgressiveRevealSystem {
             1: { name: 'mirror', unlocked: true },
             2: { name: 'recognition', unlocked: false },
             3: { name: 'expansion', unlocked: false },
-            4: { name: 'alchemy', unlocked: false }
+            4: { name: 'alchemy', unlocked: false },
+            5: { name: 'observatory', unlocked: false } // <--- ADD THIS LINE
         };
         
         this.init();
@@ -85,6 +86,17 @@ class ProgressiveRevealSystem {
             this.phases[4].capability = true;
             console.log('Progressive system: Phase 4 capability granted due to 3+ saved kits');
         }
+
+        // --- PASTE YOUR CODE HERE ---
+        // Check for Phase 5 (Observatory) capability
+        if (this.phases[4].capability && !this.phases[5]?.capability) {
+            // Initialize Phase 5 if not in constructor
+            if (!this.phases[5]) this.phases[5] = { name: 'observatory', unlocked: false };
+            
+            this.phases[5].capability = true;
+            console.log('Progressive system: Phase 5 capability granted (Alchemy unlocked)');
+        }
+        // -----------------------------
     }
 
     // Hide all phases except phase 1
@@ -379,43 +391,38 @@ class ProgressiveRevealSystem {
     }
 
     // CRITICAL FIX: Enhanced revealExpansion for Phase 3
+    // FIXED: Reveal the Universal Creation Studio instead of Tabs
     revealExpansion() {
         console.log('Progressive system: revealExpansion called for Phase 3');
-        
-        // Reveal multi-style preview tabs
-        const tabs = document.querySelectorAll('.tab-button');
-        console.log('Progressive system: Found', tabs.length, 'tab buttons');
-        
-        tabs.forEach((tab, index) => {
+
+        // 1. Reveal the Creation Studio (Universal Input Area)
+        // Replaces old tab/custom content logic
+        const creationStudio = document.querySelector('.generation-controls');
+        if (creationStudio) {
             setTimeout(() => {
-                tab.classList.add('available');
-                tab.style.opacity = '1';
-                tab.style.visibility = 'visible';
-                tab.style.display = 'inline-block';
-                console.log('Progressive system: Revealed tab:', tab.textContent);
-            }, index * 150);
-        });
-        
-        // Reveal custom content generation section
-        const customContentSection = document.querySelector('.create-custom-content');
-        if (customContentSection) {
-            setTimeout(() => {
-                customContentSection.style.opacity = '1';
-                customContentSection.style.visibility = 'visible';
-                customContentSection.style.display = 'block';
-                console.log('Progressive system: Revealed custom content section');
-            }, 800);
+                creationStudio.style.opacity = '1';
+                creationStudio.style.visibility = 'visible';
+                creationStudio.style.display = 'block';
+                creationStudio.classList.add('emerging'); // Triggers CSS animation
+                console.log('Progressive system: Revealed Creation Studio');
+            }, 300);
         }
         
-        // Reveal collective preview gallery
-        const gallerySection = document.querySelector('.collective-preview-gallery');
-        if (gallerySection) {
+        // 2. Reveal the Voice Library Preview
+        const librarySection = document.querySelector('.library-preview');
+        if (librarySection) {
             setTimeout(() => {
-                gallerySection.style.opacity = '1';
-                gallerySection.style.visibility = 'visible';
-                gallerySection.style.display = 'block';
-                console.log('Progressive system: Revealed gallery section');
-            }, 1000);
+                librarySection.style.opacity = '1';
+                librarySection.style.visibility = 'visible';
+                librarySection.style.display = 'block';
+                console.log('Progressive system: Revealed Library');
+            }, 600);
+        }
+
+        // 3. Ensure the Output Canvas is ready (but hidden until generation)
+        const outputCanvas = document.getElementById('generatedContentOutput');
+        if (outputCanvas) {
+            outputCanvas.style.display = 'none'; // Keeps it hidden until user clicks generate
         }
     }
 
@@ -434,9 +441,20 @@ class ProgressiveRevealSystem {
             window.renderSymbolMemoryGrid();
         }
         
-        setTimeout(() => {
+       setTimeout(() => {
             this.crystallizeTags();
         }, 500);
+
+        // --- PASTE YOUR CODE HERE ---
+        // AUTO-UNLOCK PHASE 5 AFTER ALCHEMY IS REVEALED
+        setTimeout(() => {
+            if (this.phases[5]) {
+                this.unlockPhase(5);
+                // Call the data refresh when Phase 5 opens
+                if (window.refreshObservatory) window.refreshObservatory();
+            }
+        }, 2000); 
+        // -----------------------------
     }
 
     updatePhaseVisibility() {
