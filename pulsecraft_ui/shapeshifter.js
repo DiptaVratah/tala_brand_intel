@@ -391,6 +391,12 @@ class InterfaceShapeshifter {
         this.mode = mode;
         this.applyMode();
 
+        // CRITICAL FIX: Update mode switcher dropdown to reflect current mode
+        const modeSelect = document.getElementById('modeSelect');
+        if (modeSelect && modeSelect.value !== mode) {
+            modeSelect.value = mode;
+        }
+
         // Reset progressive system when mode changes
         if (window.progressiveSystem) {
             window.progressiveSystem.resetToPhaseOne();
