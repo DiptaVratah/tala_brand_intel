@@ -47,9 +47,6 @@ app.use(cors());
 
 // Serve frontend from the 'pulsecraft_ui' directory
 app.use(express.static(path.join(__dirname, 'pulsecraft_ui')));
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'pulsecraft_ui', 'index.html'));
-});
 
 // --- SHADOW TELEMETRY SETUP (The "Wiretap") ---
 // This connects to your free MongoDB Atlas database to save kits.
@@ -637,10 +634,22 @@ app.get('/health', (req, res) => {
   res.send('✅ PulseCraft Backend Online (Universal Identity Edition)');
 });
 
-// SPA wildcard route - Serves index.html for all non-API/non-static paths
-// This enables client-side routing with clean URLs (e.g., /branding, /author, /self-reflection)
+// SPA routes - Serve index.html for client-side routing paths
+// This enables clean URLs (e.g., /branding, /author, /self-reflection)
 // MUST be placed AFTER all API routes to avoid intercepting them
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pulsecraft_ui', 'index.html'));
+});
+
+app.get('/branding', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pulsecraft_ui', 'index.html'));
+});
+
+app.get('/author', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pulsecraft_ui', 'index.html'));
+});
+
+app.get('/self-reflection', (req, res) => {
   res.sendFile(path.join(__dirname, 'pulsecraft_ui', 'index.html'));
 });
 
