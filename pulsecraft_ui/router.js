@@ -157,6 +157,7 @@ class PulseCraftRouter {
 function showLanding() {
     const landingPage = document.getElementById('landingPage');
     const appContainer = document.getElementById('appContainer');
+    const modeSwitcher = document.getElementById('modeSwitcher');
 
     if (landingPage) {
         landingPage.classList.remove('hidden');
@@ -167,6 +168,12 @@ function showLanding() {
         appContainer.style.display = 'none';
     }
 
+    // CRITICAL FIX: Hide mode switcher on landing page
+    if (modeSwitcher) {
+        modeSwitcher.classList.add('hidden');
+        modeSwitcher.style.display = 'none';
+    }
+
     // Update page title
     document.title = 'PulseCraft: The Consciousness Interface';
 }
@@ -174,6 +181,7 @@ function showLanding() {
 function showApp() {
     const landingPage = document.getElementById('landingPage');
     const appContainer = document.getElementById('appContainer');
+    const modeSwitcher = document.getElementById('modeSwitcher');
 
     if (landingPage) {
         landingPage.classList.add('hidden');
@@ -182,6 +190,12 @@ function showApp() {
     if (appContainer) {
         appContainer.classList.remove('hidden');
         appContainer.style.display = 'block';
+    }
+
+    // CRITICAL FIX: Show mode switcher when in app mode
+    if (modeSwitcher) {
+        modeSwitcher.classList.remove('hidden');
+        modeSwitcher.style.display = 'block';
     }
 }
 
@@ -299,6 +313,15 @@ function showContinuePrompt(mode) {
  */
 function initRouter() {
     const router = window.pulsecraftRouter || new PulseCraftRouter();
+
+    // CRITICAL FIX: Check for legacy query params and redirect to clean URLs
+    const urlParams = new URLSearchParams(window.location.search);
+    const modeParam = urlParams.get('mode');
+    if (modeParam) {
+        // Redirect to clean URL
+        const cleanPath = modeParam === 'therapy' ? '/self-reflection' : `/${modeParam}`;
+        window.history.replaceState({}, '', cleanPath);
+    }
 
     router.init({
         '/': () => {
