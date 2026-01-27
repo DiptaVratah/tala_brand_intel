@@ -155,16 +155,16 @@ class PulseCraftRouter {
 // ===================================
 
 function showLanding() {
-    const landingView = document.getElementById('landingPage');
-    const appView = document.getElementById('appContainer');
+    const landingPage = document.getElementById('landingPage');
+    const appContainer = document.getElementById('appContainer');
 
-    if (landingView) {
-        landingView.classList.remove('hidden');
-        landingView.style.display = 'flex';
+    if (landingPage) {
+        landingPage.classList.remove('hidden');
+        landingPage.style.display = 'flex';
     }
-    if (appView) {
-        appView.classList.add('hidden');
-        appView.style.display = 'none';
+    if (appContainer) {
+        appContainer.classList.add('hidden');
+        appContainer.style.display = 'none';
     }
 
     // Update page title
@@ -172,16 +172,16 @@ function showLanding() {
 }
 
 function showApp() {
-    const landingView = document.getElementById('landingPage');
-    const appView = document.getElementById('appContainer');
+    const landingPage = document.getElementById('landingPage');
+    const appContainer = document.getElementById('appContainer');
 
-    if (landingView) {
-        landingView.classList.add('hidden');
-        landingView.style.display = 'none';
+    if (landingPage) {
+        landingPage.classList.add('hidden');
+        landingPage.style.display = 'none';
     }
-    if (appView) {
-        appView.classList.remove('hidden');
-        appView.style.display = 'block';
+    if (appContainer) {
+        appContainer.classList.remove('hidden');
+        appContainer.style.display = 'block';
     }
 }
 
