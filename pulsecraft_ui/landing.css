@@ -1,0 +1,340 @@
+/* landing.css - PulseCraft Landing Page Styling */
+/* Provides hero section and mode selection card styling */
+
+/* ===================================
+   LANDING PAGE CONTAINER
+   =================================== */
+
+.landing-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+}
+
+/* ===================================
+   HERO SECTION
+   =================================== */
+
+.landing-hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.landing-hero h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.landing-hero .tagline {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+    opacity: 0.95;
+    font-style: italic;
+}
+
+.landing-hero .subtitle {
+    font-size: 1.125rem;
+    font-weight: 400;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    line-height: 1.8;
+}
+
+/* ===================================
+   MODE SELECTION CARDS
+   =================================== */
+
+.mode-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.mode-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    color: #2d3748;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.mode-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.mode-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+.mode-card:hover::before {
+    transform: scaleX(1);
+}
+
+.mode-card:active {
+    transform: translateY(-4px);
+}
+
+/* Card Icon */
+.mode-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Card Title */
+.mode-card h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1a202c;
+}
+
+/* Card Description */
+.mode-card p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+}
+
+/* Card Use Cases */
+.mode-card-use-cases {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.mode-card-use-cases h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #718096;
+    margin-bottom: 0.75rem;
+}
+
+.mode-card-use-cases ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mode-card-use-cases li {
+    font-size: 0.9375rem;
+    color: #4a5568;
+    padding: 0.375rem 0;
+    padding-left: 1.25rem;
+    position: relative;
+}
+
+.mode-card-use-cases li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* ===================================
+   SPECIFIC MODE CARD VARIANTS
+   =================================== */
+
+.mode-card[data-path="/branding"] .mode-card-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.mode-card[data-path="/author"] .mode-card-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.mode-card[data-path="/self-reflection"] .mode-card-icon {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* ===================================
+   FOOTER
+   =================================== */
+
+.landing-footer {
+    text-align: center;
+    padding: 2rem;
+    margin-top: auto;
+    opacity: 0.85;
+    animation: fadeIn 1s ease-out 0.4s both;
+}
+
+.landing-footer p {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.landing-footer a {
+    color: white;
+    text-decoration: underline;
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
+}
+
+.landing-footer a:hover {
+    opacity: 1;
+}
+
+/* ===================================
+   ANIMATIONS
+   =================================== */
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
+@media (max-width: 768px) {
+    .landing-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .landing-hero .tagline {
+        font-size: 1.25rem;
+    }
+
+    .landing-hero .subtitle {
+        font-size: 1rem;
+    }
+
+    .mode-cards-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .mode-card {
+        padding: 2rem;
+    }
+
+    .mode-card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .mode-card h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .landing-page {
+        padding: 1rem;
+    }
+
+    .landing-hero {
+        padding: 2rem 1rem;
+    }
+
+    .landing-hero h1 {
+        font-size: 2rem;
+    }
+
+    .landing-hero .tagline {
+        font-size: 1.125rem;
+        margin-bottom: 2rem;
+    }
+
+    .mode-card {
+        padding: 1.5rem;
+    }
+}
+
+/* ===================================
+   UTILITY CLASSES
+   =================================== */
+
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block;
+}
+
+/* Smooth transitions for showing/hiding pages */
+.page-transition {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.page-transition.fade-out {
+    opacity: 0;
+    transform: scale(0.98);
+}
+
+.page-transition.fade-in {
+    opacity: 1;
+    transform: scale(1);
+}
