@@ -637,6 +637,13 @@ app.get('/health', (req, res) => {
   res.send('✅ PulseCraft Backend Online (Universal Identity Edition)');
 });
 
+// SPA wildcard route - Serves index.html for all non-API/non-static paths
+// This enables client-side routing with clean URLs (e.g., /branding, /author, /self-reflection)
+// MUST be placed AFTER all API routes to avoid intercepting them
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pulsecraft_ui', 'index.html'));
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
