@@ -352,17 +352,8 @@ class InterfaceShapeshifter {
             return pathModeMap[pathname];
         }
 
-        // 2. Check for query params (backward compatibility during transition)
-        const urlParams = new URLSearchParams(window.location.search);
-        const modeParam = urlParams.get('mode');
-        if (modeParam && this.MODES[modeParam]) {
-            // Redirect to clean URL
-            const cleanPath = modeParam === 'therapy' ? '/self-reflection' : `/${modeParam}`;
-            if (window.pulsecraftRouter) {
-                window.pulsecraftRouter.navigateTo(cleanPath);
-            }
-            return modeParam;
-        }
+        // 2. REMOVED: Query param handling - router.js now handles this exclusively
+        // No need to check or redirect query params here
 
         // 3. Check domain (keep for future subdomain support)
         const hostname = window.location.hostname;
@@ -370,11 +361,8 @@ class InterfaceShapeshifter {
         if (hostname.includes('author.')) return 'author';
         if (hostname.includes('therapy.')) return 'therapy';
 
-        // 4. Check localStorage preference (for return visits)
-        const savedMode = localStorage.getItem('pulsecraft_mode');
-        if (savedMode && this.MODES[savedMode]) {
-            return savedMode;
-        }
+        // 4. REMOVED: Don't check localStorage for mode on initial load
+        // This should be handled by router's return visit flow
 
         // 5. Check for easter egg activation
         if (this.checkDeepActivation()) return 'deep';
@@ -480,13 +468,13 @@ class InterfaceShapeshifter {
 
 translateInterface(lang) {
     // Text content updates
-    // CRITICAL FIX: Only update app container elements, not landing page elements
+    // CRITICAL FIX: Only update app container elements, NEVER landing page elements
     const updates = {
         // Phase 1 - Use specific selectors within app container only
         '#appContainer .main-title': lang.title,
-        '#appContainer .tagline': lang.tagline,
-        '.mirror-section h2': lang.welcomeTitle || "Mirror Your Voice",
-        '.mirror-instruction': lang.welcomeText || "Enter your authentic expression.",
+        '#appContainer .tagline': lang.tagline,  // Only updates app tagline, not landing tagline
+        '#appContainer .mirror-section h2': lang.welcomeTitle || "Mirror Your Voice",
+        '#appContainer .mirror-instruction': lang.welcomeText || "Enter your authentic expression.",
         '#mirrorVoiceButton .btn-text': lang.analyzeButton,
         '#brandVoiceInput': { placeholder: lang.inputPlaceholder },
 
@@ -650,7 +638,6 @@ setupModeSwitcher() {
     if (!switcher) {
         switcher = document.createElement('div');
         switcher.id = 'modeSwitcher';
-        // CRITICAL FIX: Remove 'hidden' class - make it always visible
         switcher.className = 'mode-switcher';
         switcher.innerHTML = `
             <label for="modeSelect" style="font-size: 12px; color: #666; margin-bottom: 4px; display: block;">Interface Mode:</label>
@@ -665,16 +652,26 @@ setupModeSwitcher() {
 
     const modeSelect = document.getElementById('modeSelect');
     if (modeSelect) {
+        // Set current mode in dropdown
         modeSelect.value = this.mode;
+
+        // CRITICAL FIX: Use router for navigation instead of query params
         modeSelect.addEventListener('change', (e) => {
-            this.mode = e.target.value;
+            const selectedMode = e.target.value;
 
-            // Update the URL in the browser's address bar without reloading the page
-            const url = new URL(window.location);
-            url.searchParams.set('mode', this.mode);
-            window.history.pushState({}, '', url);
+            // Map mode to clean URL path
+            const pathMap = {
+                'branding': '/branding',
+                'author': '/author',
+                'therapy': '/self-reflection'
+            };
 
-            this.applyMode();
+            const targetPath = pathMap[selectedMode];
+
+            // Use router to navigate (which triggers mode change properly)
+            if (window.pulsecraftRouter && targetPath) {
+                window.pulsecraftRouter.navigateTo(targetPath);
+            }
         });
     }
 }

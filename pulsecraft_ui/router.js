@@ -312,33 +312,51 @@ function showContinuePrompt(mode) {
  * Initialize router when DOM is ready
  */
 function initRouter() {
+    console.log('router.js: Initializing router');
+
     const router = window.pulsecraftRouter || new PulseCraftRouter();
 
-    // CRITICAL FIX: Check for legacy query params and redirect to clean URLs
+    // CRITICAL FIX: Check for legacy query params and redirect to clean URLs BEFORE router init
     const urlParams = new URLSearchParams(window.location.search);
     const modeParam = urlParams.get('mode');
     if (modeParam) {
+        console.log('router.js: Found legacy query param, redirecting to clean URL');
         // Redirect to clean URL
         const cleanPath = modeParam === 'therapy' ? '/self-reflection' : `/${modeParam}`;
-        window.history.replaceState({}, '', cleanPath);
+        // Use replaceState to update URL without triggering router twice
+        window.history.replaceState({ path: cleanPath }, '', cleanPath);
+        // Update router's current path
+        router.currentPath = cleanPath;
     }
 
     router.init({
         '/': () => {
+            console.log('router.js: Route handler for / (landing)');
             showLanding();
             // Check for return visit after showing landing
             handleReturnVisit();
         },
-        '/branding': () => loadMode('branding'),
-        '/author': () => loadMode('author'),
-        '/self-reflection': () => loadMode('self-reflection'),
+        '/branding': () => {
+            console.log('router.js: Route handler for /branding');
+            loadMode('branding');
+        },
+        '/author': () => {
+            console.log('router.js: Route handler for /author');
+            loadMode('author');
+        },
+        '/self-reflection': () => {
+            console.log('router.js: Route handler for /self-reflection');
+            loadMode('self-reflection');
+        },
         '*': () => {
+            console.log('router.js: Fallback route handler, redirecting to landing');
             // Fallback: redirect to landing
             window.pulsecraftRouter.navigateTo('/');
         }
     });
 
     window.pulsecraftRouter = router;
+    console.log('router.js: Router initialized and exposed globally');
 
     // Set up card button click handlers
     setupCardNavigation();
