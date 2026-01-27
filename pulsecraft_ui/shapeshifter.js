@@ -660,11 +660,18 @@ setupModeSwitcher() {
 
     const modeSelect = document.getElementById('modeSelect');
     if (modeSelect) {
-        // Set current mode in dropdown
+        // CRITICAL FIX: Set current mode in dropdown (therapy is the internal mode for self-reflection)
         modeSelect.value = this.mode;
 
-        // CRITICAL FIX: Use router for navigation instead of query params
-        modeSelect.addEventListener('change', (e) => {
+        // CRITICAL FIX: Remove existing listener before adding new one to prevent duplicates
+        const newSelect = modeSelect.cloneNode(true);
+        modeSelect.parentNode.replaceChild(newSelect, modeSelect);
+
+        // Set value again after cloning
+        newSelect.value = this.mode;
+
+        // Use router for navigation instead of query params
+        newSelect.addEventListener('change', (e) => {
             const selectedMode = e.target.value;
 
             // Map mode to clean URL path

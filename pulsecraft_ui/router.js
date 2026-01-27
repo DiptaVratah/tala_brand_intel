@@ -213,9 +213,6 @@ function loadMode(mode) {
         console.warn('router.js: shapeshifter not found, mode styling may not apply');
     }
 
-    // Save to localStorage for return visits
-    localStorage.setItem('pulsecraft_last_mode', mode);
-
     // Update page title
     const titles = {
         'branding': 'PulseCraft: Brand Voice Studio',
@@ -227,90 +224,7 @@ function loadMode(mode) {
     console.log('router.js: loadMode complete');
 }
 
-// ===================================
-// RETURN VISIT HANDLING
-// ===================================
-
-/**
- * Handles return visitors who have a saved mode preference.
- * Shows a "Continue" prompt on the landing page if user previously used a mode.
- * Pattern from RESEARCH.md lines 527-552.
- */
-function handleReturnVisit() {
-    const savedMode = localStorage.getItem('pulsecraft_last_mode');
-
-    // Only show prompt if:
-    // 1. User has a saved mode preference
-    // 2. User is on the landing page (root path)
-    if (!savedMode || window.location.pathname !== '/') {
-        return;
-    }
-
-    // Validate saved mode is one of the allowed modes
-    const allowedModes = ['branding', 'author', 'self-reflection'];
-    if (!allowedModes.includes(savedMode)) {
-        // Clear invalid saved mode
-        localStorage.removeItem('pulsecraft_last_mode');
-        return;
-    }
-
-    // Create and show the return visitor banner
-    showContinuePrompt(savedMode);
-}
-
-/**
- * Shows a banner prompting the user to continue with their previous mode.
- * @param {string} mode - The previously saved mode
- */
-function showContinuePrompt(mode) {
-    // Don't show if banner already exists
-    if (document.querySelector('.return-visitor-banner')) {
-        return;
-    }
-
-    // Map mode to display name
-    const modeNames = {
-        'branding': 'Branding',
-        'author': 'Author',
-        'self-reflection': 'Self-Reflection'
-    };
-    const displayName = modeNames[mode] || mode;
-
-    const banner = document.createElement('div');
-    banner.className = 'return-visitor-banner';
-    banner.innerHTML = `
-        <p>Welcome back! Continue with <strong>${displayName}</strong>?</p>
-        <div class="return-visitor-actions">
-            <button class="continue-btn" data-mode="${mode}">Continue</button>
-            <button class="start-fresh-btn">Start Fresh</button>
-        </div>
-    `;
-
-    // Insert at top of landing view
-    const landingView = document.getElementById('landingPage');
-    if (landingView) {
-        landingView.insertBefore(banner, landingView.firstChild);
-    }
-
-    // Wire up button handlers
-    const continueBtn = banner.querySelector('.continue-btn');
-    const startFreshBtn = banner.querySelector('.start-fresh-btn');
-
-    continueBtn.addEventListener('click', () => {
-        const targetMode = continueBtn.getAttribute('data-mode');
-        const path = targetMode === 'self-reflection' ? '/self-reflection' : `/${targetMode}`;
-        if (window.pulsecraftRouter) {
-            window.pulsecraftRouter.navigateTo(path);
-        }
-        banner.remove();
-    });
-
-    startFreshBtn.addEventListener('click', () => {
-        // Clear saved mode preference
-        localStorage.removeItem('pulsecraft_last_mode');
-        banner.remove();
-    });
-}
+// Return visit handling removed - clean landing page experience
 
 // ===================================
 // ROUTER INITIALIZATION
@@ -341,8 +255,6 @@ function initRouter() {
         '/': () => {
             console.log('router.js: Route handler for / (landing)');
             showLanding();
-            // Check for return visit after showing landing
-            handleReturnVisit();
         },
         '/branding': () => {
             console.log('router.js: Route handler for /branding');
@@ -402,8 +314,6 @@ if (document.readyState === 'loading') {
 window.showLanding = showLanding;
 window.showApp = showApp;
 window.loadMode = loadMode;
-window.handleReturnVisit = handleReturnVisit;
-window.showContinuePrompt = showContinuePrompt;
 
 // Export for module systems
 if (typeof module !== 'undefined' && module.exports) {
