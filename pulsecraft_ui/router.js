@@ -205,10 +205,13 @@ function loadMode(mode) {
     // CRITICAL FIX: Show app view first
     showApp();
 
+    // CRITICAL FIX: Map 'self-reflection' path to 'therapy' mode for shapeshifter
+    const modeForShapeshifter = mode === 'self-reflection' ? 'therapy' : mode;
+
     // CRITICAL FIX: Set mode in shapeshifter after view is visible
     if (window.pulsecraftShapeshifter) {
-        console.log('router.js: Setting shapeshifter mode to:', mode);
-        window.pulsecraftShapeshifter.setMode(mode);
+        console.log('router.js: Setting shapeshifter mode to:', modeForShapeshifter);
+        window.pulsecraftShapeshifter.setMode(modeForShapeshifter);
     } else {
         console.warn('router.js: shapeshifter not found, mode styling may not apply');
     }
