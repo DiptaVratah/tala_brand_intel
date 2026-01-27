@@ -200,11 +200,17 @@ function showApp() {
 }
 
 function loadMode(mode) {
+    console.log('router.js: loadMode called with mode:', mode);
+
+    // CRITICAL FIX: Show app view first
     showApp();
 
-    // Set mode in shapeshifter (will be updated in Task 2)
+    // CRITICAL FIX: Set mode in shapeshifter after view is visible
     if (window.pulsecraftShapeshifter) {
+        console.log('router.js: Setting shapeshifter mode to:', mode);
         window.pulsecraftShapeshifter.setMode(mode);
+    } else {
+        console.warn('router.js: shapeshifter not found, mode styling may not apply');
     }
 
     // Save to localStorage for return visits
@@ -217,6 +223,8 @@ function loadMode(mode) {
         'self-reflection': 'PulseCraft: Voice Mirror'
     };
     document.title = titles[mode] || 'PulseCraft';
+
+    console.log('router.js: loadMode complete');
 }
 
 // ===================================

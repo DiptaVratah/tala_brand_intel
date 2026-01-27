@@ -403,13 +403,15 @@ class InterfaceShapeshifter {
         // If mode is null (landing page), don't apply mode styling
         if (this.mode === null) {
             console.log('shapeshifter.js: No mode detected, landing page will show');
+            // Set up easter eggs even on landing page
+            this.setupEasterEggs();
             return;
         }
 
         // Apply mode immediately
         this.applyMode();
 
-        // Set up mode switcher (hidden by default)
+        // Set up mode switcher (will be shown by router when in app mode)
         this.setupModeSwitcher();
 
         // Set up easter eggs
