@@ -340,30 +340,48 @@ class InterfaceShapeshifter {
     }
 
     detectMode() {
-        // Check URL parameters
+        // 1. Check URL path (primary method - clean URLs)
+        const pathname = window.location.pathname;
+        const pathModeMap = {
+            '/branding': 'branding',
+            '/author': 'author',
+            '/self-reflection': 'therapy'  // maps to 'therapy' mode internally
+        };
+
+        if (pathModeMap[pathname]) {
+            return pathModeMap[pathname];
+        }
+
+        // 2. Check for query params (backward compatibility during transition)
         const urlParams = new URLSearchParams(window.location.search);
         const modeParam = urlParams.get('mode');
         if (modeParam && this.MODES[modeParam]) {
+            // Redirect to clean URL
+            const cleanPath = modeParam === 'therapy' ? '/self-reflection' : `/${modeParam}`;
+            if (window.pulsecraftRouter) {
+                window.pulsecraftRouter.navigateTo(cleanPath);
+            }
             return modeParam;
         }
 
-        // Check domain
+        // 3. Check domain (keep for future subdomain support)
         const hostname = window.location.hostname;
         if (hostname.includes('brand.')) return 'branding';
         if (hostname.includes('author.')) return 'author';
         if (hostname.includes('therapy.')) return 'therapy';
-        
-        // Check localStorage preference
+
+        // 4. Check localStorage preference (for return visits)
         const savedMode = localStorage.getItem('pulsecraft_mode');
         if (savedMode && this.MODES[savedMode]) {
             return savedMode;
         }
 
-        // Check for easter egg activation
-        if (this.checkDeepActivation()) return 'deep'; 
+        // 5. Check for easter egg activation
+        if (this.checkDeepActivation()) return 'deep';
 
-        // Default
-        return 'consciousness';
+        // 6. Default - return null to indicate landing page should show
+        // (consciousness mode only activates when user explicitly chooses)
+        return null;
     }
 
     checkDeepActivation() {
@@ -371,20 +389,46 @@ class InterfaceShapeshifter {
         return deepCode === 'true';
     }
 
+    setMode(mode) {
+        if (!mode || !this.MODES[mode]) {
+            console.warn('shapeshifter.js: Invalid mode:', mode);
+            return;
+        }
+
+        // Map self-reflection path to therapy mode
+        if (mode === 'self-reflection') {
+            mode = 'therapy';
+        }
+
+        this.mode = mode;
+        this.applyMode();
+
+        // Reset progressive system when mode changes
+        if (window.progressiveSystem) {
+            window.progressiveSystem.resetToPhaseOne();
+        }
+    }
+
     init() {
         console.log('shapeshifter.js: Initializing with mode:', this.mode);
-        
+
+        // If mode is null (landing page), don't apply mode styling
+        if (this.mode === null) {
+            console.log('shapeshifter.js: No mode detected, landing page will show');
+            return;
+        }
+
         // Apply mode immediately
         this.applyMode();
-        
+
         // Set up mode switcher (hidden by default)
         this.setupModeSwitcher();
-        
+
         // Set up easter eggs
         this.setupEasterEggs();
-        
+
         // REMOVED: Progressive revelation setup - this will be handled by progressive.js
-        
+
         console.log('shapeshifter.js: Initialization complete');
     }
 
@@ -598,6 +642,9 @@ translateInterface(lang) {
 
     // 1. REPLACE setupModeSwitcher() function:
 setupModeSwitcher() {
+    // Don't show mode switcher on landing page
+    if (this.mode === null) return;
+
     let switcher = document.getElementById('modeSwitcher');
     if (!switcher) {
         switcher = document.createElement('div');
@@ -607,11 +654,9 @@ setupModeSwitcher() {
         switcher.innerHTML = `
             <label for="modeSelect" style="font-size: 12px; color: #666; margin-bottom: 4px; display: block;">Interface Mode:</label>
             <select id="modeSelect">
-                <option value="consciousness">Consciousness</option>
                 <option value="branding">Branding</option>
                 <option value="author">Author</option>
-                <option value="therapy">Therapy</option>
-                <option value="deep">0xDEEP</option> 
+                <option value="therapy">Self-Reflection</option>
             </select>
         `;
         document.body.appendChild(switcher);
