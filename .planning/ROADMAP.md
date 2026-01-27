@@ -35,10 +35,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. User can use browser back/forward buttons to navigate between landing and modes
   5. User can directly access mode URLs by pasting them into browser
 
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 01-01: TBD during phase planning
+- [ ] 01-01-PLAN.md - Landing page foundation (router, HTML/CSS, server SPA support)
+- [ ] 01-02-PLAN.md - Router wiring and mode integration (connects to shapeshifter, verification)
 
 ### Phase 2: Interface Differentiation
 **Goal**: Each interface mode feels contextually appropriate through language, visual theming, and mode-specific framing
@@ -148,7 +149,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Landing Page & Navigation | 0/TBD | Not started | - |
+| 1. Landing Page & Navigation | 0/2 | Planned | - |
 | 2. Interface Differentiation | 0/TBD | Not started | - |
 | 3. Session Management | 0/TBD | Not started | - |
 | 4. Stability Knowledge Audit | 0/TBD | Not started | - |
