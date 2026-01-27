@@ -480,10 +480,11 @@ class InterfaceShapeshifter {
 
 translateInterface(lang) {
     // Text content updates
+    // CRITICAL FIX: Only update app container elements, not landing page elements
     const updates = {
-        // Phase 1
-        '.main-title': lang.title,
-        '.tagline': lang.tagline,
+        // Phase 1 - Use specific selectors within app container only
+        '#appContainer .main-title': lang.title,
+        '#appContainer .tagline': lang.tagline,
         '.mirror-section h2': lang.welcomeTitle || "Mirror Your Voice",
         '.mirror-instruction': lang.welcomeText || "Enter your authentic expression.",
         '#mirrorVoiceButton .btn-text': lang.analyzeButton,
