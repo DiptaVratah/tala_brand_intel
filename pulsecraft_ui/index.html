@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="enhancement.css">
     <link rel="stylesheet" href="shapeshifter.css">
-    <link rel="stylesheet" href="progressive.css"> 
+    <link rel="stylesheet" href="progressive.css">
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="landing.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -21,7 +22,72 @@
         <p class="loading-text">Reflecting truth...</p>
     </div>
 
-    <div class="container" data-phase="1">
+    <!-- Landing Page -->
+    <div id="landingPage" class="landing-page">
+        <div class="landing-hero">
+            <h1>PulseCraft</h1>
+            <p class="tagline">"Most tools give you templates. This one gives you yourself."</p>
+            <p class="subtitle">Identity is not a prompt; it is a constraint. Discover how symbolic logic deterministically shapes your authentic expression.</p>
+        </div>
+
+        <div class="mode-cards-container">
+            <div class="mode-card" data-path="/branding">
+                <div class="mode-card-icon">
+                    <i class="fas fa-fingerprint"></i>
+                </div>
+                <h2>Branding Interface</h2>
+                <p>Define and maintain your brand's authentic voice across all content. Create brand kits that capture your unique identity and ensure consistency.</p>
+                <div class="mode-card-use-cases">
+                    <h3>Perfect For</h3>
+                    <ul>
+                        <li>Marketing teams building brand guides</li>
+                        <li>Agencies managing multiple client voices</li>
+                        <li>Content creators ensuring consistency</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mode-card" data-path="/author">
+                <div class="mode-card-icon">
+                    <i class="fas fa-feather-pointed"></i>
+                </div>
+                <h2>Author Interface</h2>
+                <p>Craft narratives that resonate with your authentic voice. Develop character voices, establish narrative patterns, and maintain stylistic coherence.</p>
+                <div class="mode-card-use-cases">
+                    <h3>Perfect For</h3>
+                    <ul>
+                        <li>Writers developing character voices</li>
+                        <li>Authors maintaining narrative consistency</li>
+                        <li>Storytellers exploring voice evolution</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mode-card" data-path="/self-reflection">
+                <div class="mode-card-icon">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <h2>Self-Reflection Interface</h2>
+                <p>Explore your personal expression and psychological patterns. Use psychometric analysis to understand your authentic communication style.</p>
+                <div class="mode-card-use-cases">
+                    <h3>Perfect For</h3>
+                    <ul>
+                        <li>Personal development journaling</li>
+                        <li>Understanding communication patterns</li>
+                        <li>Tracking expression evolution</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer class="landing-footer">
+            <p>Built with symbolic logic and neural generation</p>
+            <p>&copy; 2026 PulseCraft. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Main Application (Currently visible, will be hidden by Plan 02 router) -->
+    <div id="appContainer" class="container" data-phase="1">
         <div class="phase phase-1 active">
             <h1 class="main-title">PulseCraft</h1>
             <p class="tagline">"Most tools give you templates. This one gives you yourself."</p>
@@ -268,7 +334,8 @@
     </div>
 
     <div id="welcomeBanner" class="hidden"></div>
- 
+
+    <script src="router.js"></script>
     <script src="shapeshifter.js"></script>
     <script src="script.js"></script>
     <script src="progressive.js"></script>
