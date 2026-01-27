@@ -150,8 +150,211 @@ class PulseCraftRouter {
     }
 }
 
-// Create global instance (not initialized yet - Plan 02 will initialize it)
-window.pulsecraftRouter = new PulseCraftRouter();
+// ===================================
+// VIEW TOGGLE FUNCTIONS
+// ===================================
+
+function showLanding() {
+    const landingView = document.getElementById('landingPage');
+    const appView = document.getElementById('appContainer');
+
+    if (landingView) {
+        landingView.classList.remove('hidden');
+        landingView.style.display = 'flex';
+    }
+    if (appView) {
+        appView.classList.add('hidden');
+        appView.style.display = 'none';
+    }
+
+    // Update page title
+    document.title = 'PulseCraft: The Consciousness Interface';
+}
+
+function showApp() {
+    const landingView = document.getElementById('landingPage');
+    const appView = document.getElementById('appContainer');
+
+    if (landingView) {
+        landingView.classList.add('hidden');
+        landingView.style.display = 'none';
+    }
+    if (appView) {
+        appView.classList.remove('hidden');
+        appView.style.display = 'block';
+    }
+}
+
+function loadMode(mode) {
+    showApp();
+
+    // Set mode in shapeshifter (will be updated in Task 2)
+    if (window.pulsecraftShapeshifter) {
+        window.pulsecraftShapeshifter.setMode(mode);
+    }
+
+    // Save to localStorage for return visits
+    localStorage.setItem('pulsecraft_last_mode', mode);
+
+    // Update page title
+    const titles = {
+        'branding': 'PulseCraft: Brand Voice Studio',
+        'author': 'PulseCraft: Writing Voice Lab',
+        'self-reflection': 'PulseCraft: Voice Mirror'
+    };
+    document.title = titles[mode] || 'PulseCraft';
+}
+
+// ===================================
+// RETURN VISIT HANDLING
+// ===================================
+
+/**
+ * Handles return visitors who have a saved mode preference.
+ * Shows a "Continue" prompt on the landing page if user previously used a mode.
+ * Pattern from RESEARCH.md lines 527-552.
+ */
+function handleReturnVisit() {
+    const savedMode = localStorage.getItem('pulsecraft_last_mode');
+
+    // Only show prompt if:
+    // 1. User has a saved mode preference
+    // 2. User is on the landing page (root path)
+    if (!savedMode || window.location.pathname !== '/') {
+        return;
+    }
+
+    // Validate saved mode is one of the allowed modes
+    const allowedModes = ['branding', 'author', 'self-reflection'];
+    if (!allowedModes.includes(savedMode)) {
+        // Clear invalid saved mode
+        localStorage.removeItem('pulsecraft_last_mode');
+        return;
+    }
+
+    // Create and show the return visitor banner
+    showContinuePrompt(savedMode);
+}
+
+/**
+ * Shows a banner prompting the user to continue with their previous mode.
+ * @param {string} mode - The previously saved mode
+ */
+function showContinuePrompt(mode) {
+    // Don't show if banner already exists
+    if (document.querySelector('.return-visitor-banner')) {
+        return;
+    }
+
+    // Map mode to display name
+    const modeNames = {
+        'branding': 'Branding',
+        'author': 'Author',
+        'self-reflection': 'Self-Reflection'
+    };
+    const displayName = modeNames[mode] || mode;
+
+    const banner = document.createElement('div');
+    banner.className = 'return-visitor-banner';
+    banner.innerHTML = `
+        <p>Welcome back! Continue with <strong>${displayName}</strong>?</p>
+        <div class="return-visitor-actions">
+            <button class="continue-btn" data-mode="${mode}">Continue</button>
+            <button class="start-fresh-btn">Start Fresh</button>
+        </div>
+    `;
+
+    // Insert at top of landing view
+    const landingView = document.getElementById('landingPage');
+    if (landingView) {
+        landingView.insertBefore(banner, landingView.firstChild);
+    }
+
+    // Wire up button handlers
+    const continueBtn = banner.querySelector('.continue-btn');
+    const startFreshBtn = banner.querySelector('.start-fresh-btn');
+
+    continueBtn.addEventListener('click', () => {
+        const targetMode = continueBtn.getAttribute('data-mode');
+        const path = targetMode === 'self-reflection' ? '/self-reflection' : `/${targetMode}`;
+        if (window.pulsecraftRouter) {
+            window.pulsecraftRouter.navigateTo(path);
+        }
+        banner.remove();
+    });
+
+    startFreshBtn.addEventListener('click', () => {
+        // Clear saved mode preference
+        localStorage.removeItem('pulsecraft_last_mode');
+        banner.remove();
+    });
+}
+
+// ===================================
+// ROUTER INITIALIZATION
+// ===================================
+
+/**
+ * Initialize router when DOM is ready
+ */
+function initRouter() {
+    const router = window.pulsecraftRouter || new PulseCraftRouter();
+
+    router.init({
+        '/': () => {
+            showLanding();
+            // Check for return visit after showing landing
+            handleReturnVisit();
+        },
+        '/branding': () => loadMode('branding'),
+        '/author': () => loadMode('author'),
+        '/self-reflection': () => loadMode('self-reflection'),
+        '*': () => {
+            // Fallback: redirect to landing
+            window.pulsecraftRouter.navigateTo('/');
+        }
+    });
+
+    window.pulsecraftRouter = router;
+
+    // Set up card button click handlers
+    setupCardNavigation();
+}
+
+function setupCardNavigation() {
+    // Make entire card clickable
+    const cards = document.querySelectorAll('.mode-card');
+    cards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            const path = card.getAttribute('data-path');
+            if (path && window.pulsecraftRouter) {
+                window.pulsecraftRouter.navigateTo(path);
+            }
+        });
+
+        // Add pointer cursor
+        card.style.cursor = 'pointer';
+    });
+}
+
+// Initialize when DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRouter);
+} else {
+    initRouter();
+}
+
+// ===================================
+// GLOBAL EXPORTS
+// ===================================
+
+// Expose functions globally for integration
+window.showLanding = showLanding;
+window.showApp = showApp;
+window.loadMode = loadMode;
+window.handleReturnVisit = handleReturnVisit;
+window.showContinuePrompt = showContinuePrompt;
 
 // Export for module systems
 if (typeof module !== 'undefined' && module.exports) {

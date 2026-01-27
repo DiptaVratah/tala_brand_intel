@@ -313,6 +313,85 @@
 }
 
 /* ===================================
+   RETURN VISITOR BANNER
+   =================================== */
+
+.return-visitor-banner {
+    background: linear-gradient(135deg, var(--color-accent-primary-green, #4CAF50) 0%, var(--color-accent-secondary-green, #45a049) 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin: 1rem auto 2rem;
+    max-width: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.return-visitor-banner p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.return-visitor-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.return-visitor-banner .continue-btn {
+    background: white;
+    color: var(--color-accent-primary-green, #4CAF50);
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.return-visitor-banner .continue-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.return-visitor-banner .start-fresh-btn {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.return-visitor-banner .start-fresh-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 600px) {
+    .return-visitor-banner {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* ===================================
    UTILITY CLASSES
    =================================== */
 
