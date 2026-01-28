@@ -12,7 +12,7 @@ Transform PulseCraft from functional prototype into production-ready system with
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Landing Page & Navigation** - Professional entry point with mode selection
+- [x] **Phase 1: Landing Page & Navigation** - Professional entry point with mode selection
 - [ ] **Phase 2: Interface Differentiation** - Mode-specific language, theming, and experience
 - [ ] **Phase 3: Session Management** - Robust identity tracking with deviceId + sessionId
 - [ ] **Phase 4: Stability Knowledge Audit** - Document and verify psychometric calculations
@@ -38,8 +38,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md - Landing page foundation (router, HTML/CSS, server SPA support)
-- [ ] 01-02-PLAN.md - Router wiring and mode integration (connects to shapeshifter, verification)
+- [x] 01-01-PLAN.md - Landing page foundation (router, HTML/CSS, server SPA support)
+- [x] 01-02-PLAN.md - Router wiring and mode integration (connects to shapeshifter, verification)
 
 ### Phase 2: Interface Differentiation
 **Goal**: Each interface mode feels contextually appropriate through language, visual theming, and mode-specific framing
@@ -58,10 +58,14 @@ Plans:
   7. User encounters helpful error messages and clear success feedback
   8. User experiences consistent spacing, typography hierarchy, and professional loading states
 
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] 02-01: TBD during phase planning
+- [ ] 02-01-PLAN.md - CSS theme foundation with mode-scoped custom properties
+- [ ] 02-02-PLAN.md - Extended LANGUAGE_MATRIX with complete terminology
+- [ ] 02-03-PLAN.md - Mode-specific loading states and toast notification system
+- [ ] 02-04-PLAN.md - Mode switcher redesign, empty states, and typography
+- [ ] 02-05-PLAN.md - Human verification checkpoint
 
 ### Phase 3: Session Management
 **Goal**: System tracks user sessions with cryptographically secure IDs supporting future analytics and multi-device features
@@ -149,8 +153,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Landing Page & Navigation | 0/2 | Planned | - |
-| 2. Interface Differentiation | 0/TBD | Not started | - |
+| 1. Landing Page & Navigation | 2/2 | Complete | 2026-01-27 |
+| 2. Interface Differentiation | 0/5 | Planned | - |
 | 3. Session Management | 0/TBD | Not started | - |
 | 4. Stability Knowledge Audit | 0/TBD | Not started | - |
 | 5. Observatory Enhancement | 0/TBD | Not started | - |
@@ -158,4 +162,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 ---
 *Roadmap created: 2026-01-27*
-*Last updated: 2026-01-27*
+*Last updated: 2026-01-28 (Phase 2 planned)*
