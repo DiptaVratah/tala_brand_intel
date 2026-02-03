@@ -258,13 +258,13 @@ class InterfaceShapeshifter {
                 tagline: 'Understanding yourself through the patterns in your words',
                 welcomeTitle: 'Welcome to Your Voice Mirror',
                 welcomeText: 'The way we express ourselves reveals who we are. PulseCraft helps you see the patterns in your communication.',
-                
+
                 // Buttons
                 analyzeButton: 'Reflect My Voice',
                 saveButton: 'Save Voice Pattern',
                 recallButton: 'Review Past Patterns',
                 combineButton: 'Explore Voice Evolution',
-                
+
                 // Section headers
                 analyzeHeader: 'Your Voice Reflection',
                 saveHeader: 'Document Your Journey',
@@ -272,23 +272,23 @@ class InterfaceShapeshifter {
                 generateHeader: 'Express Yourself Differently',
                 dnaHeader: 'Your Core Patterns',
                 galleryHeader: 'Your Voice Journey',
-                
+
                 // Labels
                 dnaLabel: 'CORE PATTERNS',
                 anchorsLabel: 'EMOTIONAL ANCHORS',
                 toneLabel: 'Emotional Tone:',
                 vocabularyLabel: 'Expression Style:',
                 archetypeLabel: 'Communication Type:',
-                phrasingStyle: 'Flow of Expression:', 
-                
+                phrasingStyle: 'Flow of Expression:',
+
                 // Descriptions
                 analyzeDesc: 'Share something you\'ve written - a journal entry, email, or any authentic expression.',
                 dnaDesc: 'Patterns that consistently appear in your communication. Click to explore these themes deeper.',
-                loadingText: 'Reflecting your patterns...',
+                loadingText: 'Reflecting on your words...',
                 saveSuccess: 'Voice pattern documented!',
-                
+
                 // Placeholders
-                inputPlaceholder: 'Share your thoughts, feelings, or any authentic expression...',
+                inputPlaceholder: 'Express what\'s on your mind',
                 nameInputPlaceholder: 'Label this reflection (e.g., "Today\'s Thoughts")',
 
                 // Multi-Style Preview Topics
@@ -302,12 +302,44 @@ class InterfaceShapeshifter {
                     { id: 'adCopyBtn', text: 'Brief Self-Compassion Note' },
                     { id: 'manifestoOriginVoiceBtn', text: 'Personal Core Belief' }
                 ],
-                // --- PHASE 5 HEADERS (Paste this here) ---
+                // --- PHASE 5 HEADERS ---
                 observatoryHeader: "The Observatory",
                 observatorySubtitle: "Witness the trajectory of your soul.",
-                resonanceLabel: "Voice Resonance",
+                resonanceLabel: "Inner Alignment",
                 coherenceLabel: "Internal Coherence",
-                timelineLabel: "Archetypal Trajectory"
+                timelineLabel: "Archetypal Trajectory",
+
+                // --- PHASE 2 INTERFACE DIFFERENTIATION ---
+                // Voice Kit naming
+                voiceKitName: 'Identity Profile',
+
+                // Core action framing
+                coreAction: 'Discover Inner Voice',
+
+                // Drift & Stability metrics
+                consistencyLabel: 'Inner Alignment',
+                driftLabel: 'Personal Change',
+
+                // DNA terminology
+                dnaLabelFull: 'Identity DNA',
+
+                // Generation action labels
+                generateAction: 'Reflect',
+                generateButtonText: 'Generate Reflection',
+
+                // Empty state messaging
+                emptyStateTitle: 'No Identity Profiles Yet',
+                emptyStateMessage: 'Create your first Identity Profile to explore your authentic expression and track your personal voice evolution.',
+                emptyStateCTA: 'Create First Profile',
+
+                // Progressive phase names
+                phaseNames: {
+                    1: 'Discover',
+                    2: 'Identity Studio',
+                    3: 'Reflection Space',
+                    4: 'Identity Alchemy',
+                    5: 'Inner Observatory'
+                }
             },
             
             deep: { 
