@@ -71,7 +71,7 @@ class InterfaceShapeshifter {
                 coherenceLabel: "Internal Coherence",
                 timelineLabel: "Archetypal Trajectory"
             },
-            
+
             branding: {
                 // Page elements
                 title: 'PulseCraft',
@@ -104,8 +104,12 @@ class InterfaceShapeshifter {
                 // Descriptions
                 analyzeDesc: 'Paste your best content below - something that really sounds like you. Our AI will identify the unique patterns.',
                 dnaDesc: 'These elements define your brand\'s unique voice. Click any to generate content that emphasizes that aspect.',
-                loadingText: 'Analyzing your brand voice...',
+                loadingText: 'Analyzing brand voice...',
+                loadingAnalyze: 'Analyzing brand voice...',
+                loadingSave: 'Crystallizing brand profile...',
+                loadingGenerate: 'Creating brand content...',
                 saveSuccess: 'Brand profile saved!',
+                errorPrefix: 'Brand voice extraction failed',
 
                 // Placeholders
                 inputPlaceholder: 'Add content that represents your brand voice',
@@ -195,7 +199,11 @@ class InterfaceShapeshifter {
                 analyzeDesc: 'Share a piece of your writing - fiction, non-fiction, or anything that feels authentically you.',
                 dnaDesc: 'Core elements of your writing style. Click to generate new content emphasizing these aspects.',
                 loadingText: 'Capturing your style...',
+                loadingAnalyze: 'Capturing your style...',
+                loadingSave: 'Saving writing voice...',
+                loadingGenerate: 'Writing in your voice...',
                 saveSuccess: 'Writing style captured!',
+                errorPrefix: 'Writing voice capture failed',
 
                 // Placeholders
                 inputPlaceholder: 'Share writing that sounds like you',
@@ -285,7 +293,11 @@ class InterfaceShapeshifter {
                 analyzeDesc: 'Share something you\'ve written - a journal entry, email, or any authentic expression.',
                 dnaDesc: 'Patterns that consistently appear in your communication. Click to explore these themes deeper.',
                 loadingText: 'Reflecting on your words...',
+                loadingAnalyze: 'Reflecting on your words...',
+                loadingSave: 'Documenting your journey...',
+                loadingGenerate: 'Generating reflection...',
                 saveSuccess: 'Voice pattern documented!',
+                errorPrefix: 'Reflection analysis failed',
 
                 // Placeholders
                 inputPlaceholder: 'Express what\'s on your mind',
@@ -873,13 +885,53 @@ setupModeSwitcher() {
             clearInterval(this.glitchInterval);
         }
         this.glitchInterval = setInterval(() => {
-            const elements = document.querySelectorAll('h1, h2, .dna-tag-button, .symbol-anchor-button, .tagline'); 
+            const elements = document.querySelectorAll('h1, h2, .dna-tag-button, .symbol-anchor-button, .tagline');
             const target = elements[Math.floor(Math.random() * elements.length)];
             if (target) {
                 target.classList.add('glitch');
                 setTimeout(() => target.classList.remove('glitch'), 200);
             }
-        }, 1000); 
+        }, 1000);
+    }
+
+    /**
+     * Show loading overlay with mode-specific message
+     * @param {string} customMessage - Optional override message
+     */
+    showLoading(customMessage = null) {
+        const overlay = document.getElementById('loadingOverlay');
+        const textElement = overlay?.querySelector('.loading-text');
+
+        if (!overlay) {
+            console.warn('Loading overlay not found');
+            return;
+        }
+
+        // Get mode-specific loading text
+        const lang = this.LANGUAGE_MATRIX[this.mode];
+        const message = customMessage || lang?.loadingText || 'Processing...';
+
+        if (textElement) {
+            textElement.textContent = message;
+        }
+
+        overlay.classList.remove('hidden');
+
+        // Apply mode accent to spinner
+        const spinner = overlay.querySelector('.spinner');
+        if (spinner) {
+            spinner.style.borderTopColor = `var(--accent-primary)`;
+        }
+    }
+
+    /**
+     * Hide loading overlay
+     */
+    hideLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+        }
     }
 }
 
@@ -887,3 +939,6 @@ setupModeSwitcher() {
 console.log('shapeshifter.js: Creating InterfaceShapeshifter instance');
 window.pulsecraftShapeshifter = new InterfaceShapeshifter();
 
+// Export loading functions globally for use by script.js
+window.showLoading = (msg) => window.pulsecraftShapeshifter?.showLoading(msg);
+window.hideLoading = () => window.pulsecraftShapeshifter?.hideLoading();
