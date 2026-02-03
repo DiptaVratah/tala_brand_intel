@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+    <div id="toastContainer"></div>
 
     <div id="loadingOverlay" class="loading-overlay hidden">
         <div class="spinner"></div>
@@ -171,10 +171,26 @@
 
             <div class="section library-preview">
                 <h3>Your Voice Library</h3>
-                <select id="sessionSelect">
-                    <option value="" selected disabled>Select a saved voice</option>
-                </select>
-                <button class="btn-secondary" id="recallButton">Recall Voice</button>
+
+                <!-- Empty state - shown when no kits exist -->
+                <div id="libraryEmptyState" class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <h4 class="empty-state-title">No Voice Kits Yet</h4>
+                    <p class="empty-state-message">Create your first Voice Kit to unlock content generation.</p>
+                    <button class="btn-primary empty-state-cta" onclick="document.querySelector('.phase-1').scrollIntoView({behavior: 'smooth'})">
+                        Create First Voice Kit
+                    </button>
+                </div>
+
+                <!-- Existing library controls - hidden when empty -->
+                <div id="libraryControls" class="library-controls">
+                    <select id="sessionSelect">
+                        <option value="" selected disabled>Select a saved voice</option>
+                    </select>
+                    <button class="btn-secondary" id="recallButton">Recall Voice</button>
+                </div>
             </div>
         </div>
 

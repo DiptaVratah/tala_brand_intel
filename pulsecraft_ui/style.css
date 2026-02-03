@@ -774,6 +774,61 @@ footer {
     }
 }
 
+/* Empty State Component */
+.empty-state {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    color: var(--color-text-secondary, #64748b);
+}
+
+.empty-state-icon {
+    font-size: 2.5rem;
+    color: var(--accent-primary, #6366f1);
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+.empty-state-icon i {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.empty-state-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #1e293b);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state-message {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.empty-state-cta {
+    margin: 0 auto;
+}
+
+/* Hide empty state when library has items */
+.library-has-items .empty-state {
+    display: none;
+}
+
+.library-has-items .library-controls {
+    display: block;
+}
+
+/* Show empty state when library is empty */
+.library-preview:not(.library-has-items) .library-controls {
+    display: none;
+}
+
 /* Mode Switcher - Enhanced with color coding */
 .mode-switcher {
     position: fixed;

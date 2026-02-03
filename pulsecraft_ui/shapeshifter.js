@@ -924,12 +924,89 @@ setupModeSwitcher() {
             overlay.classList.add('hidden');
         }
     }
+
+    /**
+     * Show toast notification
+     * @param {string} message - Message to display
+     * @param {string} type - 'success' | 'error' | 'info' | 'warning'
+     * @param {number} duration - Auto-dismiss time in ms (default 5000)
+     */
+    showToast(message, type = 'info', duration = 5000) {
+        const container = document.getElementById('toastContainer');
+        if (!container) {
+            console.warn('Toast container not found');
+            return;
+        }
+
+        const icons = {
+            success: 'fa-check-circle',
+            error: 'fa-exclamation-circle',
+            info: 'fa-info-circle',
+            warning: 'fa-exclamation-triangle'
+        };
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.setAttribute('role', 'status');
+        toast.innerHTML = `
+            <i class="fas ${icons[type]} toast-icon"></i>
+            <span class="toast-message">${message}</span>
+        `;
+
+        // Click to dismiss
+        toast.addEventListener('click', () => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 300);
+        });
+
+        container.appendChild(toast);
+
+        // Auto-dismiss
+        if (duration > 0) {
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('fade-out');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
+    }
+
+    /**
+     * Show mode-specific success message
+     * @param {string} action - The action that succeeded (e.g., 'save', 'generate')
+     */
+    showSuccess(action = 'default') {
+        const lang = this.LANGUAGE_MATRIX[this.mode];
+        const messages = {
+            save: lang?.saveSuccess || 'Saved successfully!',
+            generate: `${lang?.generateAction || 'Content'} generated!`,
+            default: 'Success!'
+        };
+
+        this.showToast(messages[action] || messages.default, 'success');
+    }
+
+    /**
+     * Show mode-specific error message
+     * @param {Error|string} error - The error object or message
+     */
+    showError(error) {
+        const lang = this.LANGUAGE_MATRIX[this.mode];
+        const prefix = lang?.errorPrefix || 'Operation failed';
+        const errorMessage = typeof error === 'string' ? error : error?.message || 'Unknown error';
+
+        this.showToast(`${prefix}: ${errorMessage}`, 'error', 7000);
+    }
 }
 
 // CRITICAL FIX: Initialize shapeshifter immediately but don't create progressive system here
 console.log('shapeshifter.js: Creating InterfaceShapeshifter instance');
 window.pulsecraftShapeshifter = new InterfaceShapeshifter();
 
-// Export loading functions globally for use by script.js
+// Export loading and feedback functions globally for use by script.js
 window.showLoading = (msg) => window.pulsecraftShapeshifter?.showLoading(msg);
 window.hideLoading = () => window.pulsecraftShapeshifter?.hideLoading();
+window.showToast = (msg, type, dur) => window.pulsecraftShapeshifter?.showToast(msg, type, dur);
+window.showSuccess = (action) => window.pulsecraftShapeshifter?.showSuccess(action);
+window.showError = (err) => window.pulsecraftShapeshifter?.showError(err);
