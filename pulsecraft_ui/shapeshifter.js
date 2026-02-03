@@ -586,7 +586,7 @@ translateInterface(lang) {
         '#appContainer .tagline': lang.tagline,  // Only updates app tagline, not landing tagline
         '#appContainer .mirror-section h2': lang.welcomeTitle || "Mirror Your Voice",
         '#appContainer .mirror-instruction': lang.welcomeText || "Enter your authentic expression.",
-        '#mirrorVoiceButton .btn-text': lang.analyzeButton,
+        '#mirrorVoiceButton .btn-text': lang.coreAction || lang.analyzeButton,
         '#brandVoiceInput': { placeholder: lang.inputPlaceholder },
 
         // Phase 2
@@ -594,7 +594,7 @@ translateInterface(lang) {
         '.save-section h3': lang.saveHeader || "Crystallize This Frequency",
         '#saveToMemoryButton': lang.saveButton,
         '#brandNameInput': { placeholder: lang.nameInputPlaceholder },
-        '.dna-container h3': lang.dnaLabel,
+        '.dna-container h3': lang.dnaLabelFull || lang.dnaLabel,
         '.symbol-container h3': lang.anchorsLabel,
         '.dna-container p': lang.dnaDesc,
         '.symbol-container p': "Deeper resonance points of your expression",
@@ -609,18 +609,31 @@ translateInterface(lang) {
         '.expansion-section h2': lang.generateHeader || "Express Through Your Voice",
         '.library-preview h3': lang.galleryHeader || "Your Voice Library",
         '#recallButton': lang.recallButton,
+        '#writeItForMeButton .btn-text': lang.generateButtonText,
+        '#writeItForMeButton': lang.generateButtonText,
 
         // Phase 4
         '.alchemy-section h2': "Voice Alchemy",
         '.tools-section h3': "Voice Data Tools",
         '#refineKitsButton': lang.combineButton,
 
-        // --- PHASE 5 UPDATES (Add this block) ---
+        // --- PHASE 5 UPDATES ---
         '.observatory-title': lang.observatoryHeader || "The Observatory",
         '.observatory-subtitle': lang.observatorySubtitle || "Witness the trajectory of your soul.",
-        '.resonance-card h3': lang.resonanceLabel || "Voice Resonance",
+        '.resonance-card h3': lang.consistencyLabel || lang.resonanceLabel || "Voice Resonance",
         '.stability-card h3': lang.coherenceLabel || "Internal Coherence",
         '.timeline-card h3': lang.timelineLabel || "Archetypal Trajectory",
+        '.resonance-label': lang.consistencyLabel,
+        '.consistency-label': lang.consistencyLabel,
+        '.drift-label': lang.driftLabel,
+
+        // Mode-specific Voice Kit naming in various contexts
+        '.voice-kit-label': lang.voiceKitName,
+
+        // Empty state elements (will be used when empty state UI exists)
+        '.empty-state-title': lang.emptyStateTitle,
+        '.empty-state-message': lang.emptyStateMessage,
+        '.empty-state-cta': lang.emptyStateCTA,
 
         // General
         '.loading-text': { dataset: { defaultText: lang.loadingText } }
