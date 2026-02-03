@@ -774,14 +774,12 @@ setupModeSwitcher() {
         switcher = document.createElement('div');
         switcher.id = 'modeSwitcher';
         switcher.className = 'mode-switcher';
-        // UPDATED: Only show three main modes (removed consciousness and deep)
-        // Consciousness/Deep modes preserved internally for easter eggs but hidden from UI
         switcher.innerHTML = `
-            <label for="modeSelect" style="font-size: 12px; color: #666; margin-bottom: 4px; display: block;">Interface Mode:</label>
+            <label for="modeSelect">Interface</label>
             <select id="modeSelect">
-                <option value="branding">Branding</option>
-                <option value="author">Author</option>
-                <option value="therapy">Self-Reflection</option>
+                <option value="branding" data-icon="fingerprint">Branding</option>
+                <option value="author" data-icon="feather-pointed">Author</option>
+                <option value="therapy" data-icon="compass">Self-Reflection</option>
             </select>
         `;
         document.body.appendChild(switcher);
@@ -789,21 +787,16 @@ setupModeSwitcher() {
 
     const modeSelect = document.getElementById('modeSelect');
     if (modeSelect) {
-        // CRITICAL FIX: Set current mode in dropdown (therapy is the internal mode for self-reflection)
+        // Set current mode
         modeSelect.value = this.mode;
 
-        // CRITICAL FIX: Remove existing listener before adding new one to prevent duplicates
+        // Remove existing listener before adding new one
         const newSelect = modeSelect.cloneNode(true);
         modeSelect.parentNode.replaceChild(newSelect, modeSelect);
-
-        // Set value again after cloning
         newSelect.value = this.mode;
 
-        // Use router for navigation instead of query params
         newSelect.addEventListener('change', (e) => {
             const selectedMode = e.target.value;
-
-            // Map mode to clean URL path
             const pathMap = {
                 'branding': '/branding',
                 'author': '/author',
@@ -811,8 +804,6 @@ setupModeSwitcher() {
             };
 
             const targetPath = pathMap[selectedMode];
-
-            // Use router to navigate (which triggers mode change properly)
             if (window.pulsecraftRouter && targetPath) {
                 window.pulsecraftRouter.navigateTo(targetPath);
             }

@@ -682,6 +682,182 @@ footer {
     100% { transform: rotate(360deg); }
 }
 
+/* Toast Notification System */
+#toastContainer {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 400px;
+}
+
+.toast {
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+}
+
+.toast:hover {
+    opacity: 0.95;
+}
+
+.toast-success {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+}
+
+.toast-error {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.toast-info {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+}
+
+.toast-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.toast .toast-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.toast .toast-message {
+    flex-grow: 1;
+    line-height: 1.4;
+}
+
+.toast.fade-out {
+    animation: fadeOutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Mobile adjustments for toast */
+@media (max-width: 480px) {
+    #toastContainer {
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+        max-width: none;
+    }
+}
+
+/* Mode Switcher - Enhanced with color coding */
+.mode-switcher {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mode-switcher label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.mode-switcher select {
+    appearance: none;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #f1f5f9;
+    cursor: pointer;
+    min-width: 140px;
+    transition: all 0.2s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+}
+
+.mode-switcher select:hover {
+    border-color: var(--accent-primary);
+    background-color: rgba(30, 41, 59, 1);
+}
+
+.mode-switcher select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* Mode indicator dot */
+.mode-switcher::after {
+    content: '';
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+/* Mode option colors when dropdown is open */
+.mode-switcher select option {
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 0.5rem;
+}
+
+.mode-switcher select option[value="branding"] {
+    border-left: 3px solid #3b82f6;
+}
+
+.mode-switcher select option[value="author"] {
+    border-left: 3px solid #ef4444;
+}
+
+.mode-switcher select option[value="therapy"] {
+    border-left: 3px solid #10b981;
+}
+
 /* Responsive Adjustments - Preserving Fluidity */
 @media (max-width: 1200px) {
     .container {
