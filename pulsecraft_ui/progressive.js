@@ -478,18 +478,39 @@ class ProgressiveRevealSystem {
         }
     }
 
+    getPhaseLabel(phaseNumber) {
+        // Get current mode from shapeshifter
+        const currentMode = window.pulsecraftShapeshifter ? window.pulsecraftShapeshifter.mode : 'branding';
+        const lang = window.pulsecraftShapeshifter?.LANGUAGE_MATRIX?.[currentMode];
+
+        // Fallback phase names if LANGUAGE_MATRIX not available
+        const fallbackNames = {
+            1: 'Mirror',
+            2: 'Recognition',
+            3: 'Expansion',
+            4: 'Alchemy',
+            5: 'Observatory'
+        };
+
+        return lang?.phaseNames?.[phaseNumber] || fallbackNames[phaseNumber] || `Phase ${phaseNumber}`;
+    }
+
     updateFooter() {
-        const footerText = document.getElementById('footerText');
-        if (footerText) {
-            const footerMessages = {
-                1: 'Begin your journey...',
-                2: 'Your voice is emerging...',
-                3: 'Express your truth...',
-                4: 'Master your essence...'
-            };
-            
-            footerText.textContent = footerMessages[this.currentPhase];
-        }
+        const footer = document.querySelector('.phase-footer p, #footerText');
+        if (!footer) return;
+
+        const currentMode = window.pulsecraftShapeshifter ? window.pulsecraftShapeshifter.mode : 'branding';
+        const lang = window.pulsecraftShapeshifter?.LANGUAGE_MATRIX?.[currentMode];
+
+        const messages = {
+            1: `${this.getPhaseLabel(1)}: Express your authentic voice...`,
+            2: `${this.getPhaseLabel(2)}: Your voice revealed. Save to unlock creation.`,
+            3: `${this.getPhaseLabel(3)}: ${lang?.voiceKitName || 'Voice Kit'} active. Create and explore.`,
+            4: `${this.getPhaseLabel(4)}: Combine voices to discover emergent patterns.`,
+            5: `${this.getPhaseLabel(5)}: Witness your evolution across time.`
+        };
+
+        footer.textContent = messages[this.currentPhase] || messages[1];
     }
 
     showPhaseNotification(phase) {
