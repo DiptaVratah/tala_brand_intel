@@ -78,13 +78,13 @@ class InterfaceShapeshifter {
                 tagline: 'AI-powered brand voice analysis that captures your authentic style',
                 welcomeTitle: 'Welcome to Your Brand Voice Studio',
                 welcomeText: 'PulseCraft uses advanced AI to analyze your writing and extract your unique brand voice. Perfect for entrepreneurs and businesses.',
-                
+
                 // Buttons
                 analyzeButton: 'Analyze Brand Voice',
                 saveButton: 'Save Brand Profile',
                 recallButton: 'Load Brand Voice',
                 combineButton: 'Merge Brand Profiles',
-                
+
                 // Section headers
                 analyzeHeader: 'Analyze Your Brand Voice',
                 saveHeader: 'Save Your Brand Voice',
@@ -92,23 +92,23 @@ class InterfaceShapeshifter {
                 generateHeader: 'Generate Content in Your Voice',
                 dnaHeader: 'Your Brand DNA',
                 galleryHeader: 'Your Voice Library',
-                
+
                 // Labels
                 dnaLabel: 'CORE BRAND ELEMENTS',
                 anchorsLabel: 'BRAND THEMES',
                 toneLabel: 'Brand Personality:',
                 vocabularyLabel: 'Language Style:',
                 archetypeLabel: 'Brand Archetype:',
-                phrasingStyle: 'Communication Style:', 
-                
+                phrasingStyle: 'Communication Style:',
+
                 // Descriptions
                 analyzeDesc: 'Paste your best content below - something that really sounds like you. Our AI will identify the unique patterns.',
                 dnaDesc: 'These elements define your brand\'s unique voice. Click any to generate content that emphasizes that aspect.',
                 loadingText: 'Analyzing your brand voice...',
                 saveSuccess: 'Brand profile saved!',
-                
+
                 // Placeholders
-                inputPlaceholder: 'Paste your content here - blog post, email, social caption...',
+                inputPlaceholder: 'Add content that represents your brand voice',
                 nameInputPlaceholder: 'Name your brand voice (e.g., "Professional Blog Voice")',
 
                 // Multi-Style Preview Topics
@@ -122,12 +122,44 @@ class InterfaceShapeshifter {
                     { id: 'adCopyBtn', text: 'Short Ad Campaign' },
                     { id: 'manifestoOriginVoiceBtn', text: 'Brand Manifesto' }
                 ],
-                // --- PHASE 5 HEADERS (Paste this here) ---
+                // --- PHASE 5 HEADERS ---
                 observatoryHeader: "The Observatory",
                 observatorySubtitle: "Witness the trajectory of your soul.",
-                resonanceLabel: "Voice Resonance",
+                resonanceLabel: "Brand Consistency",
                 coherenceLabel: "Internal Coherence",
-                timelineLabel: "Archetypal Trajectory"
+                timelineLabel: "Archetypal Trajectory",
+
+                // --- PHASE 2 INTERFACE DIFFERENTIATION ---
+                // Voice Kit naming
+                voiceKitName: 'Brand Kit',
+
+                // Core action framing
+                coreAction: 'Build Brand Voice',
+
+                // Drift & Stability metrics
+                consistencyLabel: 'Brand Consistency',
+                driftLabel: 'Brand Drift',
+
+                // DNA terminology
+                dnaLabelFull: 'Brand DNA',
+
+                // Generation action labels
+                generateAction: 'Create',
+                generateButtonText: 'Create Brand Content',
+
+                // Empty state messaging
+                emptyStateTitle: 'No Brand Kits Yet',
+                emptyStateMessage: 'Create your first Brand Kit to define your authentic brand voice and ensure consistency across all content.',
+                emptyStateCTA: 'Create First Brand Kit',
+
+                // Progressive phase names
+                phaseNames: {
+                    1: 'Build',
+                    2: 'Brand Refinery',
+                    3: 'Brand Studio',
+                    4: 'Brand Alchemy',
+                    5: 'Brand Observatory'
+                }
             },
             
             author: {
@@ -136,13 +168,13 @@ class InterfaceShapeshifter {
                 tagline: 'Discover and refine your unique writing voice',
                 welcomeTitle: 'Welcome to Your Writing Voice Lab',
                 welcomeText: 'Every great writer has a unique voice. PulseCraft helps you discover, understand, and consistently channel yours.',
-                
+
                 // Buttons
                 analyzeButton: 'Analyze My Writing',
                 saveButton: 'Save Writing Style',
                 recallButton: 'Load Writing Voice',
                 combineButton: 'Blend Writing Styles',
-                
+
                 // Section headers
                 analyzeHeader: 'Discover Your Writing Voice',
                 saveHeader: 'Save Your Voice Profile',
@@ -150,23 +182,23 @@ class InterfaceShapeshifter {
                 generateHeader: 'Write in Different Styles',
                 dnaHeader: 'Your Writing DNA',
                 galleryHeader: 'Your Style Library',
-                
+
                 // Labels
                 dnaLabel: 'STYLE ELEMENTS',
                 anchorsLabel: 'RECURRING THEMES',
                 toneLabel: 'Writing Tone:',
                 vocabularyLabel: 'Word Choice:',
                 archetypeLabel: 'Writer Archetype:',
-                phrasingStyle: 'Sentence Structure:', 
-                
+                phrasingStyle: 'Sentence Structure:',
+
                 // Descriptions
                 analyzeDesc: 'Share a piece of your writing - fiction, non-fiction, or anything that feels authentically you.',
                 dnaDesc: 'Core elements of your writing style. Click to generate new content emphasizing these aspects.',
-                loadingText: 'Analyzing your writing style...',
+                loadingText: 'Capturing your style...',
                 saveSuccess: 'Writing style captured!',
-                
+
                 // Placeholders
-                inputPlaceholder: 'Paste your writing sample here...',
+                inputPlaceholder: 'Share writing that sounds like you',
                 nameInputPlaceholder: 'Name this writing style (e.g., "My Fiction Voice")',
 
                 // Multi-Style Preview Topics
@@ -180,12 +212,44 @@ class InterfaceShapeshifter {
                     { id: 'adCopyBtn', text: 'Book Blurb' },
                     { id: 'manifestoOriginVoiceBtn', text: 'Writer\'s Creed' }
                 ],
-                // --- PHASE 5 HEADERS (Paste this here) ---
+                // --- PHASE 5 HEADERS ---
                 observatoryHeader: "The Observatory",
                 observatorySubtitle: "Witness the trajectory of your soul.",
-                resonanceLabel: "Voice Resonance",
+                resonanceLabel: "Narrative Stability",
                 coherenceLabel: "Internal Coherence",
-                timelineLabel: "Archetypal Trajectory"
+                timelineLabel: "Archetypal Trajectory",
+
+                // --- PHASE 2 INTERFACE DIFFERENTIATION ---
+                // Voice Kit naming
+                voiceKitName: 'Voice Kit',
+
+                // Core action framing
+                coreAction: 'Craft Writing Voice',
+
+                // Drift & Stability metrics
+                consistencyLabel: 'Narrative Stability',
+                driftLabel: 'Voice Shift',
+
+                // DNA terminology
+                dnaLabelFull: 'Voice DNA',
+
+                // Generation action labels
+                generateAction: 'Write',
+                generateButtonText: 'Write in Your Voice',
+
+                // Empty state messaging
+                emptyStateTitle: 'No Voice Kits Yet',
+                emptyStateMessage: 'Create your first Voice Kit to capture your unique writing style and maintain narrative consistency.',
+                emptyStateCTA: 'Create First Voice Kit',
+
+                // Progressive phase names
+                phaseNames: {
+                    1: 'Craft',
+                    2: 'Voice Workshop',
+                    3: 'Story Forge',
+                    4: 'Voice Alchemy',
+                    5: 'Voice Observatory'
+                }
             },
             
             therapy: {
@@ -389,6 +453,10 @@ class InterfaceShapeshifter {
         }
 
         this.mode = mode;
+
+        // Set data-mode attribute immediately (before full applyMode)
+        document.documentElement.setAttribute('data-mode', mode);
+
         this.applyMode();
 
         // CRITICAL FIX: Update mode switcher dropdown to reflect current mode
@@ -430,13 +498,16 @@ class InterfaceShapeshifter {
 
     applyMode() {
         console.log('shapeshifter.js: Applying mode:', this.mode);
-        
+
         const lang = this.LANGUAGE_MATRIX[this.mode];
         const colors = this.COLOR_SCHEMES[this.mode];
-        
-        // Apply CSS class to body
+
+        // Apply CSS class to body (keep for backward compatibility)
         document.body.className = `${this.mode}-mode`;
-        
+
+        // NEW: Apply data-mode attribute for CSS scoping
+        document.documentElement.setAttribute('data-mode', this.mode);
+
         // Apply color scheme (CSS variables)
         this.applyColors(colors);
         
