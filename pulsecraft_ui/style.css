@@ -30,6 +30,34 @@
     --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08);
     --transition-base: all 0.2s ease-out;
     --transition-fast: all 0.1s ease-out;
+
+    /* Mode accent fallbacks (used when no data-mode set) */
+    --accent-primary: var(--color-accent-secondary-blue);
+    --accent-hover: var(--color-accent-secondary-blue-hover);
+    --accent-glow: rgba(52, 152, 219, 0.3);
+    --accent-text: var(--color-accent-secondary-blue);
+}
+
+/* Mode-specific accent colors */
+[data-mode="branding"] {
+    --accent-primary: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-glow: rgba(59, 130, 246, 0.3);
+    --accent-text: #60a5fa;
+}
+
+[data-mode="author"] {
+    --accent-primary: #ef4444;
+    --accent-hover: #dc2626;
+    --accent-glow: rgba(239, 68, 68, 0.3);
+    --accent-text: #f87171;
+}
+
+[data-mode="therapy"] {
+    --accent-primary: #10b981;
+    --accent-hover: #059669;
+    --accent-glow: rgba(16, 185, 129, 0.3);
+    --accent-text: #34d399;
 }
 
 body {
@@ -230,8 +258,8 @@ button:disabled {
 }
 
 /* Specific Button Styles */
-.btn-primary { background-color: var(--color-accent-primary-green); }
-.btn-primary:hover { background-color: var(--color-accent-primary-green-hover); }
+.btn-primary { background-color: var(--accent-primary, var(--color-accent-primary-green)); }
+.btn-primary:hover { background-color: var(--accent-hover, var(--color-accent-primary-green-hover)); }
 .btn-secondary { background-color: var(--color-accent-tertiary-purple); }
 .btn-secondary:hover { background-color: var(--color-accent-tertiary-purple-hover); }
 .btn-export-json { background-color: var(--color-export-orange); }
