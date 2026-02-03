@@ -740,7 +740,6 @@ translateInterface(lang) {
         }
     }
 
-    // 1. REPLACE setupModeSwitcher() function:
 setupModeSwitcher() {
     // Don't show mode switcher on landing page
     if (this.mode === null) return;
@@ -750,6 +749,8 @@ setupModeSwitcher() {
         switcher = document.createElement('div');
         switcher.id = 'modeSwitcher';
         switcher.className = 'mode-switcher';
+        // UPDATED: Only show three main modes (removed consciousness and deep)
+        // Consciousness/Deep modes preserved internally for easter eggs but hidden from UI
         switcher.innerHTML = `
             <label for="modeSelect" style="font-size: 12px; color: #666; margin-bottom: 4px; display: block;">Interface Mode:</label>
             <select id="modeSelect">
