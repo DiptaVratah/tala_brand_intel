@@ -529,6 +529,9 @@ class InterfaceShapeshifter {
         // Apply mode immediately
         this.applyMode();
 
+        // Initialize feedback system
+        this.initFeedbackSystem();
+
         // Set up mode switcher (will be shown by router when in app mode)
         this.setupModeSwitcher();
 
@@ -538,6 +541,21 @@ class InterfaceShapeshifter {
         // REMOVED: Progressive revelation setup - this will be handled by progressive.js
 
         console.log('shapeshifter.js: Initialization complete');
+    }
+
+    /**
+     * Initialize feedback system and patch existing loading behavior
+     */
+    initFeedbackSystem() {
+        // Override existing loading behavior if present
+        const existingShowLoading = window.showLoadingOverlay;
+        const existingHideLoading = window.hideLoadingOverlay;
+
+        // Provide backward-compatible wrappers
+        window.showLoadingOverlay = (msg) => this.showLoading(msg);
+        window.hideLoadingOverlay = () => this.hideLoading();
+
+        console.log('shapeshifter.js: Feedback system initialized');
     }
 
     applyMode() {
@@ -569,6 +587,9 @@ class InterfaceShapeshifter {
             window.progressiveSystem.updatePhaseVisibility();
             window.progressiveSystem.updateFooter();
         }
+
+        // Update library empty state
+        this.updateLibraryEmptyState();
 
         // CRITICAL FIX: Trigger a UI refresh in script.js to update saved kits and gallery based on new mode
         if (window.refreshUIElements) {
@@ -642,10 +663,10 @@ translateInterface(lang) {
         // Mode-specific Voice Kit naming in various contexts
         '.voice-kit-label': lang.voiceKitName,
 
-        // Empty state elements (will be used when empty state UI exists)
-        '.empty-state-title': lang.emptyStateTitle,
-        '.empty-state-message': lang.emptyStateMessage,
-        '.empty-state-cta': lang.emptyStateCTA,
+        // Empty state elements
+        '#libraryEmptyState .empty-state-title': lang.emptyStateTitle,
+        '#libraryEmptyState .empty-state-message': lang.emptyStateMessage,
+        '#libraryEmptyState .empty-state-cta': lang.emptyStateCTA,
 
         // General
         '.loading-text': { dataset: { defaultText: lang.loadingText } }
@@ -762,6 +783,22 @@ translateInterface(lang) {
         if (toastContainer) {
             toastContainer.classList.remove('branding-mode-toast', 'author-mode-toast', 'therapy-mode-toast', 'deep-mode-toast'); 
             toastContainer.classList.add(`${this.mode}-mode-toast`);
+        }
+    }
+
+    /**
+     * Update library empty state visibility
+     */
+    updateLibraryEmptyState() {
+        const savedKits = window.getSavedVoiceKits ? window.getSavedVoiceKits() : [];
+        const librarySection = document.querySelector('.library-preview');
+
+        if (librarySection) {
+            if (savedKits.length > 0) {
+                librarySection.classList.add('library-has-items');
+            } else {
+                librarySection.classList.remove('library-has-items');
+            }
         }
     }
 
@@ -1010,3 +1047,4 @@ window.hideLoading = () => window.pulsecraftShapeshifter?.hideLoading();
 window.showToast = (msg, type, dur) => window.pulsecraftShapeshifter?.showToast(msg, type, dur);
 window.showSuccess = (action) => window.pulsecraftShapeshifter?.showSuccess(action);
 window.showError = (err) => window.pulsecraftShapeshifter?.showError(err);
+window.updateLibraryEmptyState = () => window.pulsecraftShapeshifter?.updateLibraryEmptyState();
