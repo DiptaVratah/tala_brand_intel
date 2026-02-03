@@ -913,6 +913,93 @@ footer {
     border-left: 3px solid #10b981;
 }
 
+/* Mode-specific Typography */
+
+/* Branding: Professional, tighter, bold */
+[data-mode="branding"] {
+    --heading-weight: 700;
+    --heading-spacing: -0.02em;
+    --body-line-height: 1.5;
+}
+
+[data-mode="branding"] h1,
+[data-mode="branding"] h2 {
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-spacing);
+}
+
+[data-mode="branding"] .tagline {
+    font-style: normal;
+    font-weight: 500;
+}
+
+/* Author: Creative, relaxed, serif accents */
+[data-mode="author"] {
+    --heading-weight: 600;
+    --heading-spacing: -0.01em;
+    --body-line-height: 1.7;
+}
+
+[data-mode="author"] h1,
+[data-mode="author"] h2 {
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-spacing);
+}
+
+[data-mode="author"] .tagline,
+[data-mode="author"] .mirror-instruction {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    line-height: 1.8;
+}
+
+[data-mode="author"] .voice-attribute span {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.7;
+}
+
+/* Self-Reflection: Supportive, softer, rounded */
+[data-mode="therapy"] {
+    --heading-weight: 500;
+    --heading-spacing: 0;
+    --body-line-height: 1.65;
+}
+
+[data-mode="therapy"] h1,
+[data-mode="therapy"] h2 {
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-spacing);
+}
+
+[data-mode="therapy"] .mirror-instruction,
+[data-mode="therapy"] .observatory-subtitle {
+    font-size: 1.05em;
+    line-height: 1.7;
+}
+
+[data-mode="therapy"] button {
+    border-radius: 0.6rem;
+}
+
+/* Mode-specific placeholder text styling */
+[data-mode="branding"] textarea::placeholder,
+[data-mode="branding"] input::placeholder {
+    font-weight: 400;
+    color: #64748b;
+}
+
+[data-mode="author"] textarea::placeholder,
+[data-mode="author"] input::placeholder {
+    font-style: italic;
+    color: #78716c;
+}
+
+[data-mode="therapy"] textarea::placeholder,
+[data-mode="therapy"] input::placeholder {
+    font-weight: 400;
+    color: #6b7280;
+}
+
 /* Responsive Adjustments - Preserving Fluidity */
 @media (max-width: 1200px) {
     .container {
