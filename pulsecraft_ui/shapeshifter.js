@@ -778,10 +778,16 @@ translateInterface(lang) {
             loadingTextElement.textContent = this.LANGUAGE_MATRIX[this.mode].loadingText;
         }
 
+        // Update spinner color with mode accent
+        const spinner = document.querySelector('.loading-overlay .spinner');
+        if (spinner) {
+            spinner.style.borderTopColor = `var(--accent-primary)`;
+        }
+
         // Apply mode-specific toast background
         const toastContainer = document.getElementById('toastContainer');
         if (toastContainer) {
-            toastContainer.classList.remove('branding-mode-toast', 'author-mode-toast', 'therapy-mode-toast', 'deep-mode-toast'); 
+            toastContainer.classList.remove('branding-mode-toast', 'author-mode-toast', 'therapy-mode-toast', 'deep-mode-toast');
             toastContainer.classList.add(`${this.mode}-mode-toast`);
         }
     }
