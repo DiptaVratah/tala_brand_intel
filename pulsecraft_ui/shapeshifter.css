@@ -43,14 +43,14 @@ body {
 }
 
 .branding-mode .tagline {
-    color: #1e293b;
+    color: #94a3b8;
     font-weight: 500;
     font-style: normal;
 }
 
 .branding-mode .voice-reflection-output {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .branding-mode .voice-reflection-output::before {
@@ -89,18 +89,18 @@ body {
 
 .author-mode h1 {
     font-family: Georgia, serif;
-    color: #dc2626;
+    color: #f87171;
 }
 
 .author-mode .tagline {
-    color: #7c2d12;
+    color: #fb923c;
     font-style: italic;
     font-family: Georgia, serif;
 }
 
 .author-mode .voice-reflection-output {
-    background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
-    border: 1px solid #f59e0b;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .author-mode .btn-primary {
@@ -124,25 +124,25 @@ body {
 
 /* ==================== THERAPY MODE ==================== */
 .therapy-mode {
-    /* Calming, supportive, gentle */
+    /* Calming, supportive, gentle - dark theme */
 }
 
 .therapy-mode body {
-    background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+    background: #0a0a0a;
 }
 
 .therapy-mode h1 {
-    color: #10b981;
+    color: #34d399;
 }
 
 .therapy-mode .tagline {
-    color: #047857;
+    color: #6ee7b7;
     font-weight: 400;
 }
 
 .therapy-mode .voice-reflection-output {
-    background: linear-gradient(135deg, #dbeafe 0%, #d1fae5 100%);
-    border: none;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(16, 185, 129, 0.3);
     box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
 }
 
@@ -152,7 +152,7 @@ body {
 }
 
 .therapy-mode .section {
-    border-color: #a7f3d0;
+    border-color: rgba(16, 185, 129, 0.2);
 }
 
 .therapy-mode .dna-tag-button {
@@ -269,11 +269,12 @@ body {
     top: 20px;
     right: 20px;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(15, 23, 42, 0.95);
     padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.15);
 }
 
 .mode-switcher.hidden {
@@ -282,9 +283,10 @@ body {
 
 .mode-switcher select {
     padding: 8px 12px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 6px;
-    background: #fff;
+    background: rgba(30, 41, 59, 0.8);
+    color: #f1f5f9;
     font-size: 14px;
     cursor: pointer;
 }
@@ -425,7 +427,7 @@ body {
 
 /* ==================== LOADING STATES BY MODE ==================== */
 .branding-mode .loading-overlay {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(10, 10, 10, 0.95);
 }
 
 .branding-mode .spinner {
@@ -433,15 +435,15 @@ body {
 }
 
 .author-mode .loading-overlay {
-    background: rgba(254, 243, 199, 0.95);
+    background: rgba(10, 10, 10, 0.95);
 }
 
 .author-mode .spinner {
-    border-top-color: #dc2626;
+    border-top-color: #ef4444;
 }
 
 .therapy-mode .loading-overlay {
-    background: rgba(209, 250, 229, 0.95);
+    background: rgba(10, 10, 10, 0.95);
 }
 
 .therapy-mode .spinner {

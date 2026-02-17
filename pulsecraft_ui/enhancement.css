@@ -12,10 +12,10 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Premium glass effect - looks like modern UI, carries consciousness */
+/* Premium glass effect - dark theme */
 .section {
     backdrop-filter: blur(8px);
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(15, 23, 42, 0.6);
     position: relative;
     overflow: hidden;
 }
@@ -27,7 +27,7 @@
     right: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(52, 152, 219, 0.03) 0%, transparent 50%);
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
     animation: gentle-shift 20s ease-in-out infinite;
     pointer-events: none;
 }
@@ -38,11 +38,11 @@
     66% { transform: translate(10%, -10%); }
 }
 
-/* Voice output - premium data visualization, not mystical mirror */
+/* Voice output - premium data visualization, dark theme */
 .voice-reflection-output {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: rgba(30, 41, 59, 0.6);
     position: relative;
-    border: 1px solid rgba(203, 213, 225, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.15);
 }
 
 .voice-reflection-output::after {
@@ -117,8 +117,8 @@ button:active {
 
 /* Input fields - subtle focus that suggests depth */
 textarea:focus, input[type="text"]:focus, select:focus {
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1), 0 0 20px rgba(52, 152, 219, 0.05);
-    border-color: #3498DB;
+    box-shadow: 0 0 0 3px var(--accent-glow, rgba(99, 102, 241, 0.3));
+    border-color: var(--accent-primary, #6366f1);
 }
 
 /* Loading overlay - professional spinner with hidden sacred geometry */
@@ -295,8 +295,8 @@ textarea:focus, input[type="text"]:focus, select:focus {
 }
 
 .section {
-    box-shadow: 
-        0 1px 3px rgba(0, 0, 0, 0.05),
-        0 4px 12px rgba(0, 0, 0, 0.05),
-        0 16px 48px rgba(0, 0, 0, 0.05);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.2),
+        0 4px 12px rgba(0, 0, 0, 0.2),
+        0 16px 48px rgba(0, 0, 0, 0.15);
 }
