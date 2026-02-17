@@ -8,7 +8,7 @@ const path = require('path');
 require('dotenv').config();
 const fs = require('fs');
 const mongoose = require('mongoose'); // Shadow Telemetry
-const { handleGPTRequest } = require('./gpt_router');
+const { handleGPTRequest, streamContentGeneration } = require('./gpt_router');
 const { buildLatentMeta } = require('./services/latentMeta');
 
 
@@ -29,14 +29,14 @@ app.use(helmet({
 // Allow 10 voice mirrors per 15 minutes per IP address.
 const mirrorLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, 
+  max: 10,
   message: { error: "Too many voice analyses. Please wait 15 minutes to cool down." }
 });
 
 // Rule B: The "Generation" Limit (Lighter AI Task)
 // Allow 20 content generations per 15 minutes.
 const generateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
+  windowMs: 15 * 60 * 1000,
   max: 20,
   message: { error: "Content generation limit reached. Take a breather." }
 });
@@ -79,17 +79,17 @@ const TelemetryLog = mongoose.model('TelemetryLog', TelemetrySchema);
 // Calculates how close two vectors are (1.0 = Identical, 0.0 = Opposites)
 function calculateSimilarity(vecA, vecB) {
     if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
-    
+
     let dotProduct = 0;
     let normA = 0;
     let normB = 0;
-    
+
     for (let i = 0; i < vecA.length; i++) {
         dotProduct += vecA[i] * vecB[i];
         normA += vecA[i] * vecA[i];
         normB += vecB[i] * vecB[i];
     }
-    
+
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
@@ -101,14 +101,14 @@ async function createEmbedding(text) {
 
         // Wrap in timeout
         const embedPromise = vectorAI.embeddings.create({
-            model: "text-embedding-3-small", 
+            model: "text-embedding-3-small",
             input: text,
             encoding_format: "float",
         });
 
         const response = await Promise.race([
             embedPromise,
-            new Promise((_, reject) => 
+            new Promise((_, reject) =>
                 setTimeout(() => reject(new Error('Embedding timeout')), 10000)
             )
         ]);
@@ -116,7 +116,7 @@ async function createEmbedding(text) {
         return response.data[0].embedding;
     } catch (e) {
         console.error("⚠️ Vectorization Failed:", e.message);
-        return []; 
+        return [];
     }
 }
 
@@ -129,10 +129,10 @@ function synthesizeGenerationPrompt(kit, style, context) {
     const cadence = latent.emotionalCadence || "Natural flow";
     const tension = latent.cognitiveTension || "Balanced";
     const narrative = latent.narrativeMode || "Organic";
-    
+
     // Safely handle motifs array
-    const motifs = Array.isArray(latent.dominantMotifs) 
-        ? latent.dominantMotifs.join(', ') 
+    const motifs = Array.isArray(latent.dominantMotifs)
+        ? latent.dominantMotifs.join(', ')
         : "None detected";
 
     // 2. RESTORED: The "Resonant Truth" Prompt for DNA/Symbol clicks
@@ -260,8 +260,8 @@ if (mongoose.connection.readyState === 1 && userId) {
     // --- SHADOW INGESTION: VECTORIZE THE CORE ---
     // We distill the kit into a single "Essence String" for the AI to memorize.
     const essenceString = `
-        Tone: ${responseKit.tone}. 
-        Archetype: ${responseKit.archetype}. 
+        Tone: ${responseKit.tone}.
+        Archetype: ${responseKit.archetype}.
         Keywords: ${responseKit.dnaTags.join(", ")}.
         Philosophy: ${responseKit.latentProfile?.communicativeIntent || "Unknown"}
     `.trim();
@@ -277,7 +277,7 @@ if (mongoose.connection.readyState === 1 && userId) {
             eventType: 'MIRROR_VOICE',
             inputContext: brandInput.substring(0, 500),
             outputData: responseKit,
-            latentProfile: responseKit.latentProfile, 
+            latentProfile: responseKit.latentProfile,
              latentMeta: latentMeta,// <-- internal analytics
             vectorEmbedding: vector
         }).save().catch(e => console.error('Telemetry Save Failed:', e));
@@ -291,7 +291,7 @@ if (mongoose.connection.readyState === 1 && userId) {
   }
 });
 
-// 2. API: Generate Content (Updated with Vectorization)
+// 2. API: Generate Content (STREAMING via Universal Pipe)
 app.post('/api/generate-content', generateLimiter, async (req, res) => {
   const { kit, context, style = 'auto', userId } = req.body;
 
@@ -300,49 +300,66 @@ app.post('/api/generate-content', generateLimiter, async (req, res) => {
   }
 
   try {
+    // Build the voice-constrained prompt
     const generationPrompt = synthesizeGenerationPrompt(kit, style, context);
-    
-    const routerRequest = {
-        prompt: generationPrompt,
-        style: style 
-    };
+    const systemMessage = "You are a master stylist and voice chameleon. Your task is to generate content that perfectly embodies a specific voice and style.";
 
-    // 1. Generate the Text
-    const { output, error } = await handleGPTRequest('content', routerRequest);
+    console.log("🌊 Streaming content generation started...");
 
-    if (error) {
-        return res.status(500).json({ error: 'AI generation error: ' + error });
+    // 1. Call the AI (This returns the Result Object)
+    const result = await streamContentGeneration(generationPrompt, style, systemMessage);
+
+    // 2. Manual Header Setup (Prevents ERR_HTTP_HEADERS_SENT)
+    res.writeHead(200, {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Transfer-Encoding': 'chunked',
+        'X-Content-Type-Options': 'nosniff'
+    });
+
+    // 3. TELEMETRY DVR (Set this up BEFORE consuming stream)
+    // We start the background recording promise immediately.
+    result.text.then(async (fullText) => {
+        try {
+            console.log("🌊 Stream complete. Capturing telemetry...");
+            const contentVector = await createEmbedding(fullText);
+            if (mongoose.connection.readyState === 1) {
+                await new TelemetryLog({
+                    userId: userId,
+                    eventType: 'GENERATE_CONTENT',
+                    inputContext: context.substring(0, 200),
+                    outputData: { generatedText: fullText },
+                    latentProfile: kit.latentProfile,
+                    meta: { archetype: kit.archetype, streaming: true },
+                    vectorEmbedding: contentVector
+                }).save();
+                console.log('📝 Telemetry successfully saved via Server.js');
+            }
+        } catch (err) {
+            console.error('⚠️ Telemetry failed (Background):', err);
+        }
+    }).catch(e => console.error('⚠️ Telemetry Promise Failed:', e));
+
+    // 4. MANUAL STREAMING LOOP (The Universal Fix)
+    // We iterate over the textStream directly. This works on all SDK versions.
+    for await (const chunk of result.textStream) {
+        res.write(chunk);
     }
-
-    // 2. [NEW] Vectorize the Result (The "Reality Check")
-    // We convert the AI's output into math so we can compare it to the user's voice later.
-    console.log("🧬 Vectorizing Generated Content for Drift Analysis...");
-    const contentVector = await createEmbedding(output);
-
-    // 3. Save to Shadow Log
-    if (mongoose.connection.readyState === 1) {
-        new TelemetryLog({
-            userId: userId,
-            eventType: 'GENERATE_CONTENT',
-            inputContext: context.substring(0, 200),
-            outputData: { generatedText: output },
-            latentProfile: kit.latentProfile,
-            meta: { archetype: kit.archetype },
-            vectorEmbedding: contentVector // ← NOW WE SAVE THE MATH
-        }).save().catch(e => console.error('Telemetry Save Failed:', e));
-    }
-
-    res.json({ output });
+    res.end();
 
   } catch (err) {
     console.error(' Generate Content API error:', err);
-    res.status(500).json({ error: 'Failed to generate content: ' + err.message });
+    // Only send a JSON error if we haven't started streaming yet
+    if (!res.headersSent) {
+        res.status(500).json({ error: 'Failed to generate content: ' + err.message });
+    } else {
+        res.end(); // Close the connection if we crashed mid-stream
+    }
   }
 });
 
 // 3. API: Refine Selected Kits (Voice Alchemy Endpoint)
 app.post('/api/refine-kits', generateLimiter, async (req, res) => {
-    const { kits, userId } = req.body; 
+    const { kits, userId } = req.body;
     console.log(' Received /api/refine-kits request with', kits.length, 'kits.');
 
     if (!kits || !Array.isArray(kits) || kits.length < 2) {
@@ -350,29 +367,29 @@ app.post('/api/refine-kits', generateLimiter, async (req, res) => {
     }
 
     try {
-        const refinedKit = await handleGPTRequest('refine', { kits }); 
+        const refinedKit = await handleGPTRequest('refine', { kits });
         console.log(' GPT Router response for refinement:', refinedKit);
 
         if (refinedKit.error) {
             return res.status(500).json({ error: refinedKit.error });
         }
-        
+
         refinedKit.name = `Refined: ${kits.map(k => k.name || 'Kit').join(' + ')}`;
 
         // --- INTERNAL OBSERVER FOR ALCHEMY ---
         let latentMeta = null;
         if (mongoose.connection.readyState === 1 && userId) {
             // Get history of past Alchemies OR Mirrors to compare against
-            const history = await TelemetryLog.find({ 
-                userId: userId, 
-                latentProfile: { $exists: true } 
+            const history = await TelemetryLog.find({
+                userId: userId,
+                latentProfile: { $exists: true }
             })
             .sort({ timestamp: 1 })
             .select('latentProfile')
             .limit(10);
 
             const historyProfiles = history.map(h => h.latentProfile);
-            
+
             // Calculate stability of this new merged soul
             latentMeta = buildLatentMeta(refinedKit.latentProfile, historyProfiles);
         }
@@ -380,15 +397,15 @@ app.post('/api/refine-kits', generateLimiter, async (req, res) => {
         // --- NEW: VECTORIZE THE ALCHEMY (The "New Soul") ---
         // We must calculate the vector for this new merged identity so we can track drift against it.
         const essenceString = `
-            Tone: ${refinedKit.tone}. 
-            Archetype: ${refinedKit.archetype}. 
+            Tone: ${refinedKit.tone}.
+            Archetype: ${refinedKit.archetype}.
             Keywords: ${Array.isArray(refinedKit.dnaTags) ? refinedKit.dnaTags.join(", ") : "Evolved"}.
             Philosophy: ${refinedKit.latentProfile?.communicativeIntent || "Synthesis"}
         `.trim();
 
         console.log("⚗️ Vectorizing Alchemical Essence...");
         const alchemyVector = await createEmbedding(essenceString);
-        
+
         // --- SHADOW LOGGING: CAPTURE THE ALCHEMY ---
         if (mongoose.connection.readyState === 1) {
             new TelemetryLog({
@@ -433,7 +450,7 @@ app.get('/api/user-history', async (req, res) => {
         const rawLogs = await TelemetryLog.find({ userId: userId })
             .sort({ timestamp: -1 })
             .limit(100) // Increased limit for better analysis
-            .select('-vectorEmbedding'); 
+            .select('-vectorEmbedding');
 
         // 2. Map to CLEAN data (The "Cleanliness")
         // We format the messy DB logs into a clear UI-ready structure.
@@ -459,8 +476,8 @@ app.get('/api/user-history', async (req, res) => {
                         }
                     }
                 };
-            } 
-            
+            }
+
             else if (log.eventType === 'GENERATE_CONTENT') {
                 return {
                     ...base,
@@ -469,7 +486,7 @@ app.get('/api/user-history', async (req, res) => {
                         contextSnippet: log.inputContext ? log.inputContext.substring(0, 60) + "..." : "No context",
                         styleUsed: log.styleUsed || "Auto",
                         // Useful to see which voice was active during generation
-                        archetypeUsed: log.meta?.archetype || "Unknown" 
+                        archetypeUsed: log.meta?.archetype || "Unknown"
                     }
                 };
             }
@@ -484,7 +501,7 @@ app.get('/api/user-history', async (req, res) => {
                     }
                 };
             }
-            
+
             return base; // Fallback for unknown events
         });
 
@@ -513,15 +530,15 @@ app.get('/api/identity-drift', async (req, res) => {
     try {
         // --- PART 1: THE ANCHOR (Current True North) ---
         // Get the MOST RECENT Voice (Mirror or Alchemy) to serve as the baseline
-        const lastVoice = await TelemetryLog.findOne({ 
-            userId: userId, 
-            eventType: { $in: ['MIRROR_VOICE', 'REFINE_ALCHEMY'] } 
+        const lastVoice = await TelemetryLog.findOne({
+            userId: userId,
+            eventType: { $in: ['MIRROR_VOICE', 'REFINE_ALCHEMY'] }
         }).sort({ timestamp: -1 });
 
         // Get the MOST RECENT Content (Last 5 Generations) to check performance
-        const recentContent = await TelemetryLog.find({ 
-            userId: userId, 
-            eventType: 'GENERATE_CONTENT' 
+        const recentContent = await TelemetryLog.find({
+            userId: userId,
+            eventType: 'GENERATE_CONTENT'
         }).sort({ timestamp: -1 }).limit(5);
 
         if (!lastVoice || !lastVoice.vectorEmbedding) {
@@ -529,7 +546,7 @@ app.get('/api/identity-drift', async (req, res) => {
         }
 
         // --- PART 2: THE RESONANCE CALCULATION (Content vs. Current Voice) ---
-        let driftScore = 100; 
+        let driftScore = 100;
         let driftStatus = "clean_slate";
 
         if (recentContent.length > 0) {
@@ -560,13 +577,13 @@ app.get('/api/identity-drift', async (req, res) => {
             vectorEmbedding: { $exists: true, $ne: [] }
         }).sort({ timestamp: 1 }); // Oldest first
 
-        let evolutionStory = "Identity Initialized"; 
+        let evolutionStory = "Identity Initialized";
         let journey = [];
 
         if (voiceHistory.length > 1) {
             const startArchetype = voiceHistory[0].outputData?.archetype || "Unknown";
             const currentArchetype = voiceHistory[voiceHistory.length - 1].outputData?.archetype || "Unknown";
-            
+
             // The Narrative String: Tells the user where they came from and where they are now
             evolutionStory = `Shifted from ${startArchetype} to ${currentArchetype}`;
 
@@ -581,13 +598,13 @@ app.get('/api/identity-drift', async (req, res) => {
         // --- PART 3.5: EXTRACT INTERNAL METRICS (The Fix) ---
         // The drift score is for "Content", but the dashboard also wants "Voice Stability".
         // We pull this from the saved latentMeta of the last voice.
-        
+
         const internalMetrics = {
             // If latentMeta exists (because we saved it in mirror/alchemy), use it.
             // If not, fall back to "Stable" defaults.
             tension: lastVoice.latentProfile?.cognitiveTension || "Balanced",
             cadence: lastVoice.latentProfile?.emotionalCadence || "Steady",
-            stability: lastVoice.latentMeta?.stabilityBand || "Stable" 
+            stability: lastVoice.latentMeta?.stabilityBand || "Stable"
         };
 
         // --- PART 4: THE REFLECTION (Non-Judgmental Insight) ---
@@ -606,15 +623,15 @@ app.get('/api/identity-drift', async (req, res) => {
         // --- FINAL RESPONSE ---
         res.json({
             status: driftStatus,
-            resonanceScore: driftScore, 
+            resonanceScore: driftScore,
             state: driftScore > 75 ? "Resonant" : driftScore > 50 ? "Flexible" : "Divergent",
-            
+
             evolutionStory: evolutionStory, // The Story (Rebel -> Visionary)
             journey: journey,               // The Data Points
             baselineArchetype: lastVoice.outputData.archetype,
 
             internalMetrics: internalMetrics,
-            
+
             insight: observation            // The Mirror's Reflection
         });
 

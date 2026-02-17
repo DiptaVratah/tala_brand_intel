@@ -3,11 +3,22 @@
 // based on task type and style. Preserves v4 prompts/post-processing.
 
 require('dotenv').config();
+
+// --- ORIGINAL SDK IMPORTS (Used by multiExtract, multiAlchemy, latentExtract) ---
 const OpenAI = require('openai');
 const Anthropic = require('@anthropic-ai/sdk');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// Initialize Clients
+// --- VERCEL AI SDK IMPORTS (Used by streamContentGeneration) ---
+const { streamText } = require('ai');
+const { anthropic: createAnthropic } = require('@ai-sdk/anthropic');
+const { google: createGoogle } = require('@ai-sdk/google');
+const { openai: createOpenAI } = require('@ai-sdk/openai');
+
+// --- ZOD VALIDATION SCHEMAS (Patent-Compliant JSON Enforcement) ---
+const { validateVoiceKit, validateLatentProfile } = require('./schemas');
+
+// Initialize Original Clients (for multiExtract, multiAlchemy, latentExtract)
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
@@ -45,36 +56,36 @@ const voiceAnalysisSchema = {
 // --- NEW: THE INTENT CLASSIFIER (Optimized) ---
 async function classifyIntent(userPrompt) {
     console.log("🔮 Classifying User Intent...");
-    
+
     // We use gpt-4o-mini because it is faster and cheaper for this simple logic task.
     // It acts as the "Switchboard Operator".
     try {
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini", // <--- CHANGED for speed/cost
             messages: [
-                { 
-                    role: "system", 
+                {
+                    role: "system",
                     content: `You are a strict routing system. Classify the user's request into ONE category:
                     1. NARRATIVE (Story, manifesto, essay, deep reflection, emotional writing)
                     2. STRUCTURED (Plan, strategy, analysis, technical doc, outline, how-to)
                     3. ACTION (Email, social post, ad copy, sales pitch, dialogue, short request)
-                    
+
                     If unclear, output ACTION.
                     Output ONLY the one word label.`
-                }, 
+                },
                 { role: "user", content: userPrompt.substring(0, 500) }
             ],
             temperature: 0.0 // Strict logic, no creativity
         });
-        
+
         let intent = completion.choices[0].message.content.trim().toUpperCase();
-        
+
         // Sanitize output (Safety Net)
         if (!['NARRATIVE', 'STRUCTURED', 'ACTION'].includes(intent)) {
             console.warn(`⚠️ Classifier returned weird value: ${intent}. Defaulting to ACTION.`);
-            intent = 'ACTION'; 
+            intent = 'ACTION';
         }
-        
+
         console.log(`🔮 Intent Detected: ${intent}`);
         return intent;
 
@@ -92,7 +103,7 @@ async function selectModelForTask(type, style, userPrompt) {
         // For structural/JSON tasks, stick to OpenAI (best schema adherence)
         // Optional: If style provided, blend (e.g., poetic refine → Claude assist)
         if (style && style.includes('poetic')) selectedModel = 'anthropic';
-        return selectedModel; 
+        return selectedModel;
     }
 
     if (type === 'content') {
@@ -108,7 +119,7 @@ async function selectModelForTask(type, style, userPrompt) {
             selectedModel = 'openai';    // GPT-4o is the Messenger
         }
     }
-    
+
     console.log(`[Orchestrator] Routing Content Task to: ${selectedModel.toUpperCase()}`);
     return selectedModel;
 }
@@ -126,15 +137,15 @@ async function callOpenAI(messages, responseFormat = null, temp = 0.7) {
     if (responseFormat) {
         params.response_format = responseFormat;
     }
-    
+
     const completion = await openai.chat.completions.create(params);
     return completion.choices[0].message.content;
 }
 
 async function callAnthropic(systemPrompt, userPrompt, temp = 0.7) {
-    // FIXED: Use current Claude 4 Sonnet (Dec 2025 stable)
+    // FIXED: Use Claude 4 Sonnet (stable)
     const msg = await anthropic.messages.create({
-        model: "claude-sonnet-4-5-20250929",  // Or "claude-4-sonnet-latest" for auto-updates
+        model: "claude-sonnet-4-20250514",  // Claude 4 Sonnet (May 2025 stable)
         max_tokens: 4096,
         temperature: temp,
         system: systemPrompt,
@@ -156,7 +167,7 @@ async function callGoogle(systemPrompt, userPrompt) {
 // --- NEW: MULTI-AI EXTRACTION LOGIC ---
 async function multiExtract(prompt) {
     console.log("⚡ Starting Multi-AI Voice Extraction...");
-    
+
     // 1. OpenAI (The Skeleton: Strict JSON Schema)
     const openaiMsg = [
         { role: "system", content: "You extract structure, schema-correct JSON, and explicit linguistic patterns." },
@@ -181,17 +192,35 @@ function combineExtractionProviders(base, claude, gemini) {
         return { error: "Base extraction failed" };
     }
 
+    // --- ZOD VALIDATION: Enforce Patent-Compliant Schema ---
+    const validation = validateVoiceKit(parsed);
+    if (validation.success) {
+        // Use validated data (strips illegal/extra fields)
+        parsed = validation.data;
+        console.log("✅ Voice Kit schema validation passed");
+    } else {
+        // Soft failure: log warning but continue with raw parsed data
+        console.warn("⚠️ Voice Kit schema validation failed:", validation.error.issues?.map(i => i.message).join(', '));
+        // Ensure minimum required fields exist
+        parsed = {
+            tone: parsed.tone || "Unvalidated",
+            vocabulary: parsed.vocabulary || "Unvalidated",
+            phrasingStyle: parsed.phrasingStyle || "Unvalidated",
+            archetype: parsed.archetype || "Unvalidated",
+            samplePhrases: Array.isArray(parsed.samplePhrases) ? parsed.samplePhrases : [],
+            phrasesToAvoid: Array.isArray(parsed.phrasesToAvoid) ? parsed.phrasesToAvoid : [],
+            dnaTags: Array.isArray(parsed.dnaTags) ? parsed.dnaTags : [],
+            symbolAnchors: Array.isArray(parsed.symbolAnchors) ? parsed.symbolAnchors : []
+        };
+    }
+
     // Inject the "Soul" (Claude) and "Logic" (Gemini) into the JSON
-    // We append this extra intel to the 'tone' and 'phrasingStyle' fields 
+    // We append this extra intel to the 'tone' and 'phrasingStyle' fields
     // so it appears in the UI without breaking the schema.
-    
-    // Replace the fragie splitting logic with this:
-if (claude) {
-    // Regex to find "Subtext:" or just grab the text if no label exists
-    const match = claude.match(/Subtext:\s*(.*)/i) || claude.match(/^(.*)/);
-    const soulSnippet = match ? match[1].substring(0, 100).trim() : "Deep Resonance";
-    parsed.tone += ` (Subtext: ${soulSnippet})`;
-}
+
+    // Inject Claude's subtext (limited to 150 chars to prevent prompt bloat)
+    const claudeSoul = claude ? (claude.match(/Subtext:\s*(.*)/i) || claude.match(/^(.*)/))?.[1]?.trim() || "Deep Resonance" : "";
+    parsed.tone += (claude ? ' | Subtext: ' + claudeSoul.substring(0, 150) : '');
 
     if (gemini) {
         // Extract structural analysis
@@ -210,12 +239,33 @@ if (claude) {
 async function multiAlchemy(kits, prompt) {
     console.log("⚡ Starting Multi-AI Alchemy...");
 
+    // --- ZOD SANDWICH LAYER 1: Input Validation ---
+    const validKits = [];
+    for (const kit of kits) {
+        const validation = validateVoiceKit(kit);
+        if (validation.success) {
+            validKits.push(validation.data);
+        } else {
+            console.warn("⚠️ Alchemy: Dropped invalid kit:", validation.error.issues?.map(i => i.message).join(', '));
+        }
+    }
+
+    // Cannot alchemize fewer than 2 valid kits
+    if (validKits.length < 2) {
+        throw new Error(`Alchemy requires at least 2 valid Voice Kits. Only ${validKits.length} passed validation.`);
+    }
+
+    console.log(`✅ Alchemy: ${validKits.length}/${kits.length} kits passed input validation`);
+
+    // Use validated kits for AI prompts
+    const validatedKitsJSON = JSON.stringify(validKits);
+
     // 1. OpenAI (The Architect)
     // Strict Schema to prevent breakage
     const openaiMsg = [
-        { 
-            role: "system", 
-            content: `You are a master synthesist. Output a JSON object strictly adhering to this schema: ${JSON.stringify(voiceAnalysisSchema, null, 2)}.` 
+        {
+            role: "system",
+            content: `You are a master synthesist. Output a JSON object strictly adhering to this schema: ${JSON.stringify(voiceAnalysisSchema, null, 2)}.`
         },
         { role: "user", content: prompt }
     ];
@@ -223,22 +273,22 @@ async function multiAlchemy(kits, prompt) {
     // 2. Claude (The Visionary)
     // SILENCING ORDER: We force it to output ONLY the name.
     const claudePrompt = `
-    Review these Voice Kits. 
+    Review these Voice Kits.
     Resolve the tension between them into a NEW, singular Archetype.
     Output ONLY the name of this new Archetype (e.g., "The Quantum Sage").
     Do not write a full sentence. Do not write "The archetype is...". Just the name.
-    
-    Data: ${JSON.stringify(kits)}
+
+    Data: ${validatedKitsJSON}
     `;
 
     // 3. Gemini (The Bridge)
     // SILENCING ORDER: We force it to output ONLY keywords.
     const geminiPrompt = `
     Identify 3 unique "Bridge Words" that fuse these styles.
-    Output ONLY the 3 words, separated by commas. 
+    Output ONLY the 3 words, separated by commas.
     NO intro text. NO explanations. NO bullet points.
-    
-    Data: ${JSON.stringify(kits)}
+
+    Data: ${validatedKitsJSON}
     `;
 
     // Fire all three
@@ -265,21 +315,36 @@ function combineAlchemyProviders(base, claude, gemini) {
         parsed = { tone: "Emergent Synthesis", vocabulary: "Hybridized Lexicon", archetype: "The Alchemist" };
     }
 
-    // Default Fallbacks
-    parsed.archetype = parsed.archetype || "Emergent Archetype";
-    parsed.tone = parsed.tone || "Synthesized Tone";
-    parsed.vocabulary = parsed.vocabulary || "Evolved Vocabulary";
+    // --- ZOD SANDWICH LAYER 2: Output Validation ---
+    const validation = validateVoiceKit(parsed);
+    if (validation.success) {
+        parsed = validation.data;
+        console.log("✅ Alchemy output schema validation passed");
+    } else {
+        console.warn("⚠️ Alchemy output schema validation failed:", validation.error.issues?.map(i => i.message).join(', '));
+        // Soft landing: ensure minimum required fields
+        parsed = {
+            tone: parsed.tone || "Emergent Synthesis",
+            vocabulary: parsed.vocabulary || "Hybridized Lexicon",
+            phrasingStyle: parsed.phrasingStyle || "Synthesized Flow",
+            archetype: parsed.archetype || "The Alchemist",
+            samplePhrases: Array.isArray(parsed.samplePhrases) ? parsed.samplePhrases : [],
+            phrasesToAvoid: Array.isArray(parsed.phrasesToAvoid) ? parsed.phrasesToAvoid : [],
+            dnaTags: Array.isArray(parsed.dnaTags) ? parsed.dnaTags : [],
+            symbolAnchors: Array.isArray(parsed.symbolAnchors) ? parsed.symbolAnchors : []
+        };
+    }
 
     // --- POLISHED MERGE LOGIC (Natural Blending) ---
 
     // 1. Inject Claude's Vision (Seamlessly)
     if (claude) {
-        const cleanSoul = claude.replace(/\n/g, '').trim(); 
+        const cleanSoul = claude.replace(/\n/g, '').trim();
         // Result: "The Sage, The Quantum Alchemist" (No more pipes or labels)
-        parsed.archetype = `${parsed.archetype}, ${cleanSoul}`; 
-        
+        parsed.archetype = `${parsed.archetype}, ${cleanSoul}`;
+
         // Result: "Reflective, with elements of The Quantum Alchemist"
-        parsed.tone = `${parsed.tone}, evoking ${cleanSoul}`; 
+        parsed.tone = `${parsed.tone}, evoking ${cleanSoul}`;
     }
 
     // 2. Inject Gemini's Bridge Words (Seamlessly)
@@ -384,17 +449,17 @@ Rules:
             const start = clean.indexOf('{');
             // 2. Find the LAST '}'
             const end = clean.lastIndexOf('}');
-            
+
             if (start !== -1 && end !== -1) {
                 // Extract ONLY the JSON part
                 clean = clean.substring(start, end + 1);
                 intentMotifs = JSON.parse(clean);
             } else {
                 // If no brackets, use fallback
-                intentMotifs = JSON.parse(clean); 
+                intentMotifs = JSON.parse(clean);
             }
-        } catch (e) { 
-            console.warn(`Gemini Latent Parse Warning (Handled): ${e.message}`); 
+        } catch (e) {
+            console.warn(`Gemini Latent Parse Warning (Handled): ${e.message}`);
             // Fallback so extraction succeeds
             intentMotifs = { communicativeIntent: "Complex Expression", dominantMotifs: [] };
         }
@@ -425,7 +490,23 @@ Rules:
         latentProfile = { error: "latent_extraction_failed" };
     }
 
-    return latentProfile;
+    // --- ZOD VALIDATION: Enforce Latent Profile Schema ---
+    const latentValidation = validateLatentProfile(latentProfile);
+    if (latentValidation.success) {
+        console.log("✅ Latent Profile schema validation passed");
+        return latentValidation.data;
+    } else {
+        console.warn("⚠️ Latent Profile schema validation failed:", latentValidation.error.issues?.map(i => i.message).join(', '));
+        // Safe fallback with default stabilityIndex
+        return {
+            narrativeMode: latentProfile.narrativeMode || "Linear",
+            stabilityIndex: typeof latentProfile.stabilityIndex === 'number' ? latentProfile.stabilityIndex : 0.5,
+            emotionalCadence: latentProfile.emotionalCadence || "Neutral",
+            cognitiveTension: latentProfile.cognitiveTension || "Balanced",
+            communicativeIntent: latentProfile.communicativeIntent || "Expression",
+            dominantMotifs: Array.isArray(latentProfile.dominantMotifs) ? latentProfile.dominantMotifs : []
+        };
+    }
 }
 
 
@@ -473,7 +554,7 @@ async function handleGPTRequest(type, data) {
   let style = 'general'; // Default style
   let systemMessage = "You are PulseCraft, an advanced identity engine.";
   let isJsonResponse = false;
-  
+
   // Extract data if it's an object with metadata (from updated server.js)
   // Or handle it if it's just a raw prompt string (legacy support)
   let requestData = data;
@@ -487,10 +568,10 @@ async function handleGPTRequest(type, data) {
   }
 
   // --- PREPARE PROMPTS BASED ON TYPE (Preserving Your Previous Logic) ---
-  
+
   if (type === "voice") {
     promptContent = data; // Full prompt from server.js
-    
+
     isJsonResponse = true;
     systemMessage = `You are an expert Linguistic Analyst. Your output must be a JSON object strictly adhering to this schema: ${JSON.stringify(voiceAnalysisSchema, null, 2)}
       Ensure all array fields (samplePhrases, phrasesToAvoid, dnaTags, symbolAnchors) are valid JSON arrays. Do not include any other text or formatting outside the JSON object.`;
@@ -501,13 +582,30 @@ async function handleGPTRequest(type, data) {
     isJsonResponse = false;
 
   } else if (type === "refine") {
-    const { kits } = requestData; 
+    const { kits } = requestData;
+
+    // --- ZOD VALIDATION: Validate kits BEFORE building prompt (prevent poisoning) ---
+    const validKits = [];
+    for (const kit of kits) {
+        const validation = validateVoiceKit(kit);
+        if (validation.success) {
+            validKits.push(validation.data);
+        } else {
+            console.warn("⚠️ handleGPTRequest refine: Dropped invalid kit:", validation.error.issues?.map(i => i.message).join(', '));
+        }
+    }
+
+    if (validKits.length < 2) {
+        throw new Error(`Alchemy requires at least 2 valid Voice Kits. Only ${validKits.length} passed validation.`);
+    }
+
+    console.log(`✅ handleGPTRequest refine: ${validKits.length}/${kits.length} kits passed validation`);
 
     // CRITICAL FIX: Streamlined system message from v4.
     systemMessage = `You are the Supreme Voice Alchemist. Your SOLE output MUST be a JSON object that strictly adheres to the following schema: ${JSON.stringify(voiceAnalysisSchema, null, 2)}.
       You MUST provide detailed, descriptive, and non-empty values for ALL required properties. Ensure all array fields are valid JSON arrays. DO NOT include any other text, preambles, or explanations outside the JSON object. Your response should start directly with '{'.`;
 
-    // Preserving the Refine Prompt from v4
+    // Build prompt using ONLY validated kits
     promptContent = `
 Your sacred task is to perform a profound, non-linear synthesis of the provided Voice Kits. These are "Consciousness Prints" – the distilled essence of unique voices. Your goal is to identify the emergent properties, the unexpected harmonies, and the deeper, unifying frequency that arises when these voices are brought together.
 
@@ -529,7 +627,7 @@ Focus on:
 The output must be a single JSON object, strictly adhering to the Voice Kit schema. Do NOT include any preambles or explanations outside the JSON.
 
 Here are the Voice Kits to be alchemized (their raw data for your deep analysis):
-${kits.map((kit, index) => `
+${validKits.map((kit, index) => `
 --- Voice Kit ${index + 1} ("${kit.name || 'Untitled'}") ---
 Tone: ${kit.tone || 'None'}
 Vocabulary: ${kit.vocabulary || 'None'}
@@ -544,6 +642,9 @@ Symbol Anchors: ${Array.isArray(kit.symbolAnchors) && kit.symbolAnchors.length >
 Perform the alchemy. Provide only the refined JSON object.
 `.trim();
 
+    // Pass validated kits to multiAlchemy
+    requestData = { kits: validKits };
+
     isJsonResponse = true;
   } else {
     throw new Error("Unsupported type for GPT request: " + type);
@@ -557,11 +658,11 @@ const provider = await selectModelForTask(type, style, promptContent);
     let rawContent;
 
     // --- EXECUTE REQUEST ---
-    
+
     if (type === 'voice') {
         // Multi-AI Extraction (Existing)
     console.log("⚡ Executing Multi-AI Voice Extraction...");
-    
+
     // EXECUTE PARALLEL: Visible Extraction + Silent Latent Extraction
     const [extract, latent] = await Promise.all([
         multiExtract(promptContent),
@@ -582,11 +683,11 @@ const provider = await selectModelForTask(type, style, promptContent);
     } catch (e) {
         console.warn("Could not attach latent profile to JSON", e);
     }
-    } 
+    }
     else if (type === 'refine') {
         // [NEW] Multi-AI Alchemy Logic
         console.log("⚡ Executing Multi-AI Alchemy...");
-        const { kits } = requestData; 
+        const { kits } = requestData;
         const alchemy = await multiAlchemy(kits, promptContent);
         rawContent = combineAlchemyProviders(
             alchemy.baseJSON,
@@ -600,19 +701,19 @@ const provider = await selectModelForTask(type, style, promptContent);
             { role: "system", content: systemMessage },
             { role: "user", content: promptContent }
         ];
-        
-        // CRITICAL FIX: Explicitly undefined if not JSON. 
-        // Sending { type: "json_object" } for text prompts causes OpenAI to hang/error.
-        const format = isJsonResponse ? { type: "json_object" } : undefined; 
-        const temp = type === 'refine' ? 0.9 : 0.7; 
 
-        console.log(`🚀 Sending request to OpenAI (Format: ${format ? 'JSON' : 'Text'})...`); 
-        
+        // CRITICAL FIX: Explicitly undefined if not JSON.
+        // Sending { type: "json_object" } for text prompts causes OpenAI to hang/error.
+        const format = isJsonResponse ? { type: "json_object" } : undefined;
+        const temp = type === 'refine' ? 0.9 : 0.7;
+
+        console.log(`🚀 Sending request to OpenAI (Format: ${format ? 'JSON' : 'Text'})...`);
+
         // Safety Timeout (60s)
-        const timeoutPromise = new Promise((_, reject) => 
+        const timeoutPromise = new Promise((_, reject) =>
             setTimeout(() => reject(new Error("OpenAI Request Timed Out")), 60000)
         );
-        
+
         try {
             rawContent = await Promise.race([
                 callOpenAI(messages, format, temp),
@@ -621,12 +722,12 @@ const provider = await selectModelForTask(type, style, promptContent);
             console.log("✅ OpenAI Replied. Length:", rawContent ? rawContent.length : 0);
         } catch (openaiError) {
             console.error("❌ OpenAI Error:", openaiError.message);
-            throw openaiError; 
+            throw openaiError;
         }
     }
     else if (provider === 'anthropic') {
         rawContent = await callAnthropic(systemMessage, promptContent);
-    } 
+    }
     else if (provider === 'google') {
         rawContent = await callGoogle(systemMessage, promptContent);
     }
@@ -655,24 +756,24 @@ const provider = await selectModelForTask(type, style, promptContent);
             parsedContent.vocabulary = parsedContent.vocabulary || 'Rich and expressive lexicon';
             parsedContent.phrasingStyle = parsedContent.phrasingStyle || 'Dynamic and impactful phrasing';
             parsedContent.archetype = parsedContent.archetype || 'The Alchemist';
-            
+
             parsedContent.samplePhrases = Array.isArray(parsedContent.samplePhrases) && parsedContent.samplePhrases.length > 0
                                         ? parsedContent.samplePhrases
                                         : ['Synthesized insight', 'New resonant truth'];
-            
+
             parsedContent.phrasesToAvoid = Array.isArray(parsedContent.phrasesToAvoid) && parsedContent.phrasesToAvoid.length > 0
                                         ? parsedContent.phrasesToAvoid
                                         : ['Stagnation', 'Limitation'];
-            
+
             parsedContent.dnaTags = Array.isArray(parsedContent.dnaTags) && parsedContent.dnaTags.length > 0
                                   ? parsedContent.dnaTags
                                   : ['Fusion', 'Evolution', 'Resonance'];
-            
+
             parsedContent.symbolAnchors = Array.isArray(parsedContent.symbolAnchors) && parsedContent.symbolAnchors.length > 0
                                         ? parsedContent.symbolAnchors
                                         : ['New Horizon', 'Deep Current', 'Guiding Star'];
-            
-            parsedContent.name = parsedContent.name || undefined; 
+
+            parsedContent.name = parsedContent.name || undefined;
 
             return parsedContent;
 
@@ -694,4 +795,43 @@ const provider = await selectModelForTask(type, style, promptContent);
   }
 }
 
-module.exports = { handleGPTRequest };
+// --- STREAMING CONTENT GENERATION (Vercel AI SDK Bridge) ---
+// Bridges existing intent classification to Vercel AI SDK streaming
+// SAFETY: Does NOT touch multiExtract, multiAlchemy, or classifyIntent
+async function streamContentGeneration(prompt, style, systemMessage) {
+    console.log("🌊 Starting Streaming Content Generation...");
+
+    // Step A: Use existing intent classification to select provider
+    const provider = await selectModelForTask('content', style, prompt);
+    console.log(`🌊 Stream routed to: ${provider.toUpperCase()}`);
+
+    // Step B: Bridge to Vercel AI SDK model constructors
+    // ALIGNED: Using EXACT same model versions as non-streaming logic
+    let model;
+    switch (provider) {
+        case 'anthropic':
+            model = createAnthropic('claude-sonnet-4-20250514');
+            break;
+        case 'google':
+            model = createGoogle('gemini-2.5-pro');
+            break;
+        case 'openai':
+        default:
+            model = createOpenAI('gpt-4o');
+            break;
+    }
+
+    // Step C: Stream using Vercel AI SDK with system prompt
+    // ALIGNED: temperature and maxTokens match non-streaming quality
+    const result = streamText({
+        model: model,
+        system: systemMessage,
+        prompt: prompt,
+        temperature: 0.7,
+        maxTokens: 4096
+    });
+
+    return result;
+}
+
+module.exports = { handleGPTRequest, streamContentGeneration };
