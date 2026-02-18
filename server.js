@@ -8,9 +8,12 @@ const path = require('path');
 require('dotenv').config();
 const fs = require('fs');
 const mongoose = require('mongoose'); // Shadow Telemetry
+const OpenAI = require('openai'); // For embeddings
 const { handleGPTRequest, streamContentGeneration } = require('./gpt_router');
 const { buildLatentMeta } = require('./services/latentMeta');
 
+// --- GLOBAL OPENAI CLIENT FOR EMBEDDINGS (Reused across all requests) ---
+const embeddingClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // --- NEW SECURITY IMPORTS ---
 const rateLimit = require('express-rate-limit');
@@ -96,11 +99,8 @@ function calculateSimilarity(vecA, vecB) {
 // HELPER: Turn Text into Vector Math
 async function createEmbedding(text) {
     try {
-        const OpenAI = require('openai');
-        const vectorAI = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-        // Wrap in timeout
-        const embedPromise = vectorAI.embeddings.create({
+        // Wrap in timeout (uses global embeddingClient for connection reuse)
+        const embedPromise = embeddingClient.embeddings.create({
             model: "text-embedding-3-small",
             input: text,
             encoding_format: "float",
