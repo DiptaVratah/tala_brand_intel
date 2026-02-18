@@ -7,15 +7,8 @@
     50% { transform: scale(1.002); }
 }
 
-.container {
-    animation: quality-pulse 6s ease-in-out infinite;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Premium glass effect - dark theme */
+/* Premium glass effect - dark theme (inherits from style.css) */
 .section {
-    backdrop-filter: blur(8px);
-    background: rgba(15, 23, 42, 0.6);
     position: relative;
     overflow: hidden;
 }
@@ -63,11 +56,7 @@
 }
 
 /* Buttons - micro interactions that feel premium, not magical */
-button {
-    position: relative;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
+/* Note: Core button styles are in style.css, this adds the ripple effect */
 button::after {
     content: '';
     position: absolute;
@@ -76,18 +65,16 @@ button::after {
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
+    transition: width var(--duration-slow, 0.5s) var(--ease-out, cubic-bezier(0, 0, 0.2, 1)),
+                height var(--duration-slow, 0.5s) var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+    pointer-events: none;
 }
 
 button:hover::after {
     width: 300px;
     height: 300px;
-}
-
-button:active {
-    transform: scale(0.98);
 }
 
 /* DNA Tags - look like smart labels, not consciousness markers */
@@ -115,52 +102,22 @@ button:active {
     opacity: 1;
 }
 
-/* Input fields - subtle focus that suggests depth */
-textarea:focus, input[type="text"]:focus, select:focus {
-    box-shadow: 0 0 0 3px var(--accent-glow, rgba(99, 102, 241, 0.3));
-    border-color: var(--accent-primary, #6366f1);
-}
+/* Input fields - focus depth handled in style.css */
 
-/* Loading overlay - professional spinner with hidden sacred geometry */
-.spinner {
-    position: relative;
-}
+/* Loading overlay - spinner glow handled in style.css */
 
-.spinner::after {
-    content: '';
-    position: absolute;
-    width: 120%;
-    height: 120%;
-    border: 2px solid rgba(52, 152, 219, 0.1);
-    border-radius: 50%;
-    top: -10%;
-    left: -10%;
-    animation: consciousness-ring 3s linear infinite;
-}
-
-@keyframes consciousness-ring {
-    0% { 
-        transform: rotate(0deg) scale(1);
-        opacity: 0.3;
-    }
-    50% {
-        transform: rotate(180deg) scale(1.1);
-        opacity: 0.1;
-    }
-    100% { 
-        transform: rotate(360deg) scale(1);
-        opacity: 0.3;
-    }
-}
-
-/* Preview cards - subtle lift suggesting consciousness */
+/* Preview cards - subtle lift suggesting depth */
 .preview-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+        transform var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1)),
+        box-shadow var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
 .preview-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: var(--lift-subtle, translateY(-2px));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .preview-card::after {
@@ -169,11 +126,11 @@ textarea:focus, input[type="text"]:focus, select:focus {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #3498DB 0%, #8E44AD 100%);
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-primary, #6366f1) 0%, var(--accent-hover, #4f46e5) 100%);
     transform: scaleX(0);
-    transition: transform 0.3s;
-    opacity: 0.3;
+    transform-origin: left;
+    transition: transform var(--duration-base, 300ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
 .preview-card:hover::after {
@@ -292,11 +249,4 @@ textarea:focus, input[type="text"]:focus, select:focus {
 /* Professional polish that carries sacred geometry */
 :root {
     --enhancement-ratio: 1.618; /* Golden ratio, hidden in plain sight */
-}
-
-.section {
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.2),
-        0 4px 12px rgba(0, 0, 0, 0.2),
-        0 16px 48px rgba(0, 0, 0, 0.15);
 }
