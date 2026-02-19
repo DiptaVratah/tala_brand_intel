@@ -108,20 +108,24 @@
 }
 
 .mode-card {
-    /* Glassmorphism effect */
+    /* Enhanced Glassmorphism effect */
     background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(var(--blur-deep, 24px));
+    -webkit-backdrop-filter: blur(var(--blur-deep, 24px));
     border: 1px solid rgba(148, 163, 184, 0.1);
-    border-radius: 20px;
+    border-radius: var(--radius-2xl, 1.25rem);
     padding: 2.5rem;
     color: #f1f5f9;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    /* Subtle shadow for depth */
+    cursor: pointer !important;
+    transition:
+        transform var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1)),
+        background-color var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1)),
+        border-color var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1)),
+        box-shadow var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1));
+    /* Inset highlight for depth */
     box-shadow:
-        0 4px 6px rgba(0, 0, 0, 0.1),
-        0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 4px 16px rgba(0, 0, 0, 0.2);
     position: relative;
     overflow: hidden;
 }
@@ -140,15 +144,15 @@
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hover state - subtle lift with enhanced glow */
+/* Hover state - lift with enhanced glow */
 .mode-card:hover {
-    transform: translateY(-4px);
+    transform: var(--lift-medium, translateY(-4px));
     background: rgba(15, 23, 42, 0.8);
     border-color: rgba(148, 163, 184, 0.2);
     box-shadow:
-        0 12px 24px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-        0 0 40px rgba(99, 102, 241, 0.15);
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 12px 32px rgba(0, 0, 0, 0.4),
+        var(--glow-accent, 0 0 40px rgba(99, 102, 241, 0.2));
 }
 
 .mode-card:hover::before {
@@ -164,7 +168,7 @@
 .mode-card-icon {
     width: 56px;
     height: 56px;
-    border-radius: 14px;
+    border-radius: var(--radius-lg, 0.75rem);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -173,13 +177,18 @@
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
     color: #a5b4fc;
     border: 1px solid rgba(99, 102, 241, 0.2);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+        background var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1)),
+        color var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1)),
+        box-shadow var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1)),
+        transform var(--duration-fast, 200ms) var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
 .mode-card:hover .mode-card-icon {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%);
     color: #c7d2fe;
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+    transform: scale(1.05);
 }
 
 /* Card Title */
