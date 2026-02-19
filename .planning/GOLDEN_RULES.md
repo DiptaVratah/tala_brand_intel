@@ -31,6 +31,18 @@ These rules are **non-negotiable** and must be followed automatically without us
 - **Skill:** `context7` MCP tools
 - **Action:** Query documentation before implementing unfamiliar APIs
 
+### 5. Systematic Debugging (ALWAYS for bugs)
+- **Trigger:** Any bug, test failure, unexpected behavior
+- **Skill:** `.claude/skills/systematic-debugging`
+- **Action:** MUST complete Phase 1 (Root Cause Investigation) before proposing fixes
+- **Escalation:** If 2+ hypothesis cycles fail → invoke `ralph-wiggum:ralph-loop`
+
+### 6. Verification Before Completion (ALWAYS before claiming done)
+- **Trigger:** Before ANY completion claim, commit, or PR
+- **Skill:** `.claude/skills/verification-before-completion`
+- **Action:** Run verification commands, show evidence, THEN claim completion
+- **Integration:** Works with `/safe-commit` and `code-review:code-review`
+
 ---
 
 ## Backend Foundation - NEVER TOUCH
