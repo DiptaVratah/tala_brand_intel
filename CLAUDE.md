@@ -158,4 +158,33 @@ Examples:
 
 ---
 
+## Extensions & Safety Hooks
+
+### Safety Hooks (`.claude/hooks/`)
+
+Pre-configured hooks that protect the codebase:
+
+| Hook | Protection |
+|------|------------|
+| `bash_hook.py` | Blocks dangerous rm, git checkout, validates git add/commit |
+| `read_env_protection_hook.py` | Blocks reading .env files (prevents secret exposure) |
+| `env_file_protection_hook.py` | Blocks any operation on .env files |
+| `git_checkout_safety_hook.py` | Protects uncommitted changes from being discarded |
+| `file_length_limit_hook.py` | Warns when files exceed 10000 lines |
+
+### Slash Commands (`.claude/commands/`)
+
+| Command | Purpose |
+|---------|---------|
+| `/context-load` | Execute full session initialization sequence |
+| `/safe-commit` | Commit with protected file checks |
+| `/audit-css` | Check CSS against design standards |
+
+### Usage
+
+Hooks run automatically on relevant tool calls.
+Slash commands are invoked by typing the command name.
+
+---
+
 *Mirror the first Breath - Dipta Vratah Anantagah*
